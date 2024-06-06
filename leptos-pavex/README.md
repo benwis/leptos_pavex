@@ -1,2 +1,2 @@
-# leptos_pavex repo
+# leptos_pavex
 Pavex Integration for Leptos
