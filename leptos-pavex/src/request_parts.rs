@@ -1,4 +1,4 @@
-use spin_sdk::http::{conversions::IntoHeaders, IncomingRequest, Method, Scheme};
+// use spin_sdk::http::{conversions::IntoHeaders, IncomingRequest, Method, Scheme};
 
 // Because IncomingRequest is not Clone, we provide this struct with the
 // easily cloneable parts.

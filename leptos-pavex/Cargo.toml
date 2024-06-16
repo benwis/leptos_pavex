@@ -7,8 +7,11 @@ edition = "2021"
 
 [dependencies]
 
-leptos = { version = "0.7.0-preview2", features = ["ssr"] }
-leptos_integration_utils = { git="https://github.com/leptos-rs/leptos", branch="leptos_0.7" }
-leptos_meta = { version = "0.7.0-preview2", features = ["ssr"] }
-leptos_router = { version = "0.7.0-preview2", features = ["ssr"] }
+leptos.workspace=true 
+leptos_integration_utils.workspace=true 
+leptos_meta.workspace=true
+leptos_router.workspace=true 
 futures.workspace = true
+url.workspace = true
+bytes.workspace = true
+pavex.workspace = true

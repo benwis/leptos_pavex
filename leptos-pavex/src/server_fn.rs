@@ -2,7 +2,7 @@ use crate::request_parts::RequestParts;
 use crate::response_options::ResponseOptions;
 use crate::{
     request::SpinRequest,
-    response::{SpinBody, SpinResponse},
+    response::{SpinBody, PavexResponse},
 };
 use dashmap::DashMap;
 use futures::{SinkExt, StreamExt};
@@ -19,15 +19,15 @@ use url::Url;
 #[allow(unused)] // used by server integrations
 type LazyServerFnMap<Req, Res> = Lazy<DashMap<&'static str, ServerFnTraitObj<Req, Res>>>;
 
-static REGISTERED_SERVER_FUNCTIONS: LazyServerFnMap<SpinRequest, SpinResponse> =
-    initialize_server_fn_map!(SpinRequest, SpinResponse);
+static REGISTERED_SERVER_FUNCTIONS: LazyServerFnMap<SpinRequest, PavexResponse> =
+    initialize_server_fn_map!(SpinRequest, PavexResponse);
 
 /// Explicitly register a server function. This is only necessary if you are
 /// running the server in a WASM environment (or a rare environment that the
 /// `inventory`) crate doesn't support. Spin is one of those environments
 pub fn register_explicit<T>()
 where
-    T: ServerFn<ServerRequest = SpinRequest, ServerResponse = SpinResponse> + 'static,
+    T: ServerFn<ServerRequest = SpinRequest, ServerResponse = PavexResponse> + 'static,
 {
     REGISTERED_SERVER_FUNCTIONS.insert(
         T::PATH,
@@ -53,7 +53,7 @@ handle_server_fns_with_context(req, resp_out, ||{}).await;
 pub async fn handle_server_fns_with_context(req: IncomingRequest, resp_out: ResponseOutparam, additional_context: impl Fn() + 'static + Clone + Send) {
     let pq = req.path_with_query().unwrap_or_default();
 
-    let (spin_res, req_parts, res_options, runtime) = 
+    let (pavex_res, req_parts, res_options, runtime) = 
         match crate::server_fn::get_server_fn_by_path(&pq) {
             Some(lepfn) => {
             let runtime = create_runtime();
@@ -90,9 +90,9 @@ pub async fn handle_server_fns_with_context(req: IncomingRequest, resp_out: Resp
 
         } 
 
-    let headers = merge_headers(spin_res.0.headers, res_options.headers());
-    let status = res_options.status().unwrap_or(spin_res.0.status_code);
-    match spin_res.0.body {
+    let headers = merge_headers(pavex_res.0.headers, res_options.headers());
+    let status = res_options.status().unwrap_or(pavex_res.0.status_code);
+    match pavex_res.0.body {
         SpinBody::Plain(r) => {
             let og = OutgoingResponse::new(headers);
             og.set_status_code(status).expect("Failed to set Status");
@@ -115,7 +115,7 @@ pub async fn handle_server_fns_with_context(req: IncomingRequest, resp_out: Resp
 }
 
 /// Returns the server function at the given path
-pub fn get_server_fn_by_path(path: &str) -> Option<ServerFnTraitObj<SpinRequest, SpinResponse>> {
+pub fn get_server_fn_by_path(path: &str) -> Option<ServerFnTraitObj<SpinRequest, PavexResponse>> {
     // Sanitize Url to prevent query string or ids causing issues. To do that Url wants a full url,
     // so we give it a fake one. We're only using the path anyway!
     let full_url =format!("http://leptos.dev{}", path);
