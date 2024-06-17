@@ -1,63 +1,50 @@
 use std::sync::{Arc, RwLock};
+use pavex::http::{StatusCode, HeaderMap, HeaderValue, HeaderName};
 
-use spin_sdk::http::Headers;
 
 #[derive(Clone, Debug, Default)]
-pub struct ResponseOptions {
-    inner: Arc<RwLock<ResponseOptionsInner>>,
-}
+pub struct ResponseOptions(Arc<RwLock<ResponseParts>>);
 
 impl ResponseOptions {
-    pub fn status(&self) -> Option<u16> {
-        self.inner.read().unwrap().status
+
+    /// A simpler way to overwrite the contents of `ResponseOptions` with a new `ResponseParts`.
+    pub fn overwrite(&self, parts: ResponseParts) {
+        let mut writable = self.0.write();
+        *writable = parts
     }
-    pub fn set_status(&self, status: u16) {
-        let mut inner = self.inner.write().unwrap();
-        inner.status = Some(status);
+    /// Set the status of the returned Response.
+    pub fn set_status(&self, status: StatusCode) {
+        let mut writeable = self.0.write();
+        let res_parts = &mut *writeable;
+        res_parts.status = Some(status);
     }
-    pub fn status_is_set(&self) -> bool {
-        let inner = self.inner.read().unwrap();
-        inner.status.is_some()
+    /// Insert a header, overwriting any previous value with the same key.
+    pub fn insert_header(&self, key: HeaderName, value: HeaderValue) {
+        let mut writeable = self.0.write();
+        let res_parts = &mut *writeable;
+        res_parts.headers.insert(key, value);
     }
-    pub fn headers(&self) -> Headers {
-        self.inner.read().unwrap().headers.clone()
-    }
-    pub fn insert_header(&self, name: &str, value: impl Into<Vec<u8>>) {
-        let inner = self.inner.write().unwrap();
-        inner
-            .headers
-            .set(&name.to_string(), &[value.into()])
-            .expect("Failed to set header");
-    }
-    pub fn append_header(&self, name: &str, value: &[u8]) {
-        let inner = self.inner.write().unwrap();
-        inner
-            .headers
-            .append(&name.to_string(), &value.to_vec())
-            .expect("Failed to append header");
-    }
-    // Creates a ResponseOptions object with a default 200 status and no headers
-    // Useful for server functions
-    pub fn default_without_headers() -> Self {
-        Self {
-            inner: Arc::new(RwLock::new(ResponseOptionsInner::default_without_headers())),
-        }
+    /// Append a header, leaving any header with the same key intact.
+    pub fn append_header(&self, key: HeaderName, value: HeaderValue) {
+        let mut writeable = self.0.write();
+        let res_parts = &mut *writeable;
+        res_parts.headers.append(key, value);
     }
 }
 
 #[derive(Debug)]
-struct ResponseOptionsInner {
-    status: Option<u16>,
-    headers: Headers,
+struct ResponseParts {
+    pub(crate) status: Option<StatusCode>,
+    headers: HeaderMap,
 }
 
-impl Default for ResponseOptionsInner {
+impl Default for ResponseParts {
     fn default() -> Self {
-        let headers = Headers::new();
+        let mut headers = HeaderMap::new();
         headers
             .append(
-                &"content-type".to_string(),
-                &"text/html".as_bytes().to_vec(),
+                "content-type",
+                HeaderValue::from("text/html"),
             )
             .expect("Failed to append headers");
         Self {
@@ -67,13 +54,18 @@ impl Default for ResponseOptionsInner {
     }
 }
 
-impl ResponseOptionsInner {
-    // Creates a ResponseOptionsInner object with a default 200 status and no headers
-    // Useful for server functions
+impl ResponseParts {
     pub fn default_without_headers() -> Self {
         Self {
             status: Default::default(),
-            headers: Headers::new(),
+            headers: HeaderMap::new(),
         }
     }
+    /// Insert a header, overwriting any previous value with the same key
+    pub fn insert_header(&mut self, key: HeaderName, value: HeaderValue) {
+        self.headers.insert(key, value);
+    }
+    /// Append a header, leaving any header with the same key intact
+    pub fn append_header(&mut self, key: HeaderName, value: HeaderValue) {
+        self.headers.append(key, value);
 }

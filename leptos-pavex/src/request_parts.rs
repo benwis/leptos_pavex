@@ -1,4 +1,6 @@
 // use spin_sdk::http::{conversions::IntoHeaders, IncomingRequest, Method, Scheme};
+use pavex::http::{HeaderMap, Method, uri::Scheme};
+use pavex::request::RequestHead;
 
 // Because IncomingRequest is not Clone, we provide this struct with the
 // easily cloneable parts.
@@ -7,18 +9,18 @@
 pub struct RequestParts {
     method: Method,
     scheme: Option<Scheme>,
-    headers: Vec<(String, Vec<u8>)>,
+    headers: HeaderMap,
 }
 impl RequestParts {
-    pub fn new_from_req(req: &IncomingRequest) -> Self {
+    pub fn new_from_req(req: &RequestHead) -> Self {
         Self {
-            method: req.method(),
-            scheme: req.scheme(),
-            headers: req.headers().into_headers(),
+            method: req.method.clone(),
+            scheme: req.target.scheme().cloned(),
+            headers: req.headers.clone(),
         }
     }
     /// Get the Headers for the Request
-    pub fn headers(&self) -> &Vec<(String, Vec<u8>)> {
+    pub fn headers(&self) -> &HeaderMap {
         &self.headers
     }
     /// Get the Method for the Request

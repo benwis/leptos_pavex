@@ -1,77 +1,72 @@
 use bytes::Bytes;
 use futures::{Stream, StreamExt};
 use leptos::server_fn::{error::ServerFnError, request::Req};
-use spin_sdk::http::IncomingRequest;
 use std::borrow::Cow;
+use pavex::request::body::{BodySizeLimit, BufferedBody, RawIncomingBody};
+use pavex::request::RequestHead;
+use pavex::response::body::raw::RawBody;
 
 /// This is here because the orphan rule does not allow us to implement it on IncomingRequest with
 /// the generic error. So we have to wrap it to make it happy
 #[derive(Debug)]
-pub struct SpinRequest {
-    pub req: IncomingRequest,
-    pub path_with_query: Option<String>,
+pub struct PavexRequest {
+    pub head: RequestHead,
+    pub body: RawIncomingBody,
 }
-impl SpinRequest {
-    pub fn new_from_req(req: IncomingRequest) -> Self {
-        SpinRequest {
-            path_with_query: req.path_with_query(),
-            req,
+impl PavexRequest {
+    pub fn new_from_req(head: RequestHead, body: RawIncomingBody) -> Self {
+        Self {
+        head,
+        body,
         }
     }
 }
 
-impl<CustErr> Req<CustErr> for SpinRequest
+impl<CustErr> Req<CustErr> for PavexRequest
 where
     CustErr: 'static,
 {
     fn as_query(&self) -> Option<&str> {
-        self.path_with_query
-            .as_ref()
-            .and_then(|n| n.split_once('?').map(|(_, query)| query))
+        Some(self.head.target.to_string().as_ref())
     }
 
     fn to_content_type(&self) -> Option<Cow<'_, str>> {
-        self.req
-            .headers()
-            .get(&"Content-Type".to_string())
-            .first()
-            .map(|h| String::from_utf8_lossy(h))
-            .map(Cow::into_owned)
-            .map(Cow::<'static, str>::Owned)
+        self.head
+            .headers
+            .get("Content-Type")
+            .map(|h| h.to_str()).ok()
+
     }
 
     fn accepts(&self) -> Option<Cow<'_, str>> {
-        self.req
-            .headers()
-            .get(&"Accept".to_string())
-            .first()
-            .map(|h| String::from_utf8_lossy(h))
-            .map(Cow::into_owned)
-            .map(Cow::<'static, str>::Owned)
+        self.head
+            .headers
+            .get("Accept")
+            .map(|h| h.to_str()).ok()
+
     }
 
     fn referer(&self) -> Option<Cow<'_, str>> {
-        self.req
-            .headers()
-            .get(&"Referer".to_string())
-            .first()
-            .map(|h| String::from_utf8_lossy(h))
-            .map(Cow::into_owned)
-            .map(Cow::<'static, str>::Owned)
+        self
+            .head
+            .headers
+            .get("Referer")
+            .map(|h| h.to_str()).ok()
+
     }
 
     async fn try_into_bytes(self) -> Result<Bytes, ServerFnError<CustErr>> {
-        let buf = self
-            .req
-            .into_body()
+        let buf = BufferedBody::extract(&self.head,self.body, BodySizeLimit::Disabled)
             .await
             .map_err(|e| ServerFnError::Deserialization(e.to_string()))?;
-        Ok(Bytes::copy_from_slice(&buf))
+        Ok(buf.bytes)
     }
 
     async fn try_into_string(self) -> Result<String, ServerFnError<CustErr>> {
-        let bytes = self.try_into_bytes().await?;
-        String::from_utf8(bytes.to_vec()).map_err(|e| ServerFnError::Deserialization(e.to_string()))
+        let buf = BufferedBody::extract(&self.head,self.body, BodySizeLimit::Disabled)
+            .await
+            .map_err(|e| ServerFnError::Deserialization(e.to_string()))?;
+        String::from_utf8(Vec::from(buf.bytes)).map_err(|e| ServerFnError::Deserialization(e.to_string()))
     }
 
     fn try_into_stream(
@@ -80,10 +75,9 @@ where
         impl Stream<Item = Result<Bytes, ServerFnError>> + Send + 'static,
         ServerFnError<CustErr>,
     > {
-        Ok(self.req.into_body_stream().map(|chunk| {
+        Ok(self.body.poll_frame().map(|chunk| {
             chunk
-                .map(|c| Bytes::copy_from_slice(&c))
-                .map_err(|e| ServerFnError::Deserialization(e.to_string()))
+                .flatten(|c| Bytes::copy_from_slice(&c))
         }))
     }
 }
