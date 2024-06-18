@@ -19,3 +19,7 @@ dashmap.workspace = true
 once_cell.workspace = true
 multimap.workspace = true
 tracing = "0.1.40"
+parking_lot.workspace = true
+http-body-util.workspace = true
+http-body.workspace = true
+pin-project.workspace = true

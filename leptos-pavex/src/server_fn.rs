@@ -5,8 +5,7 @@ use crate::{
     response::PavexResponse,
 };
 use dashmap::DashMap;
-use futures::{SinkExt, StreamExt};
-use pavex::http::{Method as HttpMethod, HeaderMap, StatusCode};
+use pavex::http::{HeaderName, Method as HttpMethod, StatusCode};
 use pavex::response::Response;
 use leptos::server_fn::middleware::Service;
 use leptos::server_fn::{codec::Encoding, initialize_server_fn_map, ServerFn, ServerFnTraitObj};
@@ -45,20 +44,20 @@ pub fn server_fn_paths() -> impl Iterator<Item = (&'static str, HttpMethod)> {
         .map(|item| (item.path(), item.method()))
 }
 
-pub async fn handle_server_fns(req: PavexRequest) -> Response {
+pub async fn handle_server_fns(req: PavexRequest) -> Response  {
 handle_server_fns_with_context(req, ||{}).await
 }
-pub async fn handle_server_fns_with_context(req: PavexRequest,  additional_context: impl Fn() + 'static + Clone + Send) -> Response {
-    let pq = req.path_with_query().unwrap_or_default();
-        match crate::server_fn::get_server_fn_by_path(&pq) {
+pub async fn handle_server_fns_with_context(req: PavexRequest,  additional_context: impl Fn() + 'static + Clone + Send) -> Response  {
+    let pq = req.head.target.path_and_query().unwrap();
+        match crate::server_fn::get_server_fn_by_path(pq.as_str()) {
             Some(lepfn) => {
             //let runtime = create_runtime();
             let owner = Owner::new();
-                owner.with(|| {
+               let blah =  owner.with(|| {
                     ScopedFuture::new(async move{
-                        let req_parts = RequestParts::new_from_req(&req);
+                        let req_parts = RequestParts::new_from_req(&req.head);
                         provide_context(req_parts.clone());
-                        let res_options = ResponseOptions::default_without_headers();
+                        let res_options = ResponseOptions::default();
                         provide_context(res_options.clone());
                         additional_context();
                         let pavex_req = PavexRequest::new_from_req(req.head, req.body);
@@ -69,19 +68,27 @@ pub async fn handle_server_fns_with_context(req: PavexRequest,  additional_conte
                         // or the user specified location
 
                         let req_headers = req_parts.headers();
-                        let accepts = &req_headers.get("Accept");
-                        let accepts_html_bool = accepts.unwrap_or(false).to_string().contains("text/html");
+                        let accepts = req_headers.get("Accept");
+                        let accepts_html_bool = match accepts{
+                            Some(h) => match h.to_str().unwrap().contains("text/html"){
+                                true => true,
+                                false => false
+                            },
+                            None => false
+                        };
 
                         if accepts_html_bool {
 
                             let referrer = &req_headers.get("Referer");
                             let location = &req_headers.get("Location");
                             if location.is_none(){
-                                res_options.insert_header("location", referrer.to_owned());
+                                if let Some(referrer) = *referrer{
+                                res_options.insert_header(HeaderName::from_static("location"), referrer.to_owned());
+                                }
                             }
                             // Set status
-                            if !res_options.status_is_set(){
-                                res_options.set_status(302);
+                            if res_options.status().is_none(){
+                                res_options.set_status(StatusCode::FOUND);
                             }
                         }
 
@@ -95,15 +102,16 @@ pub async fn handle_server_fns_with_context(req: PavexRequest,  additional_conte
                         pavex_res.0
 
                     })
-                })
+                });
+                blah.await
 
         },
             //None => panic!("Server FN path {} not found", &pq)
             None => {
             Response::new(StatusCode::BAD_REQUEST)
 
-            .typed_body(format!(
-                "Could not find a server function at the route {path}. \
+            .set_typed_body(format!(
+                "Could not find a server function at the route {pq}. \
                  \n\nIt's likely that either
                          1. The API prefix you specify in the `#[server]` \
                  macro doesn't match the prefix at which your server function \
@@ -113,8 +121,7 @@ pub async fn handle_server_fns_with_context(req: PavexRequest,  additional_conte
                  function type, somewhere in your `main` function.",
             ))
         }
-            .expect("could not build Response")}
-        
+    }
     }
 
 /// Returns the server function at the given path

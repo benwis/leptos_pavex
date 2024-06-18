@@ -1,6 +1,6 @@
-use std::sync::{Arc, RwLock};
+use std::sync::Arc;
 use pavex::http::{StatusCode, HeaderMap, HeaderValue, HeaderName};
-
+use parking_lot::RwLock;
 
 #[derive(Clone, Debug, Default)]
 pub struct ResponseOptions(Arc<RwLock<ResponseParts>>);
@@ -12,6 +12,18 @@ impl ResponseOptions {
         let mut writable = self.0.write();
         *writable = parts
     }
+    /// Get the status of the returned Response.
+    pub fn status(&self) -> Option<StatusCode> {
+        let readable = self.0.read();
+        let res_parts = readable;
+        res_parts.status
+    }
+    /// Get the headers of the returned Response.
+    pub fn headers(&self) -> HeaderMap {
+        let readable = self.0.read();
+        let res_parts = readable;
+        res_parts.headers.clone()
+        }
     /// Set the status of the returned Response.
     pub fn set_status(&self, status: StatusCode) {
         let mut writeable = self.0.write();
@@ -44,9 +56,8 @@ impl Default for ResponseParts {
         headers
             .append(
                 "content-type",
-                HeaderValue::from("text/html"),
-            )
-            .expect("Failed to append headers");
+                HeaderValue::from_str("text/html").unwrap(),
+            );
         Self {
             status: Default::default(),
             headers,
@@ -68,4 +79,5 @@ impl ResponseParts {
     /// Append a header, leaving any header with the same key intact
     pub fn append_header(&mut self, key: HeaderName, value: HeaderValue) {
         self.headers.append(key, value);
+    }
 }

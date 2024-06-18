@@ -8,62 +8,12 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="dc9646a2-d8ac-4395-ab6f-1cce323c37f6" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Cargo.lock" beforeDir="false" afterPath="$PROJECT_DIR$/Cargo.lock" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Cargo.toml" beforeDir="false" afterPath="$PROJECT_DIR$/Cargo.toml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/basic-pavex/.cargo/config.toml" beforeDir="false" afterPath="$PROJECT_DIR$/examples/basic-pavex/.cargo/config.toml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/basic-pavex/.config/hakari.toml" beforeDir="false" afterPath="$PROJECT_DIR$/examples/basic-pavex/.config/hakari.toml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/basic-pavex/.dockerignore" beforeDir="false" afterPath="$PROJECT_DIR$/examples/basic-pavex/.dockerignore" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/basic-pavex/.github/workflows/general.yml" beforeDir="false" afterPath="$PROJECT_DIR$/examples/basic-pavex/.github/workflows/general.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/basic-pavex/.github/workflows/security.yml" beforeDir="false" afterPath="$PROJECT_DIR$/examples/basic-pavex/.github/workflows/security.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/basic-pavex/.github/workflows/workspace_hack.yml" beforeDir="false" afterPath="$PROJECT_DIR$/examples/basic-pavex/.github/workflows/workspace_hack.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/basic-pavex/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/examples/basic-pavex/.gitignore" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/basic-pavex/CONFIGURATION.md" beforeDir="false" afterPath="$PROJECT_DIR$/examples/basic-pavex/CONFIGURATION.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/basic-pavex/Cargo.toml" beforeDir="false" afterPath="$PROJECT_DIR$/examples/basic-pavex/Cargo.toml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/basic-pavex/Dockerfile" beforeDir="false" afterPath="$PROJECT_DIR$/examples/basic-pavex/Dockerfile" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/basic-pavex/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/examples/basic-pavex/README.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/basic-pavex/app/Cargo.toml" beforeDir="false" afterPath="$PROJECT_DIR$/examples/basic-pavex/app/Cargo.toml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/basic-pavex/app/src/bin/bp.rs" beforeDir="false" afterPath="$PROJECT_DIR$/examples/basic-pavex/app/src/bin/bp.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/basic-pavex/app/src/blueprint.rs" beforeDir="false" afterPath="$PROJECT_DIR$/examples/basic-pavex/app/src/blueprint.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/basic-pavex/app/src/configuration.rs" beforeDir="false" afterPath="$PROJECT_DIR$/examples/basic-pavex/app/src/configuration.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/basic-pavex/app/src/lib.rs" beforeDir="false" afterPath="$PROJECT_DIR$/examples/basic-pavex/app/src/lib.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/basic-pavex/app/src/routes/greet.rs" beforeDir="false" afterPath="$PROJECT_DIR$/examples/basic-pavex/app/src/routes/greet.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/basic-pavex/app/src/routes/mod.rs" beforeDir="false" afterPath="$PROJECT_DIR$/examples/basic-pavex/app/src/routes/mod.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/basic-pavex/app/src/routes/ping.rs" beforeDir="false" afterPath="$PROJECT_DIR$/examples/basic-pavex/app/src/routes/ping.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/basic-pavex/app/src/telemetry.rs" beforeDir="false" afterPath="$PROJECT_DIR$/examples/basic-pavex/app/src/telemetry.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/basic-pavex/deny.toml" beforeDir="false" afterPath="$PROJECT_DIR$/examples/basic-pavex/deny.toml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/basic-pavex/rust-toolchain.toml" beforeDir="false" afterPath="$PROJECT_DIR$/examples/basic-pavex/rust-toolchain.toml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/basic-pavex/server/Cargo.toml" beforeDir="false" afterPath="$PROJECT_DIR$/examples/basic-pavex/server/Cargo.toml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/basic-pavex/server/configuration/base.yml" beforeDir="false" afterPath="$PROJECT_DIR$/examples/basic-pavex/server/configuration/base.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/basic-pavex/server/configuration/dev.yml" beforeDir="false" afterPath="$PROJECT_DIR$/examples/basic-pavex/server/configuration/dev.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/basic-pavex/server/configuration/prod.yml" beforeDir="false" afterPath="$PROJECT_DIR$/examples/basic-pavex/server/configuration/prod.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/basic-pavex/server/src/bin/server.rs" beforeDir="false" afterPath="$PROJECT_DIR$/examples/basic-pavex/server/src/bin/server.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/basic-pavex/server/src/configuration/mod.rs" beforeDir="false" afterPath="$PROJECT_DIR$/examples/basic-pavex/server/src/configuration/mod.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/basic-pavex/server/src/configuration/profile.rs" beforeDir="false" afterPath="$PROJECT_DIR$/examples/basic-pavex/server/src/configuration/profile.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/basic-pavex/server/src/configuration/schema.rs" beforeDir="false" afterPath="$PROJECT_DIR$/examples/basic-pavex/server/src/configuration/schema.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/basic-pavex/server/src/lib.rs" beforeDir="false" afterPath="$PROJECT_DIR$/examples/basic-pavex/server/src/lib.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/basic-pavex/server/src/telemetry.rs" beforeDir="false" afterPath="$PROJECT_DIR$/examples/basic-pavex/server/src/telemetry.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/basic-pavex/server/tests/integration/helpers.rs" beforeDir="false" afterPath="$PROJECT_DIR$/examples/basic-pavex/server/tests/integration/helpers.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/basic-pavex/server/tests/integration/main.rs" beforeDir="false" afterPath="$PROJECT_DIR$/examples/basic-pavex/server/tests/integration/main.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/basic-pavex/server/tests/integration/ping.rs" beforeDir="false" afterPath="$PROJECT_DIR$/examples/basic-pavex/server/tests/integration/ping.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/basic-pavex/server_sdk/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/examples/basic-pavex/server_sdk/.gitignore" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/basic-pavex/server_sdk/Cargo.toml" beforeDir="false" afterPath="$PROJECT_DIR$/examples/basic-pavex/server_sdk/Cargo.toml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/basic-pavex/server_sdk/rustfmt.toml" beforeDir="false" afterPath="$PROJECT_DIR$/examples/basic-pavex/server_sdk/rustfmt.toml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/basic-pavex/server_sdk/src/lib.rs" beforeDir="false" afterPath="$PROJECT_DIR$/examples/basic-pavex/server_sdk/src/lib.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/basic-pavex/workspace_hack/.gitattributes" beforeDir="false" afterPath="$PROJECT_DIR$/examples/basic-pavex/workspace_hack/.gitattributes" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/basic-pavex/workspace_hack/Cargo.toml" beforeDir="false" afterPath="$PROJECT_DIR$/examples/basic-pavex/workspace_hack/Cargo.toml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/basic-pavex/workspace_hack/build.rs" beforeDir="false" afterPath="$PROJECT_DIR$/examples/basic-pavex/workspace_hack/build.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/basic-pavex/workspace_hack/src/lib.rs" beforeDir="false" afterPath="$PROJECT_DIR$/examples/basic-pavex/workspace_hack/src/lib.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/examples/leptos-ecommerce/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/examples/leptos-ecommerce/.idea/vcs.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/examples/leptos-ecommerce/Cargo.toml" beforeDir="false" afterPath="$PROJECT_DIR$/examples/leptos-ecommerce/Cargo.toml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/examples/leptos-ecommerce/app/Cargo.toml" beforeDir="false" afterPath="$PROJECT_DIR$/examples/leptos-ecommerce/app/Cargo.toml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/examples/leptos-ecommerce/common/Cargo.toml" beforeDir="false" afterPath="$PROJECT_DIR$/examples/leptos-ecommerce/common/Cargo.toml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/examples/leptos-ecommerce/server/Cargo.toml" beforeDir="false" afterPath="$PROJECT_DIR$/examples/leptos-ecommerce/server/Cargo.toml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/examples/leptos-ecommerce/server/src/fileserv.rs" beforeDir="false" afterPath="$PROJECT_DIR$/examples/leptos-ecommerce/server/src/fileserv.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/examples/leptos-ecommerce/server/src/state.rs" beforeDir="false" afterPath="$PROJECT_DIR$/examples/leptos-ecommerce/server/src/state.rs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/leptos-pavex/Cargo.toml" beforeDir="false" afterPath="$PROJECT_DIR$/leptos-pavex/Cargo.toml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/leptos-pavex/src/lib.rs" beforeDir="false" afterPath="$PROJECT_DIR$/leptos-pavex/src/lib.rs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/leptos-pavex/src/request.rs" beforeDir="false" afterPath="$PROJECT_DIR$/leptos-pavex/src/request.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/leptos-pavex/src/request_parts.rs" beforeDir="false" afterPath="$PROJECT_DIR$/leptos-pavex/src/request_parts.rs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/leptos-pavex/src/response.rs" beforeDir="false" afterPath="$PROJECT_DIR$/leptos-pavex/src/response.rs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/leptos-pavex/src/response_options.rs" beforeDir="false" afterPath="$PROJECT_DIR$/leptos-pavex/src/response_options.rs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/leptos-pavex/src/server_fn.rs" beforeDir="false" afterPath="$PROJECT_DIR$/leptos-pavex/src/server_fn.rs" afterDir="false" />
@@ -136,7 +86,7 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1718506299833</updated>
-      <workItem from="1718506300834" duration="15897000" />
+      <workItem from="1718506300834" duration="24564000" />
     </task>
     <servers />
   </component>

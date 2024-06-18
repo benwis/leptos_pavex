@@ -8,15 +8,14 @@ use pavex::http::header::CONTENT_TYPE;
 use pavex::http::{HeaderMap, HeaderName, StatusCode};
 use pavex::response::{Response, ResponseHead, ResponseBody};
 use pavex::http::{HeaderValue, header::SERVER};
+use std::error::Error;
 use std::pin::Pin;
 use std::{
     fmt::{Debug, Display},
     str::FromStr,
 };
-use leptos_integration_utils::ExtendResponse;
-use pavex::request::body::BufferedBody;
-use crate::ResponseOptions;
 
+use crate::stream::PavexStream;
 /// This is here because the orphan rule does not allow us to implement it on IncomingRequest with
 /// the generic error. So we have to wrap it to make it happy
 pub struct PavexResponse(pub Response);
@@ -59,16 +58,10 @@ pub struct PavexResponse(pub Response);
 //     }
 // }
 
-/// We can either return a fairly simple Box type for normal bodies or a Stream for Streaming
-/// server functions
-pub enum PavexBody {
-    Plain(BufferedBody),
-    Streaming(Pin<Box<dyn Stream<Item = Result<Bytes, Box<dyn std::error::Error>>> + Send>>),
-}
-
 impl<CustErr> Res<CustErr> for PavexResponse
 where
-    CustErr: Send + Sync + Debug + FromStr + Display + 'static,
+    CustErr: Send + Sync + Debug + FromStr + Display + Error +  'static,
+    ServerFnError<CustErr>: From<ServerFnErrorErr<CustErr>>,
 {
     fn try_from_string(content_type: &str, data: String) -> Result<Self, ServerFnError<CustErr>> {
         let mut headers = HeaderMap::new();
@@ -96,16 +89,18 @@ where
         content_type: &str,
         data: impl Stream<Item = Result<Bytes, ServerFnError<CustErr>>> + Send + 'static,
     ) -> Result<Self, ServerFnError<CustErr>> {
-        let body = data.map(|n| {
-            n.map_err(ServerFnErrorErr::from)
-                .map_err(|e| Box::new(e) as Box<dyn std::error::Error>)
-        });
+        // let body = data.map(|n| {
+        //     n.map_err(ServerFnErrorErr::from)
+        //         .map_err(|e| Box::new(e) as Box<dyn std::error::Error>)
+        // });
 
         let mut headers = HeaderMap::new();
         headers.insert(CONTENT_TYPE, content_type.parse().unwrap());
 
+        let stream = PavexStream{inner: data};
+
         let mut res = Response::ok()
-        .set_typed_body(data.clone());
+        .set_raw_body(stream);
         *res.headers_mut() = headers;
 
         Ok(PavexResponse(res))
@@ -113,7 +108,7 @@ where
 
     fn error_response(path: &str, err: &ServerFnError<CustErr>) -> Self {
         let res = Response::new(StatusCode::INTERNAL_SERVER_ERROR)
-            .insert_header(HeaderName::from(SERVER_FN_ERROR_HEADER), path.into())
+            .insert_header(HeaderName::from_static(SERVER_FN_ERROR_HEADER), HeaderValue::from_str(path).unwrap())
             .set_typed_body(
                 err.ser().unwrap_or_else(|_| err.to_string()));
         PavexResponse(res)

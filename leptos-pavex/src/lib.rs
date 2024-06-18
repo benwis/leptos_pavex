@@ -3,12 +3,13 @@ pub mod request;
 pub mod response;
 pub mod response_options;
 pub mod server_fn;
+pub mod stream;
 
 use std::future::Future;
 use std::io;
 use std::pin::Pin;
 use bytes::Bytes;
-use futures::Stream;
+use futures::{Stream, StreamExt};
 use futures::stream::once;
 use leptos::prelude::*;
 use leptos::server_fn::redirect::REDIRECT_HEADER;
@@ -22,6 +23,7 @@ use crate::response_options::ResponseOptions;
 use pavex::http::{header, HeaderName, HeaderValue};
 use pavex::http::header::{ACCEPT, LOCATION};
 use pavex::http::StatusCode;
+use pavex::request::path::MatchedPathPattern;
 use pavex::request::RequestHead;
 use pavex::response::Response;
 use crate::request::PavexRequest;
@@ -224,6 +226,7 @@ pub fn render_app_to_stream_with_context<IV>(
 #[tracing::instrument(level = "trace", fields(error), skip_all)]
 pub fn render_route_with_context<IV>(
     paths: Vec<PavexRouteListing>,
+    matched_path: &MatchedPathPattern,
     additional_context: impl Fn() + 'static + Clone + Send,
     app_fn: impl Fn() -> IV + Clone + Send + 'static,
 ) -> impl Fn(
@@ -255,15 +258,11 @@ pub fn render_route_with_context<IV>(
 
     move |req| {
         // 1. Process route to match the values in routeListing
-        let path = req
-            .extensions()
-            .get::<MatchedPath>()
-            .expect("Failed to get Axum router rule")
-            .as_str();
+
         // 2. Find RouteListing in paths. This should probably be optimized, we probably don't want to
         // search for this every time
         let listing: &PavexRouteListing =
-            paths.iter().find(|r| r.path() == path).unwrap_or_else(|| {
+            paths.iter().find(|r| r.path() == matched_path.inner()).unwrap_or_else(|| {
                 panic!(
                     "Failed to find the route {path} requested by the user. \
                      This suggests that the routing rules in the Router that \
