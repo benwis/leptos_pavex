@@ -107,12 +107,7 @@ Pin<Box<dyn Stream<Item = io::Result<Bytes>> + Send>>;
 #[tracing::instrument(level = "trace", fields(error), skip_all)]
 pub fn render_app_to_stream<IV>(
     app_fn: impl Fn() -> IV + Clone + Send + 'static,
-) -> impl Fn(
-    PavexRequest,
-) -> Pin<Box<dyn Future<Output = Response> + Send + 'static>>
-+ Clone
-+ Send
-+ 'static
+) -> Response
     where
         IV: IntoView + 'static,
 {
@@ -127,17 +122,13 @@ pub fn render_app_to_stream<IV>(
 #[tracing::instrument(level = "trace", fields(error), skip_all)]
 pub fn render_route<IV>(
     paths: Vec<PavexRouteListing>,
+    matched_path: &MatchedPathPattern,
     app_fn: impl Fn() -> IV + Clone + Send + 'static,
-) -> impl Fn(
-    PavexRequest,
-) -> Pin<Box<dyn Future<Output = Response> + Send + 'static>>
-+ Clone
-+ Send
-+ 'static
+) -> Response
     where
         IV: IntoView + 'static,
 {
-    render_route_with_context(paths, || {}, app_fn)
+    render_route_with_context(paths, matched_path, || {}, app_fn)
 }
 
 /// Returns an Axum [Handler](axum::handler::Handler) that listens for a `GET` request and tries
@@ -161,12 +152,7 @@ pub fn render_route<IV>(
 #[tracing::instrument(level = "trace", fields(error), skip_all)]
 pub fn render_app_to_stream_in_order<IV>(
     app_fn: impl Fn() -> IV + Clone + Send + 'static,
-) -> impl Fn(
-    PavexRequest,
-) -> Pin<Box<dyn Future<Output = Response> + Send + 'static>>
-+ Clone
-+ Send
-+ 'static
+) -> Response
     where
         IV: IntoView + 'static,
 {
@@ -202,12 +188,7 @@ pub fn render_app_to_stream_in_order<IV>(
 pub fn render_app_to_stream_with_context<IV>(
     additional_context: impl Fn() + 'static + Clone + Send,
     app_fn: impl Fn() -> IV + Clone + Send + 'static,
-) -> impl Fn(
-    PavexRequest,
-) -> Pin<Box<dyn Future<Output = Response> + Send + 'static>>
-+ Clone
-+ Send
-+ 'static
+) -> Response
     where
         IV: IntoView + 'static,
 {
@@ -229,12 +210,7 @@ pub fn render_route_with_context<IV>(
     matched_path: &MatchedPathPattern,
     additional_context: impl Fn() + 'static + Clone + Send,
     app_fn: impl Fn() -> IV + Clone + Send + 'static,
-) -> impl Fn(
-    PavexRequest,
-) -> Pin<Box<dyn Future<Output = Response> + Send + 'static>>
-+ Clone
-+ Send
-+ 'static
+) -> Response
     where
         IV: IntoView + 'static,
 {
@@ -304,12 +280,7 @@ pub fn render_app_to_stream_with_context_and_replace_blocks<IV>(
     additional_context: impl Fn() + 'static + Clone + Send,
     app_fn: impl Fn() -> IV + Clone + Send + 'static,
     replace_blocks: bool,
-) -> impl Fn(
-    PavexRequest,
-) -> Pin<Box<dyn Future<Output = Response> + Send + 'static>>
-+ Clone
-+ Send
-+ 'static
+) -> Response
     where
         IV: IntoView + 'static,
 {
@@ -353,12 +324,7 @@ pub fn render_app_to_stream_with_context_and_replace_blocks<IV>(
 pub fn render_app_to_stream_in_order_with_context<IV>(
     additional_context: impl Fn() + 'static + Clone + Send,
     app_fn: impl Fn() -> IV + Clone + Send + 'static,
-) -> impl Fn(
-    PavexRequest,
-) -> Pin<Box<dyn Future<Output = Response> + Send + 'static>>
-+ Clone
-+ Send
-+ 'static
+) -> Response
     where
         IV: IntoView + 'static,
 {
@@ -377,7 +343,7 @@ fn handle_response<IV>(
         IV,
         BoxedFnOnce<PinnedStream<String>>,
     ) -> PinnedFuture<PinnedStream<String>>,
-) -> impl Fn(PavexRequest) -> PinnedFuture<Response> + Clone + Send + 'static
+) -> Response
     where
         IV: IntoView + 'static,
 {
@@ -458,12 +424,7 @@ fn provide_contexts(
 #[tracing::instrument(level = "trace", fields(error), skip_all)]
 pub fn render_app_async<IV>(
     app_fn: impl Fn() -> IV + Clone + Send + 'static,
-) -> impl Fn(
-    PavexRequest,
-) -> Pin<Box<dyn Future<Output = Response> + Send + 'static>>
-+ Clone
-+ Send
-+ 'static
+) -> Response
     where
         IV: IntoView + 'static,
 {
@@ -500,12 +461,7 @@ pub fn render_app_async<IV>(
 pub fn render_app_async_stream_with_context<IV>(
     additional_context: impl Fn() + 'static + Clone + Send,
     app_fn: impl Fn() -> IV + Clone + Send + 'static,
-) -> impl Fn(
-    PavexRequest,
-) -> Pin<Box<dyn Future<Output = Response> + Send + 'static>>
-+ Clone
-+ Send
-+ 'static
+) -> Response
     where
         IV: IntoView + 'static,
 {
@@ -549,12 +505,7 @@ pub fn render_app_async_stream_with_context<IV>(
 pub fn render_app_async_with_context<IV>(
     additional_context: impl Fn() + 'static + Clone + Send,
     app_fn: impl Fn() -> IV + Clone + Send + 'static,
-) -> impl Fn(
-    PavexRequest,
-) -> Pin<Box<dyn Future<Output = Response> + Send + 'static>>
-+ Clone
-+ Send
-+ 'static
+) -> Response
     where
         IV: IntoView + 'static,
 {
@@ -607,32 +558,6 @@ pub fn generate_route_list_with_exclusions<IV>(
         IV: IntoView + 'static,
 {
     generate_route_list_with_exclusions_and_ssg(app_fn, excluded_routes).0
-}
-
-/// TODO docs
-#[allow(unused)]
-pub async fn build_static_routes<IV>(
-    options: &LeptosOptions,
-    app_fn: impl Fn() -> IV + 'static + Send + Clone,
-    routes: &[RouteListing],
-    static_data_map: StaticDataMap,
-) where
-    IV: IntoView + 'static,
-{
-    todo!()
-    /*
-    let options = options.clone();
-    let routes = routes.to_owned();
-    spawn_task!(async move {
-        leptos_router::build_static_routes(
-            &options,
-            app_fn,
-            &routes,
-            &static_data_map,
-        )
-        .await
-        .expect("could not build static routes")
-    });*/
 }
 
 /// Generates a list of all routes defined in Leptos's Router in your app. We can then use this to automatically
