@@ -1,4 +1,3 @@
-use std::error::Error;
 use std::{fmt::Display, fmt::Debug, str::FromStr};
 use std::pin::Pin;
 use futures::Stream;

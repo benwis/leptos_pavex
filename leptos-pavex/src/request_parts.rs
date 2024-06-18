@@ -12,6 +12,14 @@ pub struct RequestParts {
     headers: HeaderMap,
 }
 impl RequestParts {
+    pub fn new() -> Self{
+        Self{
+                method: Method::default(),
+                headers: HeaderMap::default(),
+                scheme: None, 
+            }
+        }
+    
     pub fn new_from_req(req: &RequestHead) -> Self {
         Self {
             method: req.method.clone(),

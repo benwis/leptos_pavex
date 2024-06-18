@@ -1,15 +1,14 @@
 use bytes::Bytes;
-use futures::{Stream, StreamExt};
+use futures::Stream;
 use leptos::server_fn::error::{
     ServerFnError, ServerFnErrorErr, ServerFnErrorSerde, SERVER_FN_ERROR_HEADER,
 };
 use leptos::server_fn::response::Res;
 use pavex::http::header::CONTENT_TYPE;
 use pavex::http::{HeaderMap, HeaderName, StatusCode};
-use pavex::response::{Response, ResponseHead, ResponseBody};
-use pavex::http::{HeaderValue, header::SERVER};
+use pavex::response::Response;
+use pavex::http::HeaderValue;
 use std::error::Error;
-use std::pin::Pin;
 use std::{
     fmt::{Debug, Display},
     str::FromStr,

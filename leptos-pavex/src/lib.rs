@@ -5,7 +5,6 @@ pub mod response_options;
 pub mod server_fn;
 pub mod stream;
 
-use std::future::Future;
 use std::io;
 use std::pin::Pin;
 use bytes::Bytes;
@@ -15,12 +14,13 @@ use leptos::prelude::*;
 use leptos::server_fn::redirect::REDIRECT_HEADER;
 use leptos_integration_utils::BoxedFnOnce;
 use leptos_meta::ServerMetaContext;
-use leptos_router::{RouteList, RouteListing, SsrMode, StaticDataMap, StaticMode};
+use leptos_router::{PathSegment, RouteList, RouteListing, SsrMode, StaticDataMap, StaticMode};
 use leptos_router::components::provide_server_redirect;
 use leptos_router::location::RequestUrl;
+use pavex::request::body::RawIncomingBody;
 use crate::request_parts::RequestParts;
 use crate::response_options::ResponseOptions;
-use pavex::http::{header, HeaderName, HeaderValue};
+use pavex::http::{HeaderName, HeaderValue};
 use pavex::http::header::{ACCEPT, LOCATION};
 use pavex::http::StatusCode;
 use pavex::request::path::MatchedPathPattern;
@@ -106,12 +106,17 @@ Pin<Box<dyn Stream<Item = io::Result<Bytes>> + Send>>;
 /// - [`RouterIntegrationContext`](leptos_router::RouterIntegrationContext)
 #[tracing::instrument(level = "trace", fields(error), skip_all)]
 pub fn render_app_to_stream<IV>(
+    req_head: &RequestHead,
+    req_body: RawIncomingBody,
     app_fn: impl Fn() -> IV + Clone + Send + 'static,
 ) -> Response
     where
         IV: IntoView + 'static,
 {
-    render_app_to_stream_with_context(|| {}, app_fn)
+    render_app_to_stream_with_context(            
+        req_head,
+        req_body,
+        || {}, app_fn)
 }
 
 /// Returns an Axum [Handler](axum::handler::Handler) that listens for a `GET` request and tries
@@ -122,13 +127,20 @@ pub fn render_app_to_stream<IV>(
 #[tracing::instrument(level = "trace", fields(error), skip_all)]
 pub fn render_route<IV>(
     paths: Vec<PavexRouteListing>,
+    req_head: &RequestHead,
+    req_body: RawIncomingBody,
     matched_path: &MatchedPathPattern,
     app_fn: impl Fn() -> IV + Clone + Send + 'static,
 ) -> Response
     where
         IV: IntoView + 'static,
 {
-    render_route_with_context(paths, matched_path, || {}, app_fn)
+    render_route_with_context(
+        paths,            
+        req_head,
+        req_body, 
+        matched_path, 
+        || {}, app_fn)
 }
 
 /// Returns an Axum [Handler](axum::handler::Handler) that listens for a `GET` request and tries
@@ -151,12 +163,17 @@ pub fn render_route<IV>(
 /// - [`RouterIntegrationContext`](leptos_router::RouterIntegrationContext)
 #[tracing::instrument(level = "trace", fields(error), skip_all)]
 pub fn render_app_to_stream_in_order<IV>(
+    req_head: &RequestHead,
+    req_body: RawIncomingBody,
     app_fn: impl Fn() -> IV + Clone + Send + 'static,
 ) -> Response
     where
         IV: IntoView + 'static,
 {
-    render_app_to_stream_in_order_with_context(|| {}, app_fn)
+    render_app_to_stream_in_order_with_context(
+        req_head,
+        req_body,
+        || {}, app_fn)
 }
 
 /// Returns an Axum [Handler](axum::handler::Handler) that listens for a `GET` request and tries
@@ -186,6 +203,8 @@ pub fn render_app_to_stream_in_order<IV>(
 /// - [`RouterIntegrationContext`](leptos_router::RouterIntegrationContext)
 #[tracing::instrument(level = "trace", fields(error), skip_all)]
 pub fn render_app_to_stream_with_context<IV>(
+    req_head: &RequestHead,
+    req_body: RawIncomingBody,
     additional_context: impl Fn() + 'static + Clone + Send,
     app_fn: impl Fn() -> IV + Clone + Send + 'static,
 ) -> Response
@@ -193,6 +212,8 @@ pub fn render_app_to_stream_with_context<IV>(
         IV: IntoView + 'static,
 {
     render_app_to_stream_with_context_and_replace_blocks(
+        req_head,
+        req_body,
         additional_context,
         app_fn,
         false,
@@ -207,6 +228,8 @@ pub fn render_app_to_stream_with_context<IV>(
 #[tracing::instrument(level = "trace", fields(error), skip_all)]
 pub fn render_route_with_context<IV>(
     paths: Vec<PavexRouteListing>,
+    req_head: &RequestHead,
+    req_body: RawIncomingBody,
     matched_path: &MatchedPathPattern,
     additional_context: impl Fn() + 'static + Clone + Send,
     app_fn: impl Fn() -> IV + Clone + Send + 'static,
@@ -214,44 +237,45 @@ pub fn render_route_with_context<IV>(
     where
         IV: IntoView + 'static,
 {
-    let ooo = render_app_to_stream_with_context(
-        additional_context.clone(),
-        app_fn.clone(),
-    );
-    let pb = render_app_to_stream_with_context_and_replace_blocks(
-        additional_context.clone(),
-        app_fn.clone(),
-        true,
-    );
-    let io = render_app_to_stream_in_order_with_context(
-        additional_context.clone(),
-        app_fn.clone(),
-    );
-    let asyn = render_app_async_stream_with_context(
-        additional_context.clone(),
-        app_fn.clone(),
-    );
-
-    move |req| {
-        // 1. Process route to match the values in routeListing
-
-        // 2. Find RouteListing in paths. This should probably be optimized, we probably don't want to
-        // search for this every time
-        let listing: &PavexRouteListing =
-            paths.iter().find(|r| r.path() == matched_path.inner()).unwrap_or_else(|| {
-                panic!(
-                    "Failed to find the route {path} requested by the user. \
-                     This suggests that the routing rules in the Router that \
-                     call this handler needs to be edited!"
-                )
-            });
-        // 3. Match listing mode against known, and choose function
-        match listing.mode() {
-            SsrMode::OutOfOrder => ooo(req),
-            SsrMode::PartiallyBlocked => pb(req),
-            SsrMode::InOrder => io(req),
-            SsrMode::Async => asyn(req),
-        }
+    // 1. Process route to match the values in routeListing
+    let path = &matched_path.to_string();
+    // 2. Find RouteListing in paths. This should probably be optimized, we probably don't want to
+    // search for this every time
+    let listing: &PavexRouteListing =
+        paths.iter().find(|r| r.path() == matched_path.inner()).unwrap_or_else(|| {
+            panic!(
+                "Failed to find the route {path} requested by the user. \
+                    This suggests that the routing rules in the Router that \
+                    call this handler needs to be edited!"
+            )
+        });
+    // 3. Match listing mode against known, and choose function
+    match listing.mode() {
+        SsrMode::OutOfOrder => render_app_to_stream_with_context(
+            req_head,
+            req_body,
+            additional_context.clone(),
+            app_fn.clone(),
+        ),
+        SsrMode::PartiallyBlocked => render_app_to_stream_with_context_and_replace_blocks(
+            req_head,
+            req_body,
+            additional_context.clone(),
+            app_fn.clone(),
+            true,
+        ),
+        SsrMode::InOrder => render_app_to_stream_in_order_with_context(
+            req_head,
+            req_body,
+            additional_context.clone(),
+            app_fn.clone(),
+        ),
+        SsrMode::Async => render_app_async_stream_with_context(
+            req_head,
+            req_body,
+            additional_context.clone(),
+            app_fn.clone(),
+        ),
     }
 }
 
@@ -277,6 +301,8 @@ pub fn render_route_with_context<IV>(
 /// - [`RouterIntegrationContext`](leptos_router::RouterIntegrationContext)
 #[tracing::instrument(level = "trace", fields(error), skip_all)]
 pub fn render_app_to_stream_with_context_and_replace_blocks<IV>(
+    req_head: &RequestHead,
+    req_body: RawIncomingBody,
     additional_context: impl Fn() + 'static + Clone + Send,
     app_fn: impl Fn() -> IV + Clone + Send + 'static,
     replace_blocks: bool,
@@ -322,6 +348,8 @@ pub fn render_app_to_stream_with_context_and_replace_blocks<IV>(
 /// - [`RouterIntegrationContext`](leptos_router::RouterIntegrationContext)
 #[tracing::instrument(level = "trace", fields(error), skip_all)]
 pub fn render_app_to_stream_in_order_with_context<IV>(
+    req_head: &RequestHead,
+    req_body: RawIncomingBody,
     additional_context: impl Fn() + 'static + Clone + Send,
     app_fn: impl Fn() -> IV + Clone + Send + 'static,
 ) -> Response
@@ -459,6 +487,8 @@ pub fn render_app_async<IV>(
 /// - [`RouterIntegrationContext`](leptos_router::RouterIntegrationContext)
 #[tracing::instrument(level = "trace", fields(error), skip_all)]
 pub fn render_app_async_stream_with_context<IV>(
+    req_head: &RequestHead,
+    req_body: RawIncomingBody,
     additional_context: impl Fn() + 'static + Clone + Send,
     app_fn: impl Fn() -> IV + Clone + Send + 'static,
 ) -> Response
@@ -509,14 +539,15 @@ pub fn render_app_async_with_context<IV>(
     where
         IV: IntoView + 'static,
 {
-    handle_response(additional_context, app_fn, |app, chunks| {
+    let res = handle_response(additional_context, app_fn, |app, chunks| {
         Box::pin(async move {
             let app = app.to_html_stream_in_order().collect::<String>().await;
             let chunks = chunks();
             Box::pin(once(async move { app }).chain(chunks))
                 as PinnedStream<String>
         })
-    })
+    });
+    res
 }
 
 /// Generates a list of all routes defined in Leptos's Router in your app. We can then use this to automatically
@@ -589,7 +620,7 @@ pub struct PavexRouteListing {
 
 impl From<RouteListing> for PavexRouteListing {
     fn from(value: RouteListing) -> Self {
-        let path = value.path().to_axum_path();
+        let path = value.path().to_pavex_path();
         let path = if path.is_empty() {
             "/".to_string()
         } else {
@@ -645,6 +676,36 @@ impl PavexRouteListing {
     }
 }
 
+trait PavexPath {
+    fn to_pavex_path(&self) -> String;
+}
+
+impl PavexPath for &[PathSegment] {
+    fn to_pavex_path(&self) -> String {
+        let mut path = String::new();
+        for segment in self.iter() {
+            // TODO trailing slash handling
+            let raw = segment.as_raw_str();
+            if !raw.is_empty() && !raw.starts_with('/') {
+                path.push('/');
+            }
+            match segment {
+                PathSegment::Static(s) => path.push_str(s),
+                PathSegment::Param(s) => {
+                    path.push(':');
+                    path.push_str(s);
+                }
+                PathSegment::Splat(s) => {
+                    path.push('*');
+                    path.push_str(s);
+                }
+                PathSegment::Unit => {}
+            }
+        }
+        path
+    }
+}
+
 /// Generates a list of all routes defined in Leptos's Router in your app. We can then use this to automatically
 /// create routes in Axum's Router without having to use wildcard matching or fallbacks. Take in your root app Element
 /// as an argument, so it can walk your app tree. This version is tailored to generate Axum compatible paths. Adding excluded_routes
@@ -666,8 +727,8 @@ pub fn generate_route_list_with_exclusions_and_ssg_and_context<IV>(
         .with(|| {
             // stub out a path for now
             provide_context(RequestUrl::new(""));
-            let mock_parts =
-                RequestParts::new_from_req(RequestHead::default());
+            let mock_parts = RequestParts::new();
+
             provide_contexts(
                 "",
                 &Default::default(),
