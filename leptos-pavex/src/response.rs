@@ -27,11 +27,12 @@ impl ExtendResponse for PavexResponse {
     fn from_stream(
         stream: impl Stream<Item = String> + Send + 'static,
     ) -> Self {
+        let stream = stream.map(|chunk| Ok(chunk) as Result<String, std::io::Error>);
 
-        let stream = LeptosPavexStream{inner: stream};
+        let lp_stream = LeptosPavexStream{inner: stream};
         PavexResponse(
             Response::ok()
-            .set_raw_body(stream.map(|chunk| Ok(chunk) as Result<String, std::io::Error>))
+            .set_raw_body(lp_stream)
         )
     }
 

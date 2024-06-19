@@ -12,12 +12,13 @@ use futures::{Stream, StreamExt};
 use futures::stream::once;
 use leptos::prelude::*;
 use leptos::server_fn::redirect::REDIRECT_HEADER;
-use leptos_integration_utils::BoxedFnOnce;
+use leptos_integration_utils::{BoxedFnOnce, ExtendResponse};
 use leptos_meta::ServerMetaContext;
 use leptos_router::{PathSegment, RouteList, RouteListing, SsrMode, StaticDataMap, StaticMode};
 use leptos_router::components::provide_server_redirect;
 use leptos_router::location::RequestUrl;
 use pavex::request::body::RawIncomingBody;
+use response::PavexResponse;
 use crate::request_parts::RequestParts;
 use crate::response_options::ResponseOptions;
 use pavex::http::{HeaderName, HeaderValue};
@@ -311,7 +312,7 @@ pub fn render_app_to_stream_with_context_and_replace_blocks<IV>(
         IV: IntoView + 'static,
 {
     _ = replace_blocks; // TODO
-    handle_response(additional_context, app_fn, |app, chunks| {
+    handle_response(req_head, req_body, additional_context, app_fn, |app, chunks| {
         Box::pin(async move {
             Box::pin(app.to_html_stream_out_of_order().chain(chunks()))
                 as PinnedStream<String>
@@ -377,10 +378,8 @@ fn handle_response<IV>(
     where
         IV: IntoView + 'static,
 {
-    move |req: PavexRequest| {
         let app_fn = app_fn.clone();
         let additional_context = additional_context.clone();
-        Box::pin(async move {
             let app_fn = app_fn.clone();
             let add_context = additional_context.clone();
             let res_options = ResponseOptions::default();
@@ -395,7 +394,7 @@ fn handle_response<IV>(
                     let path = req_head.target.path_and_query().unwrap().as_str();
 
                     let full_path = format!("http://leptos.dev{path}");
-                    let req_parts = RequestParts::new_from_req(&req.head);
+                    let req_parts = RequestParts::new_from_req(&req_head);
                     provide_contexts(
                         &full_path,
                         &meta_context,
@@ -406,7 +405,7 @@ fn handle_response<IV>(
                 }
             };
 
-            let res = Response::from_app(
+            let res = PavexResponse::from_app(
                 app_fn,
                 meta_context,
                 additional_context,
@@ -416,9 +415,8 @@ fn handle_response<IV>(
                 .await;
 
             res.0
-        })
+        
     }
-}
 
 #[tracing::instrument(level = "trace", fields(error), skip_all)]
 fn provide_contexts(
@@ -453,12 +451,14 @@ fn provide_contexts(
 /// - [`RouterIntegrationContext`](leptos_router::RouterIntegrationContext)
 #[tracing::instrument(level = "trace", fields(error), skip_all)]
 pub fn render_app_async<IV>(
+    req_head: &RequestHead,
+    req_body: RawIncomingBody,
     app_fn: impl Fn() -> IV + Clone + Send + 'static,
 ) -> Response
     where
         IV: IntoView + 'static,
 {
-    render_app_async_with_context(|| {}, app_fn)
+    render_app_async_with_context(req_head, req_body, || {}, app_fn)
 }
 
 /// Returns an Axum [Handler](axum::handler::Handler) that listens for a `GET` request and tries
@@ -497,7 +497,7 @@ pub fn render_app_async_stream_with_context<IV>(
     where
         IV: IntoView + 'static,
 {
-    handle_response(additional_context, app_fn, |app, chunks| {
+    handle_response(req_head, req_body, additional_context, app_fn, |app, chunks| {
         Box::pin(async move {
             let app = app.to_html_stream_in_order().collect::<String>().await;
             let chunks = chunks();
@@ -535,13 +535,15 @@ pub fn render_app_async_stream_with_context<IV>(
 /// - [`RouterIntegrationContext`](leptos_router::RouterIntegrationContext)
 #[tracing::instrument(level = "trace", fields(error), skip_all)]
 pub fn render_app_async_with_context<IV>(
+    req_head: &RequestHead,
+    req_body: RawIncomingBody,
     additional_context: impl Fn() + 'static + Clone + Send,
     app_fn: impl Fn() -> IV + Clone + Send + 'static,
 ) -> Response
     where
         IV: IntoView + 'static,
 {
-    let res = handle_response(additional_context, app_fn, |app, chunks| {
+    let res = handle_response(req_head, req_body, additional_context, app_fn, |app, chunks| {
         Box::pin(async move {
             let app = app.to_html_stream_in_order().collect::<String>().await;
             let chunks = chunks();

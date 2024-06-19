@@ -46,8 +46,8 @@ impl ResponseOptions {
 
 #[derive(Debug)]
 struct ResponseParts {
-    pub(crate) status: Option<StatusCode>,
-    headers: HeaderMap,
+    pub status: Option<StatusCode>,
+    pub headers: HeaderMap,
 }
 
 impl Default for ResponseParts {
