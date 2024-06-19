@@ -45,7 +45,7 @@ impl ResponseOptions {
 }
 
 #[derive(Debug)]
-struct ResponseParts {
+pub struct ResponseParts {
     pub status: Option<StatusCode>,
     pub headers: HeaderMap,
 }

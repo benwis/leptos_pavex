@@ -1,3 +1,5 @@
+#[allow(dead_code)]
+
 pub mod request_parts;
 pub mod request;
 pub mod response;
@@ -10,9 +12,8 @@ use std::pin::Pin;
 use bytes::Bytes;
 use futures::{Stream, StreamExt};
 use futures::stream::once;
-use leptos::prelude::*;
 use leptos::server_fn::redirect::REDIRECT_HEADER;
-use leptos_integration_utils::{BoxedFnOnce, ExtendResponse};
+use leptos_integration_utils::{BoxedFnOnce, ExtendResponse, PinnedFuture, PinnedStream};
 use leptos_meta::ServerMetaContext;
 use leptos_router::{PathSegment, RouteList, RouteListing, SsrMode, StaticDataMap, StaticMode};
 use leptos_router::components::provide_server_redirect;
@@ -27,7 +28,7 @@ use pavex::http::StatusCode;
 use pavex::request::path::MatchedPathPattern;
 use pavex::request::RequestHead;
 use pavex::response::Response;
-
+use leptos::prelude::{Owner, use_context, provide_context, IntoView};
 /// Provides an easy way to redirect the user from within a server function. Mimicking the Remix `redirect()`,
 /// it sets a StatusCode of 302 and a LOCATION header with the provided value.
 /// If looking to redirect from the client, `leptos_router::use_navigate()` should be used instead
@@ -105,7 +106,7 @@ Pin<Box<dyn Stream<Item = io::Result<Bytes>> + Send>>;
 /// - [`RouterIntegrationContext`](leptos_router::RouterIntegrationContext)
 #[tracing::instrument(level = "trace", fields(error), skip_all)]
 pub async fn render_app_to_stream<IV>(
-    req_head: &RequestHead,
+    req_head: RequestHead,
     req_body: RawIncomingBody,
     app_fn: impl Fn() -> IV + Clone + Send + 'static,
 ) -> Response
@@ -126,7 +127,7 @@ pub async fn render_app_to_stream<IV>(
 #[tracing::instrument(level = "trace", fields(error), skip_all)]
 pub async fn render_route<IV>(
     paths: Vec<PavexRouteListing>,
-    req_head: &RequestHead,
+    req_head: RequestHead,
     req_body: RawIncomingBody,
     matched_path: &MatchedPathPattern,
     app_fn: impl Fn() -> IV + Clone + Send + 'static,
@@ -162,7 +163,7 @@ pub async fn render_route<IV>(
 /// - [`RouterIntegrationContext`](leptos_router::RouterIntegrationContext)
 #[tracing::instrument(level = "trace", fields(error), skip_all)]
 pub async fn render_app_to_stream_in_order<IV>(
-    req_head: &RequestHead,
+    req_head: RequestHead,
     req_body: RawIncomingBody,
     app_fn: impl Fn() -> IV + Clone + Send + 'static,
 ) -> Response
@@ -202,7 +203,7 @@ pub async fn render_app_to_stream_in_order<IV>(
 /// - [`RouterIntegrationContext`](leptos_router::RouterIntegrationContext)
 #[tracing::instrument(level = "trace", fields(error), skip_all)]
 pub async fn render_app_to_stream_with_context<IV>(
-    req_head: &RequestHead,
+    req_head: RequestHead,
     req_body: RawIncomingBody,
     additional_context: impl Fn() + 'static + Clone + Send,
     app_fn: impl Fn() -> IV + Clone + Send + 'static,
@@ -227,7 +228,7 @@ pub async fn render_app_to_stream_with_context<IV>(
 #[tracing::instrument(level = "trace", fields(error), skip_all)]
 pub async fn render_route_with_context<IV>(
     paths: Vec<PavexRouteListing>,
-    req_head: &RequestHead,
+    req_head: RequestHead,
     req_body: RawIncomingBody,
     matched_path: &MatchedPathPattern,
     additional_context: impl Fn() + 'static + Clone + Send,
@@ -300,7 +301,7 @@ pub async fn render_route_with_context<IV>(
 /// - [`RouterIntegrationContext`](leptos_router::RouterIntegrationContext)
 #[tracing::instrument(level = "trace", fields(error), skip_all)]
 pub async fn render_app_to_stream_with_context_and_replace_blocks<IV>(
-    req_head: &RequestHead,
+    req_head: RequestHead,
     req_body: RawIncomingBody,
     additional_context: impl Fn() + 'static + Clone + Send,
     app_fn: impl Fn() -> IV + Clone + Send + 'static,
@@ -347,7 +348,7 @@ pub async fn render_app_to_stream_with_context_and_replace_blocks<IV>(
 /// - [`RouterIntegrationContext`](leptos_router::RouterIntegrationContext)
 #[tracing::instrument(level = "trace", fields(error), skip_all)]
 pub async fn render_app_to_stream_in_order_with_context<IV>(
-    req_head: &RequestHead,
+    req_head: RequestHead,
     req_body: RawIncomingBody,
     additional_context: impl Fn() + 'static + Clone + Send,
     app_fn: impl Fn() -> IV + Clone + Send + 'static,
@@ -364,8 +365,8 @@ pub async fn render_app_to_stream_in_order_with_context<IV>(
 }
 
 async fn handle_response<IV>(
-    req_head: &RequestHead,
-    req_body: RawIncomingBody,
+    req_head: RequestHead,
+    _req_body: RawIncomingBody,
     additional_context: impl Fn() + 'static + Clone + Send,
     app_fn: impl Fn() -> IV + Clone + Send + 'static,
     stream_builder: fn(
@@ -449,7 +450,7 @@ fn provide_contexts(
 /// - [`RouterIntegrationContext`](leptos_router::RouterIntegrationContext)
 #[tracing::instrument(level = "trace", fields(error), skip_all)]
 pub async fn render_app_async<IV>(
-    req_head: &RequestHead,
+    req_head: RequestHead,
     req_body: RawIncomingBody,
     app_fn: impl Fn() -> IV + Clone + Send + 'static,
 ) -> Response
@@ -487,7 +488,7 @@ pub async fn render_app_async<IV>(
 /// - [`RouterIntegrationContext`](leptos_router::RouterIntegrationContext)
 #[tracing::instrument(level = "trace", fields(error), skip_all)]
 pub async fn render_app_async_stream_with_context<IV>(
-    req_head: &RequestHead,
+    req_head: RequestHead,
     req_body: RawIncomingBody,
     additional_context: impl Fn() + 'static + Clone + Send,
     app_fn: impl Fn() -> IV + Clone + Send + 'static,
@@ -533,7 +534,7 @@ pub async fn render_app_async_stream_with_context<IV>(
 /// - [`RouterIntegrationContext`](leptos_router::RouterIntegrationContext)
 #[tracing::instrument(level = "trace", fields(error), skip_all)]
 pub async fn render_app_async_with_context<IV>(
-    req_head: &RequestHead,
+    req_head: RequestHead,
     req_body: RawIncomingBody,
     additional_context: impl Fn() + 'static + Clone + Send,
     app_fn: impl Fn() -> IV + Clone + Send + 'static,

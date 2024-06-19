@@ -13,7 +13,7 @@ use pin_project::pin_project;
 pub struct PavexStream<S, CustErr>
 where 
     S: Stream<Item = Result<Bytes, ServerFnError<CustErr>>>,
-    CustErr: Send + Sync + Debug + FromStr + Display + 'static{
+    CustErr: Send + Debug + FromStr + Display + 'static{
 #[pin]
 pub inner: S,
 }
@@ -23,7 +23,7 @@ pub inner: S,
 impl<S, CustErr> PavexStream<S,CustErr>
     where 
         S: Stream<Item = Result<Bytes, ServerFnError<CustErr>>>,
-        CustErr: Send + Sync + Debug + FromStr + Display  +  'static 
+        CustErr: Send + Debug + FromStr + Display  +  'static 
     {
 pub fn to_inner_pin(self: Pin<&mut Self>)-> Pin<&mut S>{
     let this=self.project();
@@ -34,7 +34,7 @@ pub fn to_inner_pin(self: Pin<&mut Self>)-> Pin<&mut S>{
 impl<S, CustErr> RawBody for PavexStream<S,CustErr>
 where 
     S: Stream<Item = Result<Bytes, ServerFnError<CustErr>>>, 
-    CustErr: Send + Sync + Debug + FromStr + Display + 'static,
+    CustErr: Send + Debug + FromStr + Display + 'static,
     ServerFnError<CustErr>: From<ServerFnErrorErr<CustErr>> {
     type Data = Bytes;
     
