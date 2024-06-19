@@ -27,8 +27,6 @@ use pavex::http::StatusCode;
 use pavex::request::path::MatchedPathPattern;
 use pavex::request::RequestHead;
 use pavex::response::Response;
-use crate::request::PavexRequest;
-
 
 /// Provides an easy way to redirect the user from within a server function. Mimicking the Remix `redirect()`,
 /// it sets a StatusCode of 302 and a LOCATION header with the provided value.
@@ -450,7 +448,7 @@ fn provide_contexts(
 /// - [`ServerMetaContext`](leptos_meta::ServerMetaContext)
 /// - [`RouterIntegrationContext`](leptos_router::RouterIntegrationContext)
 #[tracing::instrument(level = "trace", fields(error), skip_all)]
-pub fn render_app_async<IV>(
+pub async fn render_app_async<IV>(
     req_head: &RequestHead,
     req_body: RawIncomingBody,
     app_fn: impl Fn() -> IV + Clone + Send + 'static,
@@ -458,7 +456,7 @@ pub fn render_app_async<IV>(
     where
         IV: IntoView + 'static,
 {
-    render_app_async_with_context(req_head, req_body, || {}, app_fn)
+    render_app_async_with_context(req_head, req_body, || {}, app_fn).await
 }
 
 /// Returns an Axum [Handler](axum::handler::Handler) that listens for a `GET` request and tries
