@@ -894,6 +894,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "cb7b8fb5d1c64723a3fefe88409a2f8a783e35643b08526db66a430bbf6f29bb"
 dependencies = [
  "any_spawner 0.1.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "base64 0.22.1",
  "cfg-if",
  "either_of 0.1.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "futures",
@@ -906,6 +907,7 @@ dependencies = [
  "oco_ref 0.2.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "or_poisoned 0.1.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "paste",
+ "rand",
  "reactive_graph 0.1.0-preview (registry+https://github.com/rust-lang/crates.io-index)",
  "rustc-hash",
  "serde",
@@ -967,6 +969,7 @@ dependencies = [
  "futures",
  "http-body",
  "http-body-util",
+ "hydration_context 0.1.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "leptos 0.7.0-preview2 (registry+https://github.com/rust-lang/crates.io-index)",
  "leptos_integration_utils",
  "leptos_meta 0.7.0-preview2 (registry+https://github.com/rust-lang/crates.io-index)",
@@ -976,6 +979,7 @@ dependencies = [
  "parking_lot",
  "pavex",
  "pin-project",
+ "reactive_graph 0.1.0-preview (git+https://github.com/leptos-rs/leptos?branch=leptos_0.7)",
  "tracing",
  "url",
 ]
@@ -1021,9 +1025,12 @@ version = "0.7.0-preview2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "bb39a77bd95a7427635d9b3d31c1942b9117344c75bf611ae111696ddbbe6626"
 dependencies = [
+ "base64 0.21.7",
+ "getrandom",
  "hydration_context 0.1.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "js-sys",
  "or_poisoned 0.1.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "rand",
  "reactive_graph 0.1.0-preview (registry+https://github.com/rust-lang/crates.io-index)",
  "tachys 0.1.0-preview (registry+https://github.com/rust-lang/crates.io-index)",
  "tracing",
@@ -1471,9 +1478,8 @@ checksum = "8835116a5c179084a830efb3adc117ab007512b535bc1a21c991d3b32a6b44dd"
 
 [[package]]
 name = "pavex"
-version = "0.1.38"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "25dcbadf72dbf8265079e38381cbae753da451c202e6b5703b85a73546e5f0f8"
+version = "0.1.42"
+source = "git+https://github.com/benwis/pavex#ab6c8eed58691a2066e1ca9849bea8f86ec5c92a"
 dependencies = [
  "anyhow",
  "biscotti",
@@ -1513,9 +1519,8 @@ dependencies = [
 
 [[package]]
 name = "pavex_bp_schema"
-version = "0.1.38"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "9f2c57ea83222d88234e8224386cfbc59249acfa9803f124f248b2af93cf64c8"
+version = "0.1.42"
+source = "git+https://github.com/benwis/pavex#ab6c8eed58691a2066e1ca9849bea8f86ec5c92a"
 dependencies = [
  "pavex_reflection",
  "serde",
@@ -1523,9 +1528,8 @@ dependencies = [
 
 [[package]]
 name = "pavex_macros"
-version = "0.1.38"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d195d05d04730db1c7d38e64290076da60324224d1d10e9c9dc7855faf5212c6"
+version = "0.1.42"
+source = "git+https://github.com/benwis/pavex#ab6c8eed58691a2066e1ca9849bea8f86ec5c92a"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -1540,9 +1544,8 @@ checksum = "77b9753b03381fd8856966146c4d626d9a8507901c1bcdfbc41df03deea551fc"
 
 [[package]]
 name = "pavex_reflection"
-version = "0.1.38"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "7af6ae0f6789e094fbc7ff702ac44434cd66b5cb33d7f674e9c60bcb2c8e254a"
+version = "0.1.42"
+source = "git+https://github.com/benwis/pavex#ab6c8eed58691a2066e1ca9849bea8f86ec5c92a"
 dependencies = [
  "serde",
 ]
@@ -1555,9 +1558,8 @@ checksum = "e3148f5046208a5d56bcfc03053e3ca6334e51da8dfb19b6cdc8b306fae3283e"
 
 [[package]]
 name = "persist_if_changed"
-version = "0.1.38"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ed26396108af15a7215afe4c931a7f51e9e49e46969461e6e0b5b4657de46ac3"
+version = "0.1.42"
+source = "git+https://github.com/benwis/pavex#ab6c8eed58691a2066e1ca9849bea8f86ec5c92a"
 dependencies = [
  "anyhow",
  "fs-err",

@@ -3,7 +3,7 @@ use pavex::http::{StatusCode, HeaderMap, HeaderValue, HeaderName};
 use parking_lot::RwLock;
 
 #[derive(Clone, Debug, Default)]
-pub struct ResponseOptions(Arc<RwLock<ResponseParts>>);
+pub struct ResponseOptions(pub Arc<RwLock<ResponseParts>>);
 
 impl ResponseOptions {
 

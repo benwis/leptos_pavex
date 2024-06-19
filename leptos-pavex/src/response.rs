@@ -1,9 +1,10 @@
 use bytes::Bytes;
-use futures::Stream;
+use futures::{Stream, StreamExt};
 use leptos::server_fn::error::{
     ServerFnError, ServerFnErrorErr, ServerFnErrorSerde, SERVER_FN_ERROR_HEADER,
 };
 use leptos::server_fn::response::Res;
+use leptos_integration_utils::ExtendResponse;
 use pavex::http::header::CONTENT_TYPE;
 use pavex::http::{HeaderMap, HeaderName, StatusCode};
 use pavex::response::Response;
@@ -13,49 +14,49 @@ use std::{
     fmt::{Debug, Display},
     str::FromStr,
 };
+use crate::response_options::ResponseOptions;
+use crate::stream::{LeptosPavexStream, PavexStream};
 
-use crate::stream::PavexStream;
 /// This is here because the orphan rule does not allow us to implement it on IncomingRequest with
 /// the generic error. So we have to wrap it to make it happy
 pub struct PavexResponse(pub Response);
 
-// impl ExtendResponse for PavexResponse {
-//     type ResponseOptions = ResponseOptions;
-//
-//     fn from_stream(
-//         stream: impl Stream<Item = String> + Send + 'static,
-//     ) -> Self {
-//         PavexResponse(
-//             Response::ok().set_typed_body(stream.map(|chunk| Ok(chunk) as Result<String, std::io::Error>))
-//         )
-//     }
-//
-//     fn extend_response(&mut self, res_options: &Self::ResponseOptions) {
-//         let mut res_options_raw = res_options;
-//         if let Some(res_options) = res_options.status(){
-//             self.0.set_status()
-//         }
-//         // *res_options.headers.
-//         // if let Ok(status) = *res_options {
-//         //     *self.0.status_mut() = status;
-//         // }
-//         // self.0
-//         //     .headers_mut()
-//         //     .extend(std::mem::take(&mut res_options.headers));
-//     }
-//
-//     fn set_default_content_type(&mut self, content_type: &str) {
-//         let headers = self.0.headers_mut();
-//         if !headers.contains_key(CONTENT_TYPE) {
-//             // Set the Content Type headers on all responses. This makes Firefox show the page source
-//             // without complaining
-//             headers.insert(
-//                 CONTENT_TYPE,
-//                 HeaderValue::from_str(content_type).unwrap(),
-//             );
-//         }
-//     }
-// }
+impl ExtendResponse for PavexResponse {
+    type ResponseOptions = ResponseOptions;
+
+    fn from_stream(
+        stream: impl Stream<Item = String> + Send + 'static,
+    ) -> Self {
+
+        let stream = LeptosPavexStream{inner: stream};
+        PavexResponse(
+            Response::ok()
+            .set_raw_body(stream.map(|chunk| Ok(chunk) as Result<String, std::io::Error>))
+        )
+    }
+
+    fn extend_response(&mut self, res_options: &Self::ResponseOptions) {
+        let mut res_options = res_options.0.write();
+        if let Some(status) = res_options.status {
+            *self.0.status_mut() = status;
+        }
+        self.0
+            .headers_mut()
+            .extend(std::mem::take(&mut res_options.headers));
+    }
+
+    fn set_default_content_type(&mut self, content_type: &str) {
+        let headers = self.0.headers_mut();
+        if !headers.contains_key(CONTENT_TYPE) {
+            // Set the Content Type headers on all responses. This makes Firefox show the page source
+            // without complaining
+            headers.insert(
+                CONTENT_TYPE,
+                HeaderValue::from_str(content_type).unwrap(),
+            );
+        }
+    }
+}
 
 impl<CustErr> Res<CustErr> for PavexResponse
 where

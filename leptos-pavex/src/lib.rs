@@ -356,7 +356,7 @@ pub fn render_app_to_stream_in_order_with_context<IV>(
     where
         IV: IntoView + 'static,
 {
-    handle_response(additional_context, app_fn, |app, chunks| {
+    handle_response(req_head, req_body, additional_context, app_fn, |app, chunks| {
         Box::pin(async move {
             Box::pin(app.to_html_stream_in_order().chain(chunks()))
                 as PinnedStream<String>
@@ -365,6 +365,8 @@ pub fn render_app_to_stream_in_order_with_context<IV>(
 }
 
 fn handle_response<IV>(
+    req_head: &RequestHead,
+    req_body: RawIncomingBody,
     additional_context: impl Fn() + 'static + Clone + Send,
     app_fn: impl Fn() -> IV + Clone + Send + 'static,
     stream_builder: fn(
@@ -390,7 +392,7 @@ fn handle_response<IV>(
                 move || {
                     // Need to get the path and query string of the Request
                     // For reasons that escape me, if the incoming URI protocol is https, it provides the absolute URI
-                    let path = req.uri().path_and_query().unwrap().as_str();
+                    let path = req_head.target.path_and_query().unwrap().as_str();
 
                     let full_path = format!("http://leptos.dev{path}");
                     let req_parts = RequestParts::new_from_req(&req.head);

@@ -23,3 +23,5 @@ parking_lot.workspace = true
 http-body-util.workspace = true
 http-body.workspace = true
 pin-project.workspace = true
+hydration_context.workspace = true
+reactive_graph.workspace = true
