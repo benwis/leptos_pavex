@@ -106,7 +106,7 @@ Pin<Box<dyn Stream<Item = io::Result<Bytes>> + Send>>;
 /// - [`ServerMetaContext`](leptos_meta::ServerMetaContext)
 /// - [`RouterIntegrationContext`](leptos_router::RouterIntegrationContext)
 #[tracing::instrument(level = "trace", fields(error), skip_all)]
-pub fn render_app_to_stream<IV>(
+pub async fn render_app_to_stream<IV>(
     req_head: &RequestHead,
     req_body: RawIncomingBody,
     app_fn: impl Fn() -> IV + Clone + Send + 'static,
@@ -117,7 +117,7 @@ pub fn render_app_to_stream<IV>(
     render_app_to_stream_with_context(            
         req_head,
         req_body,
-        || {}, app_fn)
+        || {}, app_fn).await
 }
 
 /// Returns an Axum [Handler](axum::handler::Handler) that listens for a `GET` request and tries
@@ -126,7 +126,7 @@ pub fn render_app_to_stream<IV>(
 /// one respects the `SsrMode` on each Route and thus requires `Vec<PavexRouteListing>` for route checking.
 /// This is useful if you are using `.leptos_routes_with_handler()`
 #[tracing::instrument(level = "trace", fields(error), skip_all)]
-pub fn render_route<IV>(
+pub async fn render_route<IV>(
     paths: Vec<PavexRouteListing>,
     req_head: &RequestHead,
     req_body: RawIncomingBody,
@@ -141,7 +141,7 @@ pub fn render_route<IV>(
         req_head,
         req_body, 
         matched_path, 
-        || {}, app_fn)
+        || {}, app_fn).await
 }
 
 /// Returns an Axum [Handler](axum::handler::Handler) that listens for a `GET` request and tries
@@ -163,7 +163,7 @@ pub fn render_route<IV>(
 /// - [`ServerMetaContext`](leptos_meta::ServerMetaContext)
 /// - [`RouterIntegrationContext`](leptos_router::RouterIntegrationContext)
 #[tracing::instrument(level = "trace", fields(error), skip_all)]
-pub fn render_app_to_stream_in_order<IV>(
+pub async fn render_app_to_stream_in_order<IV>(
     req_head: &RequestHead,
     req_body: RawIncomingBody,
     app_fn: impl Fn() -> IV + Clone + Send + 'static,
@@ -174,7 +174,7 @@ pub fn render_app_to_stream_in_order<IV>(
     render_app_to_stream_in_order_with_context(
         req_head,
         req_body,
-        || {}, app_fn)
+        || {}, app_fn).await
 }
 
 /// Returns an Axum [Handler](axum::handler::Handler) that listens for a `GET` request and tries
@@ -203,7 +203,7 @@ pub fn render_app_to_stream_in_order<IV>(
 /// - [`ServerMetaContext`](leptos_meta::ServerMetaContext)
 /// - [`RouterIntegrationContext`](leptos_router::RouterIntegrationContext)
 #[tracing::instrument(level = "trace", fields(error), skip_all)]
-pub fn render_app_to_stream_with_context<IV>(
+pub async fn render_app_to_stream_with_context<IV>(
     req_head: &RequestHead,
     req_body: RawIncomingBody,
     additional_context: impl Fn() + 'static + Clone + Send,
@@ -218,7 +218,7 @@ pub fn render_app_to_stream_with_context<IV>(
         additional_context,
         app_fn,
         false,
-    )
+    ).await
 }
 /// Returns an Axum [Handler](axum::handler::Handler) that listens for a `GET` request and tries
 /// to route it using [leptos_router], serving an HTML stream of your application. It allows you
@@ -227,7 +227,7 @@ pub fn render_app_to_stream_with_context<IV>(
 /// one respects the `SsrMode` on each Route, and thus requires `Vec<PavexRouteListing>` for route checking.
 /// This is useful if you are using `.leptos_routes_with_handler()`.
 #[tracing::instrument(level = "trace", fields(error), skip_all)]
-pub fn render_route_with_context<IV>(
+pub async fn render_route_with_context<IV>(
     paths: Vec<PavexRouteListing>,
     req_head: &RequestHead,
     req_body: RawIncomingBody,
@@ -257,26 +257,26 @@ pub fn render_route_with_context<IV>(
             req_body,
             additional_context.clone(),
             app_fn.clone(),
-        ),
+        ).await,
         SsrMode::PartiallyBlocked => render_app_to_stream_with_context_and_replace_blocks(
             req_head,
             req_body,
             additional_context.clone(),
             app_fn.clone(),
             true,
-        ),
+        ).await,
         SsrMode::InOrder => render_app_to_stream_in_order_with_context(
             req_head,
             req_body,
             additional_context.clone(),
             app_fn.clone(),
-        ),
+        ).await,
         SsrMode::Async => render_app_async_stream_with_context(
             req_head,
             req_body,
             additional_context.clone(),
             app_fn.clone(),
-        ),
+        ).await,
     }
 }
 
@@ -301,7 +301,7 @@ pub fn render_route_with_context<IV>(
 /// - [`ServerMetaContext`](leptos_meta::ServerMetaContext)
 /// - [`RouterIntegrationContext`](leptos_router::RouterIntegrationContext)
 #[tracing::instrument(level = "trace", fields(error), skip_all)]
-pub fn render_app_to_stream_with_context_and_replace_blocks<IV>(
+pub async fn render_app_to_stream_with_context_and_replace_blocks<IV>(
     req_head: &RequestHead,
     req_body: RawIncomingBody,
     additional_context: impl Fn() + 'static + Clone + Send,
@@ -317,7 +317,7 @@ pub fn render_app_to_stream_with_context_and_replace_blocks<IV>(
             Box::pin(app.to_html_stream_out_of_order().chain(chunks()))
                 as PinnedStream<String>
         })
-    })
+    }).await
 }
 
 /// Returns an Axum [Handler](axum::handler::Handler) that listens for a `GET` request and tries
@@ -348,7 +348,7 @@ pub fn render_app_to_stream_with_context_and_replace_blocks<IV>(
 /// - [`ServerMetaContext`](leptos_meta::ServerMetaContext)
 /// - [`RouterIntegrationContext`](leptos_router::RouterIntegrationContext)
 #[tracing::instrument(level = "trace", fields(error), skip_all)]
-pub fn render_app_to_stream_in_order_with_context<IV>(
+pub async fn render_app_to_stream_in_order_with_context<IV>(
     req_head: &RequestHead,
     req_body: RawIncomingBody,
     additional_context: impl Fn() + 'static + Clone + Send,
@@ -362,10 +362,10 @@ pub fn render_app_to_stream_in_order_with_context<IV>(
             Box::pin(app.to_html_stream_in_order().chain(chunks()))
                 as PinnedStream<String>
         })
-    })
+    }).await
 }
 
-fn handle_response<IV>(
+async fn handle_response<IV>(
     req_head: &RequestHead,
     req_body: RawIncomingBody,
     additional_context: impl Fn() + 'static + Clone + Send,
@@ -488,7 +488,7 @@ pub fn render_app_async<IV>(
 /// - [`ServerMetaContext`](leptos_meta::ServerMetaContext)
 /// - [`RouterIntegrationContext`](leptos_router::RouterIntegrationContext)
 #[tracing::instrument(level = "trace", fields(error), skip_all)]
-pub fn render_app_async_stream_with_context<IV>(
+pub async fn render_app_async_stream_with_context<IV>(
     req_head: &RequestHead,
     req_body: RawIncomingBody,
     additional_context: impl Fn() + 'static + Clone + Send,
@@ -504,7 +504,7 @@ pub fn render_app_async_stream_with_context<IV>(
             Box::pin(once(async move { app }).chain(chunks))
                 as PinnedStream<String>
         })
-    })
+    }).await
 }
 
 /// Returns an Axum [Handler](axum::handler::Handler) that listens for a `GET` request and tries
@@ -534,7 +534,7 @@ pub fn render_app_async_stream_with_context<IV>(
 /// - [`ServerMetaContext`](leptos_meta::ServerMetaContext)
 /// - [`RouterIntegrationContext`](leptos_router::RouterIntegrationContext)
 #[tracing::instrument(level = "trace", fields(error), skip_all)]
-pub fn render_app_async_with_context<IV>(
+pub async fn render_app_async_with_context<IV>(
     req_head: &RequestHead,
     req_body: RawIncomingBody,
     additional_context: impl Fn() + 'static + Clone + Send,
@@ -543,15 +543,14 @@ pub fn render_app_async_with_context<IV>(
     where
         IV: IntoView + 'static,
 {
-    let res = handle_response(req_head, req_body, additional_context, app_fn, |app, chunks| {
+    handle_response(req_head, req_body, additional_context, app_fn, |app, chunks| {
         Box::pin(async move {
             let app = app.to_html_stream_in_order().collect::<String>().await;
             let chunks = chunks();
             Box::pin(once(async move { app }).chain(chunks))
                 as PinnedStream<String>
         })
-    });
-    res
+    }).await
 }
 
 /// Generates a list of all routes defined in Leptos's Router in your app. We can then use this to automatically
