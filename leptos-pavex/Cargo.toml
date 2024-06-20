@@ -26,3 +26,7 @@ pin-project.workspace = true
 hydration_context.workspace = true
 reactive_graph.workspace = true
 futures-util.workspace = true
+any_spawner = { workspace = true, features = ["tokio"] }
+[features]
+default = []
+wasm = []

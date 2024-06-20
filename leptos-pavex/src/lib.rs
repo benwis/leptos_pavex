@@ -7,24 +7,30 @@ pub mod response_options;
 pub mod server_fn;
 pub mod stream;
 pub mod pavex_helpers;
+pub mod extend_response;
+pub mod route_generation;
 
 use std::io;
 use std::pin::Pin;
 use std::sync::Arc;
 use bytes::Bytes;
+use extend_response::ExtendResponse;
 use futures::{Stream, StreamExt};
 use futures::stream::once;
 use hydration_context::SsrSharedContext;
 use leptos::server_fn::redirect::REDIRECT_HEADER;
-use leptos_integration_utils::{BoxedFnOnce, ExtendResponse, PinnedFuture, PinnedStream};
+
+use leptos::tachys::view::RenderHtml;
+use leptos_integration_utils::{BoxedFnOnce, PinnedFuture, PinnedStream};
 use leptos_meta::ServerMetaContext;
-use leptos_router::{PathSegment, RouteList, RouteListing, SsrMode, StaticDataMap, StaticMode};
+use leptos_router::{PathSegment, RouteListing, SsrMode, StaticDataMap, StaticMode};
 use leptos_router::components::provide_server_redirect;
 use leptos_router::location::RequestUrl;
 use pavex::http::uri::PathAndQuery;
 use pavex::request::body::RawIncomingBody;
-use pavex_helpers::AdditionalContextComponent;
+use pavex_helpers::{AdditionalContextComponent, AppFunction, RouteAppFunction};
 use response::PavexResponse;
+use route_generation::RouteList;
 use crate::request_parts::RequestParts;
 use crate::response_options::ResponseOptions;
 use pavex::http::{HeaderName, HeaderValue};
@@ -33,7 +39,7 @@ use pavex::http::StatusCode;
 use pavex::request::path::MatchedPathPattern;
 use pavex::request::RequestHead;
 use pavex::response::Response;
-use leptos::prelude::{Owner, use_context, provide_context, IntoView};
+use leptos::prelude::{Owner, use_context, provide_context};
 /// Provides an easy way to redirect the user from within a server function. Mimicking the Remix `redirect()`,
 /// it sets a StatusCode of 302 and a LOCATION header with the provided value.
 /// If looking to redirect from the client, `leptos_router::use_navigate()` should be used instead
@@ -83,7 +89,7 @@ fn init_executor() {
     {
         eprintln!(
             "It appears you have set 'default-features = false' on \
-             'leptos_axum', but are not using the 'wasm' feature. Either \
+             'leptos_pavex', but are not using the 'wasm' feature. Either \
              remove 'default-features = false' or, if you are running in a \
              JS-hosted WASM server environment, add the 'wasm' feature."
         );
@@ -110,13 +116,11 @@ Pin<Box<dyn Stream<Item = io::Result<Bytes>> + Send>>;
 /// - [`ServerMetaContext`](leptos_meta::ServerMetaContext)
 /// - [`RouterIntegrationContext`](leptos_router::RouterIntegrationContext)
 #[tracing::instrument(level = "trace", fields(error), skip_all)]
-pub async fn render_app_to_stream<IV>(
+pub async fn render_app_to_stream(
     req_head: RequestHead,
     req_body: RawIncomingBody,
-    app_fn: impl Fn() -> IV + Clone + Send + 'static,
+    app_fn: AppFunction,
 ) -> Response
-    where
-        IV: IntoView + 'static,
 {
     render_app_to_stream_with_context(            
         req_head,
@@ -135,10 +139,9 @@ pub async fn render_route<IV>(
     req_head: RequestHead,
     req_body: RawIncomingBody,
     matched_path: &MatchedPathPattern,
-    app_fn: impl Fn() -> IV + Clone + Send + 'static,
+    app_fn: AppFunction,
 ) -> Response
-    where
-        IV: IntoView + 'static,
+
 {
     render_route_with_context(
         paths,            
@@ -169,13 +172,11 @@ pub async fn render_route<IV>(
 /// - [`ServerMetaContext`](leptos_meta::ServerMetaContext)
 /// - [`RouterIntegrationContext`](leptos_router::RouterIntegrationContext)
 #[tracing::instrument(level = "trace", fields(error), skip_all)]
-pub async fn render_app_to_stream_in_order<IV>(
+pub async fn render_app_to_stream_in_order(
     req_head: RequestHead,
     req_body: RawIncomingBody,
-    app_fn: impl Fn() -> IV + Clone + Send + 'static,
+    app_fn: AppFunction,
 ) -> Response
-    where
-        IV: IntoView + 'static,
 {
     render_app_to_stream_in_order_with_context(
         req_head,
@@ -209,13 +210,11 @@ pub async fn render_app_to_stream_in_order<IV>(
 /// - [`ServerMetaContext`](leptos_meta::ServerMetaContext)
 /// - [`RouterIntegrationContext`](leptos_router::RouterIntegrationContext)
 #[tracing::instrument(level = "trace", fields(error), skip_all)]
-pub async fn render_app_to_stream_with_context<IV>(
+pub async fn render_app_to_stream_with_context(
     req_head: RequestHead,
     req_body: RawIncomingBody,
-    app_fn: impl Fn() -> IV + Clone + Send + 'static,
+    app_fn: AppFunction,
 ) -> Response
-    where
-        IV: IntoView + 'static,
 {
     render_app_to_stream_with_context_and_replace_blocks(
         req_head,
@@ -231,16 +230,14 @@ pub async fn render_app_to_stream_with_context<IV>(
 /// one respects the `SsrMode` on each Route, and thus requires `Vec<PavexRouteListing>` for route checking.
 /// This is useful if you are using `.leptos_routes_with_handler()`.
 #[tracing::instrument(level = "trace", fields(error), skip_all)]
-pub async fn render_route_with_context<IV>(
+pub async fn render_route_with_context(
     paths: Vec<PavexRouteListing>,
     req_head: RequestHead,
     req_body: RawIncomingBody,
     matched_path: &MatchedPathPattern,
     _context: AdditionalContextComponent,
-    app_fn: impl Fn() -> IV + Clone + Send + 'static,
+    app_fn: AppFunction,
 ) -> Response
-    where
-        IV: IntoView + 'static,
 {
     // 1. Process route to match the values in routeListing
     let path = &matched_path.to_string();
@@ -259,23 +256,23 @@ pub async fn render_route_with_context<IV>(
         SsrMode::OutOfOrder => render_app_to_stream_with_context(
             req_head,
             req_body,
-            app_fn.clone(),
+            app_fn,
         ).await,
         SsrMode::PartiallyBlocked => render_app_to_stream_with_context_and_replace_blocks(
             req_head,
             req_body,
-            app_fn.clone(),
+            app_fn,
             true,
         ).await,
         SsrMode::InOrder => render_app_to_stream_in_order_with_context(
             req_head,
             req_body,
-            app_fn.clone(),
+            app_fn,
         ).await,
         SsrMode::Async => render_app_async_stream_with_context(
             req_head,
             req_body,
-            app_fn.clone(),
+            app_fn,
         ).await,
     }
 }
@@ -301,19 +298,17 @@ pub async fn render_route_with_context<IV>(
 /// - [`ServerMetaContext`](leptos_meta::ServerMetaContext)
 /// - [`RouterIntegrationContext`](leptos_router::RouterIntegrationContext)
 #[tracing::instrument(level = "trace", fields(error), skip_all)]
-pub async fn render_app_to_stream_with_context_and_replace_blocks<IV>(
+pub async fn render_app_to_stream_with_context_and_replace_blocks(
     req_head: RequestHead,
     req_body: RawIncomingBody,
-    app_fn: impl Fn() -> IV + Clone + Send + 'static,
+    app_fn: AppFunction,
     replace_blocks: bool,
 ) -> Response
-    where
-        IV: IntoView + 'static,
 {
     _ = replace_blocks; // TODO
     handle_response(req_head, req_body, app_fn, |app, chunks| {
         Box::pin(async move {
-            Box::pin(app.to_html_stream_out_of_order().chain(chunks()))
+            Box::pin(app.inner().to_html_stream_out_of_order().chain(chunks()))
                 as PinnedStream<String>
         })
     }).await
@@ -347,68 +342,63 @@ pub async fn render_app_to_stream_with_context_and_replace_blocks<IV>(
 /// - [`ServerMetaContext`](leptos_meta::ServerMetaContext)
 /// - [`RouterIntegrationContext`](leptos_router::RouterIntegrationContext)
 #[tracing::instrument(level = "trace", fields(error), skip_all)]
-pub async fn render_app_to_stream_in_order_with_context<IV>(
+pub async fn render_app_to_stream_in_order_with_context(
     req_head: RequestHead,
     req_body: RawIncomingBody,
-    app_fn: impl Fn() -> IV + Clone + Send + 'static,
+    app_fn: AppFunction,
 ) -> Response
-    where
-        IV: IntoView + 'static,
 {
     handle_response(req_head, req_body, app_fn, |app, chunks| {
         Box::pin(async move {
-            Box::pin(app.to_html_stream_in_order().chain(chunks()))
+            Box::pin(app.inner().to_html_stream_in_order().chain(chunks()))
                 as PinnedStream<String>
         })
     }).await
 }
 
-async fn handle_response<IV>(
+async fn handle_response(
     req_head: RequestHead,
     _req_body: RawIncomingBody,
-    app_fn: impl Fn() -> IV + Clone + Send + 'static,
+    app_fn: AppFunction,
     stream_builder: fn(
-        IV,
+        AppFunction,
         BoxedFnOnce<PinnedStream<String>>,
     ) -> PinnedFuture<PinnedStream<String>>,
 ) -> Response
-    where
-        IV: IntoView + 'static,
+
 {
-        let app_fn = app_fn.clone();
-            let app_fn = app_fn.clone();
-            let res_options = ResponseOptions::default();
-            let meta_context = ServerMetaContext::new();
+        let res_options = ResponseOptions::default();
+        let meta_context = ServerMetaContext::new();
 
-            let additional_context = {
-                let meta_context = meta_context.clone();
-                let res_options = res_options.clone();
-                move || {
-                    // Need to get the path and query string of the Request
-                    // For reasons that escape me, if the incoming URI protocol is https, it provides the absolute URI
-                    let path = req_head.target.path_and_query().unwrap().as_str();
+        let additional_context = {
+            let meta_context = meta_context.clone();
+            let res_options = res_options.clone();
+            move || {
+                // Need to get the path and query string of the Request
+                // For reasons that escape me, if the incoming URI protocol is https, it provides the absolute URI
+                let path = req_head.target.path_and_query().unwrap().as_str();
 
-                    let full_path = format!("http://leptos.dev{path}");
-                    let req_parts = RequestParts::new_from_req(&req_head);
-                    provide_post_contexts(
-                        &full_path,
-                        &meta_context,
-                        req_parts,
-                        res_options.clone(),
-                    );
-                }
-            };
+                let full_path = format!("http://leptos.dev{path}");
+                let req_parts = RequestParts::new_from_req(&req_head);
+                provide_post_contexts(
+                    &full_path,
+                    &meta_context,
+                    req_parts,
+                    res_options.clone(),
+                );
+            }
+        };
 
-            let res = PavexResponse::from_app(
-                app_fn,
-                meta_context,
-                additional_context,
-                res_options,
-                stream_builder,
-            )
-                .await;
+        let res = PavexResponse::from_app(
+            app_fn,
+            meta_context,
+            additional_context,
+            res_options,
+            stream_builder,
+        )
+            .await;
 
-            res.0
+        res.0
         
     }
 
@@ -464,13 +454,11 @@ fn provide_post_contexts(
 /// - [`ServerMetaContext`](leptos_meta::ServerMetaContext)
 /// - [`RouterIntegrationContext`](leptos_router::RouterIntegrationContext)
 #[tracing::instrument(level = "trace", fields(error), skip_all)]
-pub async fn render_app_async<IV>(
+pub async fn render_app_async(
     req_head: RequestHead,
     req_body: RawIncomingBody,
-    app_fn: impl Fn() -> IV + Clone + Send + 'static,
+    app_fn: AppFunction,
 ) -> Response
-    where
-        IV: IntoView + 'static,
 {
     render_app_async_with_context(req_head, req_body, app_fn).await
 }
@@ -502,17 +490,15 @@ pub async fn render_app_async<IV>(
 /// - [`ServerMetaContext`](leptos_meta::ServerMetaContext)
 /// - [`RouterIntegrationContext`](leptos_router::RouterIntegrationContext)
 #[tracing::instrument(level = "trace", fields(error), skip_all)]
-pub async fn render_app_async_stream_with_context<IV>(
+pub async fn render_app_async_stream_with_context(
     req_head: RequestHead,
     req_body: RawIncomingBody,
-    app_fn: impl Fn() -> IV + Clone + Send + 'static,
+    app_fn: AppFunction,
 ) -> Response
-    where
-        IV: IntoView + 'static,
 {
     handle_response(req_head, req_body, app_fn, |app, chunks| {
         Box::pin(async move {
-            let app = app.to_html_stream_in_order().collect::<String>().await;
+            let app = app.inner().to_html_stream_in_order().collect::<String>().await;
             let chunks = chunks();
             Box::pin(once(async move { app }).chain(chunks))
                 as PinnedStream<String>
@@ -547,17 +533,15 @@ pub async fn render_app_async_stream_with_context<IV>(
 /// - [`ServerMetaContext`](leptos_meta::ServerMetaContext)
 /// - [`RouterIntegrationContext`](leptos_router::RouterIntegrationContext)
 #[tracing::instrument(level = "trace", fields(error), skip_all)]
-pub async fn render_app_async_with_context<IV>(
+pub async fn render_app_async_with_context(
     req_head: RequestHead,
     req_body: RawIncomingBody,
-    app_fn: impl Fn() -> IV + Clone + Send + 'static,
+    app_fn: AppFunction,
 ) -> Response
-    where
-        IV: IntoView + 'static,
 {
     handle_response(req_head, req_body, app_fn, |app, chunks| {
         Box::pin(async move {
-            let app = app.to_html_stream_in_order().collect::<String>().await;
+            let app = app.inner().to_html_stream_in_order().collect::<String>().await;
             let chunks = chunks();
             Box::pin(once(async move { app }).chain(chunks))
                 as PinnedStream<String>
@@ -569,11 +553,9 @@ pub async fn render_app_async_with_context<IV>(
 /// create routes in Axum's Router without having to use wildcard matching or fallbacks. Takes in your root app Element
 /// as an argument, so it can walk your app tree. This version is tailored to generate Axum compatible paths.
 #[tracing::instrument(level = "trace", fields(error), skip_all)]
-pub fn generate_route_list<IV>(
-    app_fn: impl Fn() -> IV + 'static + Clone,
+pub fn generate_route_list(
+    app_fn: RouteAppFunction,
 ) -> Vec<PavexRouteListing>
-    where
-        IV: IntoView + 'static,
 {
     generate_route_list_with_exclusions_and_ssg(app_fn, None).0
 }
@@ -582,11 +564,9 @@ pub fn generate_route_list<IV>(
 /// create routes in Axum's Router without having to use wildcard matching or fallbacks. Take in your root app Element
 /// as an argument, so it can walk your app tree. This version is tailored to generate Axum compatible paths.
 #[tracing::instrument(level = "trace", fields(error), skip_all)]
-pub fn generate_route_list_with_ssg<IV>(
-    app_fn: impl Fn() -> IV + 'static + Clone,
+pub fn generate_route_list_with_ssg(
+    app_fn: RouteAppFunction,
 ) -> (Vec<PavexRouteListing>, StaticDataMap)
-    where
-        IV: IntoView + 'static,
 {
     generate_route_list_with_exclusions_and_ssg(app_fn, None)
 }
@@ -596,12 +576,10 @@ pub fn generate_route_list_with_ssg<IV>(
 /// as an argument, so it can walk you app tree. This version is tailored to generate Axum compatible paths. Adding excluded_routes
 /// to this function will stop `.leptos_routes()` from generating a route for it, allowing a custom handler. These need to be in Axum path format
 #[tracing::instrument(level = "trace", fields(error), skip_all)]
-pub fn generate_route_list_with_exclusions<IV>(
-    app_fn: impl Fn() -> IV + 'static + Clone,
+pub fn generate_route_list_with_exclusions(
+    app_fn: RouteAppFunction,
     excluded_routes: Option<Vec<String>>,
 ) -> Vec<PavexRouteListing>
-    where
-        IV: IntoView + 'static,
 {
     generate_route_list_with_exclusions_and_ssg(app_fn, excluded_routes).0
 }
@@ -611,12 +589,10 @@ pub fn generate_route_list_with_exclusions<IV>(
 /// as an argument, so it can walk you app tree. This version is tailored to generate Axum compatible paths. Adding excluded_routes
 /// to this function will stop `.leptos_routes()` from generating a route for it, allowing a custom handler. These need to be in Axum path format
 #[tracing::instrument(level = "trace", fields(error), skip_all)]
-pub fn generate_route_list_with_exclusions_and_ssg<IV>(
-    app_fn: impl Fn() -> IV + 'static + Clone,
+pub fn generate_route_list_with_exclusions_and_ssg(
+    app_fn: RouteAppFunction,
     excluded_routes: Option<Vec<String>>,
 ) -> (Vec<PavexRouteListing>, StaticDataMap)
-    where
-        IV: IntoView + 'static,
 {
     generate_route_list_with_exclusions_and_ssg_and_context(
         app_fn,
@@ -727,13 +703,11 @@ impl PavexPath for &[PathSegment] {
 /// to this function will stop `.leptos_routes()` from generating a route for it, allowing a custom handler. These need to be in Axum path format
 /// Additional context will be provided to the app Element.
 #[tracing::instrument(level = "trace", fields(error), skip_all)]
-pub fn generate_route_list_with_exclusions_and_ssg_and_context<IV>(
-    app_fn: impl Fn() -> IV + 'static + Clone,
+pub fn generate_route_list_with_exclusions_and_ssg_and_context(
+    app_fn: RouteAppFunction,
     excluded_routes: Option<Vec<String>>,
     additional_context: impl Fn() + 'static + Clone,
 ) -> (Vec<PavexRouteListing>, StaticDataMap)
-    where
-        IV: IntoView + 'static,
 {
     init_executor();
 
@@ -751,7 +725,7 @@ pub fn generate_route_list_with_exclusions_and_ssg_and_context<IV>(
                 Default::default(),
             );
             additional_context();
-            RouteList::generate(&app_fn)
+            RouteList::generate(app_fn)
         })
         .unwrap_or_default();
 
@@ -794,7 +768,7 @@ pub enum RouteType{
 pub fn pass_leptos_context(route_type: &RouteType, req_head: &RequestHead, additional_context: impl Fn() + 'static + Clone) {
     let owner = match route_type{
         RouteType::ServerFn => Owner::new(),
-        RouteType::Component => Owner::new_root(Some(Arc::new(SsrSharedContext::new()))),
+        RouteType::Component => {println!("COMPONENT");Owner::new_root(Some(Arc::new(SsrSharedContext::new())))},
     };
     let req_parts=RequestParts::new_from_req(&req_head); 
     // Set the created Owner as the current one, by setting the thread local. Pavex pins each request to their own

@@ -25,3 +25,4 @@ pin-project = "1"
 hydration_context = {  git="https://github.com/leptos-rs/leptos", branch="leptos_0.7" }
 reactive_graph = { git="https://github.com/leptos-rs/leptos", branch="leptos_0.7", features=["sandboxed-arenas"]}
 futures-util = "0.3.30"
+any_spawner = "0.1.0"

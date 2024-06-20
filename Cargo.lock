@@ -65,6 +65,17 @@ dependencies = [
 [[package]]
 name = "any_spawner"
 version = "0.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "570fccab7129a850291c7772a2a5c4fd0b89b0be7d76a8a1432ee18d8a0d1c9d"
+dependencies = [
+ "futures",
+ "thiserror",
+ "tokio",
+]
+
+[[package]]
+name = "any_spawner"
+version = "0.1.0"
 source = "git+https://github.com/leptos-rs/leptos?branch=leptos_0.7#55357ed05b4ffe547308c41b140a3c7bf9bf1664"
 dependencies = [
  "futures",
@@ -853,7 +864,7 @@ name = "leptos"
 version = "0.7.0-preview2"
 source = "git+https://github.com/leptos-rs/leptos?branch=leptos_0.7#55357ed05b4ffe547308c41b140a3c7bf9bf1664"
 dependencies = [
- "any_spawner",
+ "any_spawner 0.1.0 (git+https://github.com/leptos-rs/leptos?branch=leptos_0.7)",
  "base64 0.22.1",
  "cfg-if",
  "either_of",
@@ -888,6 +899,7 @@ dependencies = [
 name = "leptos-pavex"
 version = "0.1.0"
 dependencies = [
+ "any_spawner 0.1.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "bytes",
  "dashmap",
  "futures",
@@ -1024,7 +1036,7 @@ name = "leptos_router"
 version = "0.7.0-preview2"
 source = "git+https://github.com/leptos-rs/leptos?branch=leptos_0.7#b61d2a9561b901f9f48369720777cd3e6f3f416e"
 dependencies = [
- "any_spawner",
+ "any_spawner 0.1.0 (git+https://github.com/leptos-rs/leptos?branch=leptos_0.7)",
  "either_of",
  "futures",
  "js-sys",
@@ -1536,7 +1548,7 @@ name = "reactive_graph"
 version = "0.1.0-preview"
 source = "git+https://github.com/leptos-rs/leptos?branch=leptos_0.7#55357ed05b4ffe547308c41b140a3c7bf9bf1664"
 dependencies = [
- "any_spawner",
+ "any_spawner 0.1.0 (git+https://github.com/leptos-rs/leptos?branch=leptos_0.7)",
  "async-lock",
  "futures",
  "guardian",
@@ -1885,7 +1897,7 @@ name = "tachys"
 version = "0.1.0-preview"
 source = "git+https://github.com/leptos-rs/leptos?branch=leptos_0.7#55357ed05b4ffe547308c41b140a3c7bf9bf1664"
 dependencies = [
- "any_spawner",
+ "any_spawner 0.1.0 (git+https://github.com/leptos-rs/leptos?branch=leptos_0.7)",
  "const_str_slice_concat",
  "drain_filter_polyfill",
  "either_of",

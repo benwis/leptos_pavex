@@ -5,8 +5,7 @@ use leptos::server_fn::error::{
     ServerFnError, ServerFnErrorErr, ServerFnErrorSerde, SERVER_FN_ERROR_HEADER,
 };
 use leptos::server_fn::response::Res;
-use leptos::IntoView;
-use leptos_integration_utils::{ExtendResponse, PinnedFuture, PinnedStream, BoxedFnOnce};
+use leptos_integration_utils::{PinnedFuture, PinnedStream, BoxedFnOnce};
 use leptos_meta::ServerMetaContext;
 use pavex::http::header::CONTENT_TYPE;
 use pavex::http::{HeaderMap, HeaderName, StatusCode};
@@ -20,6 +19,8 @@ use std::{
     str::FromStr,
     future::Future,
 };
+use crate::extend_response::ExtendResponse;
+use crate::pavex_helpers::AppFunction;
 use crate::response_options::ResponseOptions;
 use crate::stream::{LeptosPavexStream, PavexStream};
 use futures_util::stream::once;
@@ -65,18 +66,16 @@ impl ExtendResponse for PavexResponse {
         }
     }
 
-    fn from_app<IV>(
-        app_fn: impl Fn() -> IV + Send + 'static,
+    fn from_app(
+        app_fn: AppFunction,
         meta_context: ServerMetaContext,
         additional_context: impl FnOnce() + Send + 'static,
         res_options: Self::ResponseOptions,
         stream_builder: fn(
-            IV,
+            AppFunction,
             BoxedFnOnce<PinnedStream<String>>,
         ) -> PinnedFuture<PinnedStream<String>>,
     ) -> impl Future<Output = Self> + Send
-    where
-        IV: IntoView + 'static,
     {
         async move {
             let (owner, stream) = build_response(
@@ -112,17 +111,15 @@ impl ExtendResponse for PavexResponse {
     }
 }
 
-pub fn build_response<IV>(
-    app_fn: impl Fn() -> IV + Send + 'static,
+pub fn build_response(
+    app_fn: AppFunction,
     meta_context: ServerMetaContext,
     additional_context: impl FnOnce() + Send + 'static,
     stream_builder: fn(
-        IV,
+        AppFunction,
         BoxedFnOnce<PinnedStream<String>>,
     ) -> PinnedFuture<PinnedStream<String>>,
 ) -> (Owner, PinnedFuture<PinnedStream<String>>)
-where
-    IV: IntoView + 'static,
 {
     let Some(owner) = Owner::current() else{
         panic!("Failed to get Owner for components!");
@@ -134,8 +131,8 @@ where
                 .with(|| {
                     additional_context();
 
-                    // run app
-                    let app = app_fn();
+                    // // run app
+                    // let app: leptos::tachys::view::any_view::AnyView<leptos::prelude::Dom> = app_fn.inner();
 
                     let nonce = use_nonce()
                         .as_ref()
@@ -161,7 +158,7 @@ where
                     //
                     // we also don't actually start hydrating until after the whole stream is complete,
                     // so it's not useful to send those scripts down earlier.
-                    stream_builder(app, chunks)
+                    stream_builder(app_fn, chunks)
                 })
                 .await;
             Box::pin(meta_context.inject_meta_context(stream).await)
