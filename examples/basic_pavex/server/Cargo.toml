@@ -1,0 +1,29 @@
+[package]
+name = "server"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+# Telemetry
+pavex_tracing = { version = "0.1.43" }
+tracing = "0.1"
+tracing-bunyan-formatter = "0.3"
+tracing-panic = "0.1"
+tracing-subscriber = { version = "0.3", default-features = false, features = ["env-filter", "registry", "smallvec", "std", "tracing-log"] }
+
+# Configuration
+dotenvy = "0.15"
+figment = { version = "0.10", features = ["env", "yaml"] }
+serde = { version = "1", features = ["derive"] }
+humantime-serde = "1.1"
+serde-aux = "4"
+
+anyhow = "1"
+pavex = { version = "0.1.43" }
+tokio = { version = "1", features = ["full"] }
+server_sdk = { path = "../server_sdk" }
+app = { path = "../app" }
+workspace_hack = { path = "../workspace_hack" }
+
+[dev-dependencies]
+reqwest = "0.12"

@@ -1,0 +1,25 @@
+[package]
+name = "server_sdk"
+version = "0.1.0"
+edition = "2021"
+
+[package.metadata.px.generate]
+generator_type = "cargo_workspace_binary"
+generator_name = "bp"
+
+[package.metadata.px.verify]
+verifier_type = "cargo_workspace_binary"
+verifier_name = "bp"
+verifier_args = ["--check"]
+
+[lints]
+clippy = { all = "allow" }
+
+[dependencies]
+app = { version = "0.1.0", path = "../app" }
+http = "1.1.0"
+hyper = "1.3.1"
+pavex = "0.1.43"
+pavex_matchit = "0.7.4"
+pavex_tracing = "0.1.43"
+thiserror = "1.0.61"
