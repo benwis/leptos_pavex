@@ -6,19 +6,24 @@ pub mod response;
 pub mod response_options;
 pub mod server_fn;
 pub mod stream;
+pub mod pavex_helpers;
 
 use std::io;
 use std::pin::Pin;
+use std::sync::Arc;
 use bytes::Bytes;
 use futures::{Stream, StreamExt};
 use futures::stream::once;
+use hydration_context::SsrSharedContext;
 use leptos::server_fn::redirect::REDIRECT_HEADER;
 use leptos_integration_utils::{BoxedFnOnce, ExtendResponse, PinnedFuture, PinnedStream};
 use leptos_meta::ServerMetaContext;
 use leptos_router::{PathSegment, RouteList, RouteListing, SsrMode, StaticDataMap, StaticMode};
 use leptos_router::components::provide_server_redirect;
 use leptos_router::location::RequestUrl;
+use pavex::http::uri::PathAndQuery;
 use pavex::request::body::RawIncomingBody;
+use pavex_helpers::AdditionalContextComponent;
 use response::PavexResponse;
 use crate::request_parts::RequestParts;
 use crate::response_options::ResponseOptions;
@@ -116,7 +121,7 @@ pub async fn render_app_to_stream<IV>(
     render_app_to_stream_with_context(            
         req_head,
         req_body,
-        || {}, app_fn).await
+        app_fn).await
 }
 
 /// Returns an Axum [Handler](axum::handler::Handler) that listens for a `GET` request and tries
@@ -140,7 +145,9 @@ pub async fn render_route<IV>(
         req_head,
         req_body, 
         matched_path, 
-        || {}, app_fn).await
+        AdditionalContextComponent,
+        app_fn
+    ).await
 }
 
 /// Returns an Axum [Handler](axum::handler::Handler) that listens for a `GET` request and tries
@@ -173,7 +180,7 @@ pub async fn render_app_to_stream_in_order<IV>(
     render_app_to_stream_in_order_with_context(
         req_head,
         req_body,
-        || {}, app_fn).await
+        app_fn).await
 }
 
 /// Returns an Axum [Handler](axum::handler::Handler) that listens for a `GET` request and tries
@@ -205,7 +212,6 @@ pub async fn render_app_to_stream_in_order<IV>(
 pub async fn render_app_to_stream_with_context<IV>(
     req_head: RequestHead,
     req_body: RawIncomingBody,
-    additional_context: impl Fn() + 'static + Clone + Send,
     app_fn: impl Fn() -> IV + Clone + Send + 'static,
 ) -> Response
     where
@@ -214,7 +220,6 @@ pub async fn render_app_to_stream_with_context<IV>(
     render_app_to_stream_with_context_and_replace_blocks(
         req_head,
         req_body,
-        additional_context,
         app_fn,
         false,
     ).await
@@ -231,7 +236,7 @@ pub async fn render_route_with_context<IV>(
     req_head: RequestHead,
     req_body: RawIncomingBody,
     matched_path: &MatchedPathPattern,
-    additional_context: impl Fn() + 'static + Clone + Send,
+    _context: AdditionalContextComponent,
     app_fn: impl Fn() -> IV + Clone + Send + 'static,
 ) -> Response
     where
@@ -254,26 +259,22 @@ pub async fn render_route_with_context<IV>(
         SsrMode::OutOfOrder => render_app_to_stream_with_context(
             req_head,
             req_body,
-            additional_context.clone(),
             app_fn.clone(),
         ).await,
         SsrMode::PartiallyBlocked => render_app_to_stream_with_context_and_replace_blocks(
             req_head,
             req_body,
-            additional_context.clone(),
             app_fn.clone(),
             true,
         ).await,
         SsrMode::InOrder => render_app_to_stream_in_order_with_context(
             req_head,
             req_body,
-            additional_context.clone(),
             app_fn.clone(),
         ).await,
         SsrMode::Async => render_app_async_stream_with_context(
             req_head,
             req_body,
-            additional_context.clone(),
             app_fn.clone(),
         ).await,
     }
@@ -303,7 +304,6 @@ pub async fn render_route_with_context<IV>(
 pub async fn render_app_to_stream_with_context_and_replace_blocks<IV>(
     req_head: RequestHead,
     req_body: RawIncomingBody,
-    additional_context: impl Fn() + 'static + Clone + Send,
     app_fn: impl Fn() -> IV + Clone + Send + 'static,
     replace_blocks: bool,
 ) -> Response
@@ -311,7 +311,7 @@ pub async fn render_app_to_stream_with_context_and_replace_blocks<IV>(
         IV: IntoView + 'static,
 {
     _ = replace_blocks; // TODO
-    handle_response(req_head, req_body, additional_context, app_fn, |app, chunks| {
+    handle_response(req_head, req_body, app_fn, |app, chunks| {
         Box::pin(async move {
             Box::pin(app.to_html_stream_out_of_order().chain(chunks()))
                 as PinnedStream<String>
@@ -350,13 +350,12 @@ pub async fn render_app_to_stream_with_context_and_replace_blocks<IV>(
 pub async fn render_app_to_stream_in_order_with_context<IV>(
     req_head: RequestHead,
     req_body: RawIncomingBody,
-    additional_context: impl Fn() + 'static + Clone + Send,
     app_fn: impl Fn() -> IV + Clone + Send + 'static,
 ) -> Response
     where
         IV: IntoView + 'static,
 {
-    handle_response(req_head, req_body, additional_context, app_fn, |app, chunks| {
+    handle_response(req_head, req_body, app_fn, |app, chunks| {
         Box::pin(async move {
             Box::pin(app.to_html_stream_in_order().chain(chunks()))
                 as PinnedStream<String>
@@ -367,7 +366,6 @@ pub async fn render_app_to_stream_in_order_with_context<IV>(
 async fn handle_response<IV>(
     req_head: RequestHead,
     _req_body: RawIncomingBody,
-    additional_context: impl Fn() + 'static + Clone + Send,
     app_fn: impl Fn() -> IV + Clone + Send + 'static,
     stream_builder: fn(
         IV,
@@ -378,9 +376,7 @@ async fn handle_response<IV>(
         IV: IntoView + 'static,
 {
         let app_fn = app_fn.clone();
-        let additional_context = additional_context.clone();
             let app_fn = app_fn.clone();
-            let add_context = additional_context.clone();
             let res_options = ResponseOptions::default();
             let meta_context = ServerMetaContext::new();
 
@@ -394,13 +390,12 @@ async fn handle_response<IV>(
 
                     let full_path = format!("http://leptos.dev{path}");
                     let req_parts = RequestParts::new_from_req(&req_head);
-                    provide_contexts(
+                    provide_post_contexts(
                         &full_path,
                         &meta_context,
                         req_parts,
                         res_options.clone(),
                     );
-                    add_context();
                 }
             };
 
@@ -417,21 +412,41 @@ async fn handle_response<IV>(
         
     }
 
+/// Provide Context one might want available to people in the additional context environment
 #[tracing::instrument(level = "trace", fields(error), skip_all)]
-fn provide_contexts(
+pub fn provide_initial_contexts(
+    req_head: &RequestHead,
+    parts: RequestParts,
+) {
+    let path = req_head.target.path_and_query().cloned().unwrap_or(PathAndQuery::from_static("/"));
+    provide_context(RequestUrl::new(&path.to_string()));
+    provide_context(parts);
+    provide_server_redirect(redirect);
+    #[cfg(feature = "nonce")]
+    leptos::nonce::provide_nonce();
+}
+// Makes sure the stuff that could be added to context earlier is set, and add the remaining stuff
+#[tracing::instrument(level = "trace", fields(error), skip_all)]
+fn provide_post_contexts(
     path: &str,
     meta_context: &ServerMetaContext,
     parts: RequestParts,
     default_res_options: ResponseOptions,
 ) {
-    provide_context(RequestUrl::new(path));
+    // These will be set if the Pavex user is adding their own context, otherwise we need to add them
+    if use_context::<RequestUrl>().is_none(){
+        provide_context(RequestUrl::new(path));
+    }
+    if use_context::<RequestParts>().is_none(){
+        provide_context(parts);
+    }
     provide_context(meta_context.clone());
-    provide_context(parts);
     provide_context(default_res_options);
     provide_server_redirect(redirect);
     #[cfg(feature = "nonce")]
     leptos::nonce::provide_nonce();
 }
+
 
 /// Returns an Axum [Handler](axum::handler::Handler) that listens for a `GET` request and tries
 /// to route it using [leptos_router], asynchronously rendering an HTML page after all
@@ -457,7 +472,7 @@ pub async fn render_app_async<IV>(
     where
         IV: IntoView + 'static,
 {
-    render_app_async_with_context(req_head, req_body, || {}, app_fn).await
+    render_app_async_with_context(req_head, req_body, app_fn).await
 }
 
 /// Returns an Axum [Handler](axum::handler::Handler) that listens for a `GET` request and tries
@@ -490,13 +505,12 @@ pub async fn render_app_async<IV>(
 pub async fn render_app_async_stream_with_context<IV>(
     req_head: RequestHead,
     req_body: RawIncomingBody,
-    additional_context: impl Fn() + 'static + Clone + Send,
     app_fn: impl Fn() -> IV + Clone + Send + 'static,
 ) -> Response
     where
         IV: IntoView + 'static,
 {
-    handle_response(req_head, req_body, additional_context, app_fn, |app, chunks| {
+    handle_response(req_head, req_body, app_fn, |app, chunks| {
         Box::pin(async move {
             let app = app.to_html_stream_in_order().collect::<String>().await;
             let chunks = chunks();
@@ -536,13 +550,12 @@ pub async fn render_app_async_stream_with_context<IV>(
 pub async fn render_app_async_with_context<IV>(
     req_head: RequestHead,
     req_body: RawIncomingBody,
-    additional_context: impl Fn() + 'static + Clone + Send,
     app_fn: impl Fn() -> IV + Clone + Send + 'static,
 ) -> Response
     where
         IV: IntoView + 'static,
 {
-    handle_response(req_head, req_body, additional_context, app_fn, |app, chunks| {
+    handle_response(req_head, req_body, app_fn, |app, chunks| {
         Box::pin(async move {
             let app = app.to_html_stream_in_order().collect::<String>().await;
             let chunks = chunks();
@@ -731,7 +744,7 @@ pub fn generate_route_list_with_exclusions_and_ssg_and_context<IV>(
             provide_context(RequestUrl::new(""));
             let mock_parts = RequestParts::new();
 
-            provide_contexts(
+            provide_post_contexts(
                 "",
                 &Default::default(),
                 mock_parts,
@@ -770,4 +783,26 @@ pub fn generate_route_list_with_exclusions_and_ssg_and_context<IV>(
     )
 }
 
+// An Enum to specify
+pub enum RouteType{
+    ServerFn,
+    Component
+}
+/// A function to pass Leptos additional context from Pavex
+/// The owner needs to exist for calls to provide_context() to be successful. Pavex needs this to run
+/// before the constructor for additional context
+pub fn pass_leptos_context(route_type: &RouteType, req_head: &RequestHead, additional_context: impl Fn() + 'static + Clone) {
+    let owner = match route_type{
+        RouteType::ServerFn => Owner::new(),
+        RouteType::Component => Owner::new_root(Some(Arc::new(SsrSharedContext::new()))),
+    };
+    let req_parts=RequestParts::new_from_req(&req_head); 
+    // Set the created Owner as the current one, by setting the thread local. Pavex pins each request to their own
+    // thread, so this should be fineTM
+    owner.with(||{
+        provide_initial_contexts(req_head, req_parts);
+        additional_context();
+    });
+
+}
 

@@ -22,5 +22,6 @@ parking_lot = "0.12.3"
 http-body-util = "0.1.2"
 http-body = "1.0.0"
 pin-project = "1"
-hydration_context = { version = "0.1.0" }
+hydration_context = {  git="https://github.com/leptos-rs/leptos", branch="leptos_0.7" }
 reactive_graph = { git="https://github.com/leptos-rs/leptos", branch="leptos_0.7", features=["sandboxed-arenas"]}
+futures-util = "0.3.30"

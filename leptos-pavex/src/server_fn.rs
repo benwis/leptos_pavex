@@ -51,8 +51,10 @@ pub async fn handle_server_fns_with_context(req: PavexRequest,  additional_conte
     let pq = req.head.target.path_and_query().unwrap();
         match crate::server_fn::get_server_fn_by_path(pq.as_str()) {
             Some(lepfn) => {
-            //let runtime = create_runtime();
-            let owner = Owner::new();
+
+            let Some(owner) = Owner::current() else {
+                panic!("Failed to get the current owner for server functions")
+            };
                let blah =  owner.with(|| {
                     ScopedFuture::new(async move{
                         let req_parts = RequestParts::new_from_req(&req.head);

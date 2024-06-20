@@ -111,6 +111,7 @@ name = "app"
 version = "0.1.0"
 dependencies = [
  "cargo_px_env",
+ "leptos",
  "leptos-pavex",
  "pavex",
  "pavex_cli_client",
@@ -918,28 +919,15 @@ dependencies = [
 [[package]]
 name = "hydration_context"
 version = "0.1.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "95006f92e57ffff97669da825f3d229ccaa3b3a7eab3011e03e517ab3a85a564"
-dependencies = [
- "futures",
- "once_cell",
- "or_poisoned 0.1.0 (registry+https://github.com/rust-lang/crates.io-index)",
- "serde",
- "throw_error 0.1.0 (registry+https://github.com/rust-lang/crates.io-index)",
-]
-
-[[package]]
-name = "hydration_context"
-version = "0.1.0"
 source = "git+https://github.com/leptos-rs/leptos?branch=leptos_0.7#4d1c99c35dcfb9354cee93f477c495cde119bb4a"
 dependencies = [
  "futures",
  "js-sys",
  "once_cell",
- "or_poisoned 0.1.0 (git+https://github.com/leptos-rs/leptos?branch=leptos_0.7)",
+ "or_poisoned",
  "pin-project-lite",
  "serde",
- "throw_error 0.1.0 (git+https://github.com/leptos-rs/leptos?branch=leptos_0.7)",
+ "throw_error",
  "wasm-bindgen",
 ]
 
@@ -1135,13 +1123,13 @@ dependencies = [
  "cfg-if",
  "either_of",
  "futures",
- "hydration_context 0.1.0 (git+https://github.com/leptos-rs/leptos?branch=leptos_0.7)",
+ "hydration_context",
  "leptos_config",
  "leptos_dom",
  "leptos_macro",
  "leptos_server",
  "oco_ref",
- "or_poisoned 0.1.0 (git+https://github.com/leptos-rs/leptos?branch=leptos_0.7)",
+ "or_poisoned",
  "paste",
  "rand",
  "reactive_graph",
@@ -1153,7 +1141,7 @@ dependencies = [
  "slotmap",
  "tachys",
  "thiserror",
- "throw_error 0.1.0 (git+https://github.com/leptos-rs/leptos?branch=leptos_0.7)",
+ "throw_error",
  "tracing",
  "typed-builder",
  "typed-builder-macro",
@@ -1168,9 +1156,10 @@ dependencies = [
  "bytes",
  "dashmap",
  "futures",
+ "futures-util",
  "http-body",
  "http-body-util",
- "hydration_context 0.1.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "hydration_context",
  "leptos",
  "leptos_integration_utils",
  "leptos_meta",
@@ -1204,9 +1193,9 @@ source = "git+https://github.com/leptos-rs/leptos?branch=leptos_0.7#4d1c99c35dcf
 dependencies = [
  "base64 0.21.7",
  "getrandom",
- "hydration_context 0.1.0 (git+https://github.com/leptos-rs/leptos?branch=leptos_0.7)",
+ "hydration_context",
  "js-sys",
- "or_poisoned 0.1.0 (git+https://github.com/leptos-rs/leptos?branch=leptos_0.7)",
+ "or_poisoned",
  "rand",
  "reactive_graph",
  "send_wrapper",
@@ -1239,7 +1228,7 @@ version = "0.7.0-preview2"
 source = "git+https://github.com/leptos-rs/leptos?branch=leptos_0.7#4d1c99c35dcfb9354cee93f477c495cde119bb4a"
 dependencies = [
  "futures",
- "hydration_context 0.1.0 (git+https://github.com/leptos-rs/leptos?branch=leptos_0.7)",
+ "hydration_context",
  "leptos",
  "leptos_config",
  "leptos_meta",
@@ -1279,7 +1268,7 @@ dependencies = [
  "indexmap",
  "leptos",
  "once_cell",
- "or_poisoned 0.1.0 (git+https://github.com/leptos-rs/leptos?branch=leptos_0.7)",
+ "or_poisoned",
  "send_wrapper",
  "tracing",
  "wasm-bindgen",
@@ -1297,7 +1286,7 @@ dependencies = [
  "js-sys",
  "leptos",
  "once_cell",
- "or_poisoned 0.1.0 (git+https://github.com/leptos-rs/leptos?branch=leptos_0.7)",
+ "or_poisoned",
  "paste",
  "reactive_graph",
  "send_wrapper",
@@ -1314,7 +1303,7 @@ version = "0.7.0-preview2"
 source = "git+https://github.com/leptos-rs/leptos?branch=leptos_0.7#4d1c99c35dcfb9354cee93f477c495cde119bb4a"
 dependencies = [
  "futures",
- "hydration_context 0.1.0 (git+https://github.com/leptos-rs/leptos?branch=leptos_0.7)",
+ "hydration_context",
  "reactive_graph",
  "serde",
  "serde_json",
@@ -1576,12 +1565,6 @@ dependencies = [
  "pkg-config",
  "vcpkg",
 ]
-
-[[package]]
-name = "or_poisoned"
-version = "0.1.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "8c04f5d74368e4d0dfe06c45c8627c81bd7c317d52762d118fb9b3076f6420fd"
 
 [[package]]
 name = "or_poisoned"
@@ -2021,8 +2004,8 @@ dependencies = [
  "async-lock",
  "futures",
  "guardian",
- "hydration_context 0.1.0 (git+https://github.com/leptos-rs/leptos?branch=leptos_0.7)",
- "or_poisoned 0.1.0 (git+https://github.com/leptos-rs/leptos?branch=leptos_0.7)",
+ "hydration_context",
+ "or_poisoned",
  "pin-project-lite",
  "rustc-hash",
  "send_wrapper",
@@ -2456,7 +2439,7 @@ dependencies = [
  "serde_qs",
  "server_fn_macro_default",
  "thiserror",
- "throw_error 0.1.0 (git+https://github.com/leptos-rs/leptos?branch=leptos_0.7)",
+ "throw_error",
  "url",
  "wasm-bindgen",
  "wasm-bindgen-futures",
@@ -2643,7 +2626,7 @@ dependencies = [
  "next_tuple",
  "oco_ref",
  "once_cell",
- "or_poisoned 0.1.0 (git+https://github.com/leptos-rs/leptos?branch=leptos_0.7)",
+ "or_poisoned",
  "parking_lot",
  "paste",
  "pin-project-lite",
@@ -2651,7 +2634,7 @@ dependencies = [
  "rustc-hash",
  "send_wrapper",
  "slotmap",
- "throw_error 0.1.0 (git+https://github.com/leptos-rs/leptos?branch=leptos_0.7)",
+ "throw_error",
  "wasm-bindgen",
  "web-sys",
 ]
@@ -2696,15 +2679,6 @@ checksum = "8b9ef9bad013ada3808854ceac7b46812a6465ba368859a37e2100283d2d719c"
 dependencies = [
  "cfg-if",
  "once_cell",
-]
-
-[[package]]
-name = "throw_error"
-version = "0.1.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "91aaf6462d4cbe88c36a3a031ec15ef49a563844a412d13b2e1259ee2b35dd53"
-dependencies = [
- "pin-project-lite",
 ]
 
 [[package]]
