@@ -39,9 +39,7 @@ impl RouteList {
     }
 
     pub fn generate(app: RouteAppFunction) -> Option<Self>
-    where
-
-    {
+where {
         Self::IS_GENERATING.set(true);
         // run the app once, but throw away the HTML
         // the router won't actually route, but will fill the listing

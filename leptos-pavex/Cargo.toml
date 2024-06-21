@@ -7,10 +7,10 @@ edition = "2021"
 
 [dependencies]
 
-leptos.workspace=true 
-leptos_integration_utils.workspace=true 
-leptos_meta.workspace=true
-leptos_router.workspace=true 
+leptos.workspace = true
+leptos_integration_utils.workspace = true
+leptos_meta.workspace = true
+leptos_router.workspace = true
 futures.workspace = true
 url.workspace = true
 bytes.workspace = true

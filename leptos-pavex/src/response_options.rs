@@ -1,12 +1,11 @@
-use std::sync::Arc;
-use pavex::http::{StatusCode, HeaderMap, HeaderValue, HeaderName};
 use parking_lot::RwLock;
+use pavex::http::{HeaderMap, HeaderName, HeaderValue, StatusCode};
+use std::sync::Arc;
 
 #[derive(Clone, Debug, Default)]
 pub struct ResponseOptions(pub Arc<RwLock<ResponseParts>>);
 
 impl ResponseOptions {
-
     /// A simpler way to overwrite the contents of `ResponseOptions` with a new `ResponseParts`.
     pub fn overwrite(&self, parts: ResponseParts) {
         let mut writable = self.0.write();
@@ -23,7 +22,7 @@ impl ResponseOptions {
         let readable = self.0.read();
         let res_parts = readable;
         res_parts.headers.clone()
-        }
+    }
     /// Set the status of the returned Response.
     pub fn set_status(&self, status: StatusCode) {
         let mut writeable = self.0.write();
@@ -53,11 +52,7 @@ pub struct ResponseParts {
 impl Default for ResponseParts {
     fn default() -> Self {
         let mut headers = HeaderMap::new();
-        headers
-            .append(
-                "content-type",
-                HeaderValue::from_str("text/html").unwrap(),
-            );
+        headers.append("content-type", HeaderValue::from_str("text/html").unwrap());
         Self {
             status: Default::default(),
             headers,

@@ -10,12 +10,12 @@ use pavex::request::RequestHead;
 
 pub fn generate_app() -> AppFunction {
     generate_app_function(|| {
-        view! {<p>"Hello from Pavex!"</p>}
+        view! {<p>"Hello from Leptos in Pavex!"</p>}
     })
 }
 pub fn generate_route_app() -> RouteAppFunction {
     generate_route_app_function(|| {
-        view! {<p>"Hello from Pavex!"</p>}
+        view! {<p>"Hello from Leptos in Pavex!"</p>}
     })
 }
 

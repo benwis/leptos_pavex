@@ -1,14 +1,13 @@
+use crate::{pavex_helpers::AppFunction, response::build_response};
 use futures::{stream::once, Future, Stream, StreamExt};
 use leptos_integration_utils::{BoxedFnOnce, PinnedFuture, PinnedStream};
 use leptos_meta::ServerMetaContext;
 use reactive_graph::owner::Sandboxed;
-use crate::{pavex_helpers::AppFunction, response::build_response};
 
 pub trait ExtendResponse: Sized {
     type ResponseOptions: Send;
 
-    fn from_stream(stream: impl Stream<Item = String> + Send + 'static)
-        -> Self;
+    fn from_stream(stream: impl Stream<Item = String> + Send + 'static) -> Self;
 
     fn extend_response(&mut self, opt: &Self::ResponseOptions);
 
@@ -23,15 +22,10 @@ pub trait ExtendResponse: Sized {
             AppFunction,
             BoxedFnOnce<PinnedStream<String>>,
         ) -> PinnedFuture<PinnedStream<String>>,
-    ) -> impl Future<Output = Self> + Send
-    {
+    ) -> impl Future<Output = Self> + Send {
         async move {
-            let (owner, stream) = build_response(
-                app_fn,
-                meta_context,
-                additional_context,
-                stream_builder,
-            );
+            let (owner, stream) =
+                build_response(app_fn, meta_context, additional_context, stream_builder);
             let mut stream = stream.await;
 
             // wait for the first chunk of the stream, then set the status and headers

@@ -1,16 +1,13 @@
 use crate::request_parts::RequestParts;
 use crate::response_options::ResponseOptions;
-use crate::{
-    request::PavexRequest,
-    response::PavexResponse,
-};
+use crate::{request::PavexRequest, response::PavexResponse};
 use dashmap::DashMap;
-use pavex::http::{HeaderName, Method as HttpMethod, StatusCode};
-use pavex::response::Response;
+use leptos::prelude::{provide_context, Owner, ScopedFuture};
 use leptos::server_fn::middleware::Service;
 use leptos::server_fn::{codec::Encoding, initialize_server_fn_map, ServerFn, ServerFnTraitObj};
-use leptos::prelude::{Owner, provide_context, ScopedFuture};
 use once_cell::sync::Lazy;
+use pavex::http::{HeaderName, Method as HttpMethod, StatusCode};
+use pavex::response::Response;
 use url::Url;
 
 #[allow(unused)] // used by server integrations
@@ -44,76 +41,77 @@ pub fn server_fn_paths() -> impl Iterator<Item = (&'static str, HttpMethod)> {
         .map(|item| (item.path(), item.method()))
 }
 
-pub async fn handle_server_fns(req: PavexRequest) -> Response  {
-handle_server_fns_with_context(req, ||{}).await
+pub async fn handle_server_fns(req: PavexRequest) -> Response {
+    handle_server_fns_with_context(req, || {}).await
 }
-pub async fn handle_server_fns_with_context(req: PavexRequest,  additional_context: impl Fn() + 'static + Clone + Send) -> Response  {
+pub async fn handle_server_fns_with_context(
+    req: PavexRequest,
+    additional_context: impl Fn() + 'static + Clone + Send,
+) -> Response {
     let pq = req.head.target.path_and_query().unwrap();
-        match crate::server_fn::get_server_fn_by_path(pq.as_str()) {
-            Some(lepfn) => {
-
+    match crate::server_fn::get_server_fn_by_path(pq.as_str()) {
+        Some(lepfn) => {
             let Some(owner) = Owner::current() else {
                 panic!("Failed to get the current owner for server functions")
             };
-               let blah =  owner.with(|| {
-                    ScopedFuture::new(async move{
-                        let req_parts = RequestParts::new_from_req(&req.head);
-                        provide_context(req_parts.clone());
-                        let res_options = ResponseOptions::default();
-                        provide_context(res_options.clone());
-                        additional_context();
-                        let pavex_req = PavexRequest::new_from_req(req.head, req.body);
-                        let (mut pavex_res, req_parts, res_options ) = (lepfn.clone().run(pavex_req).await, req_parts, res_options);
+            let blah = owner.with(|| {
+                ScopedFuture::new(async move {
+                    let req_parts = RequestParts::new_from_req(&req.head);
+                    provide_context(req_parts.clone());
+                    let res_options = ResponseOptions::default();
+                    provide_context(res_options.clone());
+                    additional_context();
+                    let pavex_req = PavexRequest::new_from_req(req.head, req.body);
+                    let (mut pavex_res, req_parts, res_options) =
+                        (lepfn.clone().run(pavex_req).await, req_parts, res_options);
 
-                        // If the Accept header contains text/html, then this is a request from
-                        // a regular html form, so we should set up a redirect to either the referrer
-                        // or the user specified location
+                    // If the Accept header contains text/html, then this is a request from
+                    // a regular html form, so we should set up a redirect to either the referrer
+                    // or the user specified location
 
-                        let req_headers = req_parts.headers();
-                        let accepts = req_headers.get("Accept");
-                        let accepts_html_bool = match accepts{
-                            Some(h) => match h.to_str().unwrap().contains("text/html"){
-                                true => true,
-                                false => false
-                            },
-                            None => false
-                        };
+                    let req_headers = req_parts.headers();
+                    let accepts = req_headers.get("Accept");
+                    let accepts_html_bool = match accepts {
+                        Some(h) => match h.to_str().unwrap().contains("text/html") {
+                            true => true,
+                            false => false,
+                        },
+                        None => false,
+                    };
 
-                        if accepts_html_bool {
-
-                            let referrer = &req_headers.get("Referer");
-                            let location = &req_headers.get("Location");
-                            if location.is_none(){
-                                if let Some(referrer) = *referrer{
-                                res_options.insert_header(HeaderName::from_static("location"), referrer.to_owned());
-                                }
-                            }
-                            // Set status
-                            if res_options.status().is_none(){
-                                res_options.set_status(StatusCode::FOUND);
+                    if accepts_html_bool {
+                        let referrer = &req_headers.get("Referer");
+                        let location = &req_headers.get("Location");
+                        if location.is_none() {
+                            if let Some(referrer) = *referrer {
+                                res_options.insert_header(
+                                    HeaderName::from_static("location"),
+                                    referrer.to_owned(),
+                                );
                             }
                         }
-
-                        pavex_res.0
-                            .headers_mut()
-                            .extend(std::mem::take(&mut res_options.headers()));
-
-                        if let Some(status) = res_options.status(){
-                            pavex_res.0 = pavex_res.0.set_status(status);
+                        // Set status
+                        if res_options.status().is_none() {
+                            res_options.set_status(StatusCode::FOUND);
                         }
-                        pavex_res.0
+                    }
 
-                    })
-                });
-                blah.await
+                    pavex_res
+                        .0
+                        .headers_mut()
+                        .extend(std::mem::take(&mut res_options.headers()));
 
-        },
-            //None => panic!("Server FN path {} not found", &pq)
-            None => {
-            Response::new(StatusCode::BAD_REQUEST)
-
-            .set_typed_body(format!(
-                "Could not find a server function at the route {pq}. \
+                    if let Some(status) = res_options.status() {
+                        pavex_res.0 = pavex_res.0.set_status(status);
+                    }
+                    pavex_res.0
+                })
+            });
+            blah.await
+        }
+        //None => panic!("Server FN path {} not found", &pq)
+        None => Response::new(StatusCode::BAD_REQUEST).set_typed_body(format!(
+            "Could not find a server function at the route {pq}. \
                  \n\nIt's likely that either
                          1. The API prefix you specify in the `#[server]` \
                  macro doesn't match the prefix at which your server function \
@@ -121,19 +119,20 @@ pub async fn handle_server_fns_with_context(req: PavexRequest,  additional_conte
                  doesn't support automatic server function registration and \
                  you need to call ServerFn::register_explicit() on the server \
                  function type, somewhere in your `main` function.",
-            ))
-        }
+        )),
     }
-    }
+}
 
 /// Returns the server function at the given path
 pub fn get_server_fn_by_path(path: &str) -> Option<ServerFnTraitObj<PavexRequest, PavexResponse>> {
     // Sanitize Url to prevent query string or ids causing issues. To do that Url wants a full url,
     // so we give it a fake one. We're only using the path anyway!
     let full_url = format!("http://leptos.dev{}", path);
-    let Ok(url) = Url::parse(&full_url) else{
+    let Ok(url) = Url::parse(&full_url) else {
         println!("Failed to parse: {full_url:?}");
-    return None;
+        return None;
     };
-    REGISTERED_SERVER_FUNCTIONS.get_mut(url.path()).map(|f| f.clone())
+    REGISTERED_SERVER_FUNCTIONS
+        .get_mut(url.path())
+        .map(|f| f.clone())
 }

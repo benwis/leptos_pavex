@@ -242,13 +242,32 @@ pub async fn render_route_with_context(
                 .await
         }
         SsrMode::PartiallyBlocked => {
-            render_app_to_stream_with_context_and_replace_blocks(req_head, req_body, app_fn, true)
+            owner
+                .with(|| {
+                    ScopedFuture::new(render_app_to_stream_with_context_and_replace_blocks(
+                        req_head, req_body, app_fn, true,
+                    ))
+                })
                 .await
         }
         SsrMode::InOrder => {
-            render_app_to_stream_in_order_with_context(req_head, req_body, app_fn).await
+            owner
+                .with(|| {
+                    ScopedFuture::new(render_app_to_stream_in_order_with_context(
+                        req_head, req_body, app_fn,
+                    ))
+                })
+                .await
         }
-        SsrMode::Async => render_app_async_stream_with_context(req_head, req_body, app_fn).await,
+        SsrMode::Async => {
+            owner
+                .with(|| {
+                    ScopedFuture::new(render_app_async_stream_with_context(
+                        req_head, req_body, app_fn,
+                    ))
+                })
+                .await
+        }
     }
 }
 
