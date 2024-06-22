@@ -1,4 +1,6 @@
 pub mod extend_response;
+pub mod file_helpers;
+pub mod leptos_routes;
 pub mod pavex_helpers;
 pub mod request;
 #[allow(dead_code)]
@@ -745,10 +747,7 @@ pub fn pass_leptos_context(
 ) -> Owner {
     let owner = match route_type {
         RouteType::ServerFn => Owner::new(),
-        RouteType::Component => {
-            println!("COMPONENT");
-            Owner::new_root(Some(Arc::new(SsrSharedContext::new())))
-        }
+        RouteType::Component => Owner::new_root(Some(Arc::new(SsrSharedContext::new()))),
     };
     let req_parts = RequestParts::new_from_req(&req_head);
     // Set the created Owner as the current one, by setting the thread local. Pavex pins each request to their own

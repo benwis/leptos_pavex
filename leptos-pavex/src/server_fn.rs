@@ -1,12 +1,15 @@
+use crate::pavex_helpers::AdditionalContextServerFn;
 use crate::request_parts::RequestParts;
 use crate::response_options::ResponseOptions;
 use crate::{request::PavexRequest, response::PavexResponse};
 use dashmap::DashMap;
-use leptos::prelude::{provide_context, Owner, ScopedFuture};
+use leptos::prelude::{provide_context, ScopedFuture};
 use leptos::server_fn::middleware::Service;
 use leptos::server_fn::{codec::Encoding, initialize_server_fn_map, ServerFn, ServerFnTraitObj};
 use once_cell::sync::Lazy;
 use pavex::http::{HeaderName, Method as HttpMethod, StatusCode};
+use pavex::request::body::RawIncomingBody;
+use pavex::request::RequestHead;
 use pavex::response::Response;
 use url::Url;
 
@@ -41,27 +44,29 @@ pub fn server_fn_paths() -> impl Iterator<Item = (&'static str, HttpMethod)> {
         .map(|item| (item.path(), item.method()))
 }
 
-pub async fn handle_server_fns(req: PavexRequest) -> Response {
-    handle_server_fns_with_context(req, || {}).await
+pub async fn handle_server_fns(
+    req_head: RequestHead,
+    req_body: RawIncomingBody,
+    context: AdditionalContextServerFn,
+) -> Response {
+    handle_server_fns_with_context(req_head, req_body, context).await
 }
 pub async fn handle_server_fns_with_context(
-    req: PavexRequest,
-    additional_context: impl Fn() + 'static + Clone + Send,
+    req_head: RequestHead,
+    req_body: RawIncomingBody,
+    context: AdditionalContextServerFn,
 ) -> Response {
-    let pq = req.head.target.path_and_query().unwrap();
+    let pq = req_head.target.path_and_query().unwrap();
     match crate::server_fn::get_server_fn_by_path(pq.as_str()) {
         Some(lepfn) => {
-            let Some(owner) = Owner::current() else {
-                panic!("Failed to get the current owner for server functions")
-            };
+            let owner = context.owner();
             let blah = owner.with(|| {
                 ScopedFuture::new(async move {
-                    let req_parts = RequestParts::new_from_req(&req.head);
+                    let req_parts = RequestParts::new_from_req(&req_head);
                     provide_context(req_parts.clone());
                     let res_options = ResponseOptions::default();
                     provide_context(res_options.clone());
-                    additional_context();
-                    let pavex_req = PavexRequest::new_from_req(req.head, req.body);
+                    let pavex_req = PavexRequest::new_from_req(req_head, req_body);
                     let (mut pavex_res, req_parts, res_options) =
                         (lepfn.clone().run(pavex_req).await, req_parts, res_options);
 

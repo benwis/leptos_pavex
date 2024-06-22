@@ -20,7 +20,6 @@ pub fn generate_route_app() -> RouteAppFunction {
 }
 
 pub fn additional_context_components(req_head: &RequestHead) -> AdditionalContextComponent {
-    println!("ADDITIONAL CONTEXT ADDED");
     let owner = pass_leptos_context(&RouteType::Component, req_head, || {
         // Pass additional context items here
         provide_context("Test".to_string());
@@ -29,9 +28,9 @@ pub fn additional_context_components(req_head: &RequestHead) -> AdditionalContex
 }
 
 pub fn additional_context_serverfn(req_head: &RequestHead) -> AdditionalContextServerFn {
-    pass_leptos_context(&RouteType::ServerFn, req_head, || {
+    let owner = pass_leptos_context(&RouteType::ServerFn, req_head, || {
         // Pass additional context items here
         provide_context("Test".to_string());
     });
-    AdditionalContextServerFn
+    AdditionalContextServerFn::new(owner)
 }
