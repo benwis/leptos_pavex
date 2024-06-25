@@ -1,7 +1,7 @@
 use crate::models::types::*;
 use cfg_if::cfg_if;
 use derive_builder::Builder;
-use errors::EcommerceAppError;
+use app_errors::EcommerceAppError;
 use std::fmt;
 use std::path::PathBuf;
 

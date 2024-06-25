@@ -1,6 +1,7 @@
 use leptos::context::provide_context;
 use leptos::prelude::ElementChild;
 use leptos::view;
+use leptos_app::pages::App;
 use leptos_pavex::pavex_helpers::{
     generate_app_function, generate_route_app_function, AdditionalContextComponent,
     AdditionalContextServerFn, AppFunction, RouteAppFunction,
@@ -9,14 +10,10 @@ use leptos_pavex::{pass_leptos_context, RouteType};
 use pavex::request::RequestHead;
 
 pub fn generate_app() -> AppFunction {
-    generate_app_function(|| {
-        view! {<p>"Hello from Leptos in Pavex!"</p>}
-    })
+    generate_app_function(App)
 }
 pub fn generate_route_app() -> RouteAppFunction {
-    generate_route_app_function(|| {
-        view! {<p>"Hello from Leptos in Pavex!"</p>}
-    })
+    generate_route_app_function(App)
 }
 
 pub fn additional_context_components(req_head: &RequestHead) -> AdditionalContextComponent {

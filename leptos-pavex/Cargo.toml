@@ -31,6 +31,7 @@ serde.workspace = true
 http-types.workspace = true
 server_fn.workspace = true
 http.workspace = true
+
 [features]
 default = []
 wasm = []

@@ -9,25 +9,29 @@ edition = "2021"
 [dependencies]
 leptos.workspace = true
 leptos_meta.workspace = true
-# leptos_router = {git = "https://github.com/leptos-rs/leptos", branch="leptos_0.7"}
 leptos_router = { workspace = true, optional = true }
-leptos_axum = { workspace = true, optional = true }
 
-errors = {path="../errors"}
+app_errors = { path = "../app_errors" }
 derive_builder.workspace = true
 tokio-stream.workspace = true
 thiserror.workspace = true
 serde.workspace = true
 serde_json.workspace = true
 cfg-if.workspace = true
-axum = {workspace = true, optional = true}
-tokio = {workspace = true, optional = true}
-rusqlite = {workspace = true, optional = true}
+tokio = { workspace = true, optional = true }
+rusqlite = { workspace = true, optional = true }
 refinery = { workspace = true, optional = true }
 
 
- [features]
- default = []
- hydrate = ["leptos/hydrate", "leptos_router"]
- ssr = ["errors/ssr", "leptos/ssr", "leptos_meta/ssr", "leptos_router/ssr", "dep:leptos_axum", "dep:tokio", "dep:axum", "dep:rusqlite", "dep:refinery"]
-
+[features]
+default = []
+hydrate = ["leptos/hydrate", "leptos_router"]
+ssr = [
+    "app_errors/ssr",
+    "leptos/ssr",
+    "leptos_meta/ssr",
+    "leptos_router/ssr",
+    "dep:tokio",
+    "dep:rusqlite",
+    "dep:refinery",
+]

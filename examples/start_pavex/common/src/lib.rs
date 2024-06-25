@@ -9,7 +9,7 @@ use cfg_if::cfg_if;
 #[rustfmt::skip]
 cfg_if! {
     if #[cfg(feature = "ssr")] {
-        use ::errors::EcommerceAppError;
+        use app_errors::EcommerceAppError;
         use rusqlite::Connection;
         use leptos::prelude::*;
         use std::sync::Arc;

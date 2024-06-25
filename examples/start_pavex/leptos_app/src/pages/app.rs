@@ -1,5 +1,3 @@
-use crate::pages::catalog::Catalog;
-use crate::pages::catalog::InventoryItem;
 use crate::pages::home::__Home;
 use leptos::prelude::*;
 use leptos::*;
@@ -31,35 +29,18 @@ pub fn App() -> impl IntoView {
         <Stylesheet id="leptos" href="/pkg/leptos-ecommerce.css"/>
 
         // sets the document title
-        <Title text="Browser Bakery"/>
+        <Title text="Leptos Pavex Starter"/>
 
         // content for this welcome page
         <Router>
             <main>
-                <Routes fallback>
-                    <Route path="/catalog" view=Catalog />
-                    <Route path="/catalog/:id" view=InventoryItem />
-                    <Route path="" view=__Home />
-                </Routes>
+
+                <Routes fallback=||{view!{<p>"Not found"</p>}}>
+
+                <Route path=StaticSegment("/") view=__Home/>
+
+            </Routes>
             </main>
         </Router>
-    }
-}
-
-#[component(transparent)]
-fn RootRoutes() -> impl IntoView {
-    view! {
-        <Routes fallback=||{view!{<p>"Not found"</p>}}>
-            <Route path=StaticSegment("") view=__Home/>
-            <Route path=StaticSegment("/") view=__Home/>
-            <Route path=StaticSegment("/index.html") view=__Home/>
-        </Routes>
-    }
-}
-
-#[component]
-fn FullCatalog() -> impl IntoView {
-    view! {
-        <div></div>
     }
 }

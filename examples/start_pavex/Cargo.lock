@@ -162,7 +162,6 @@ source = "git+https://github.com/leptos-rs/leptos?branch=leptos_0.7#bda037a25365
 dependencies = [
  "futures",
  "thiserror",
- "tokio",
  "wasm-bindgen-futures",
 ]
 
@@ -179,12 +178,26 @@ dependencies = [
  "cargo_px_env",
  "leptos",
  "leptos-pavex",
+ "leptos_app",
  "pavex",
  "pavex_cli_client",
  "pavex_tracing",
  "serde",
  "tracing",
  "workspace_hack",
+]
+
+[[package]]
+name = "app_errors"
+version = "0.1.0"
+dependencies = [
+ "cfg-if",
+ "http 1.1.0",
+ "miette",
+ "serde",
+ "strum",
+ "strum_macros",
+ "thiserror",
 ]
 
 [[package]]
@@ -411,14 +424,11 @@ checksum = "3a6c9af12842a67734c9a2e355436e5d03b22383ed60cf13cd0c18fbfe3dcbcf"
 dependencies = [
  "async-trait",
  "axum-core",
- "axum-macros",
  "bytes",
  "futures-util",
  "http 1.1.0",
  "http-body",
  "http-body-util",
- "hyper",
- "hyper-util",
  "itoa",
  "matchit",
  "memchr",
@@ -428,15 +438,10 @@ dependencies = [
  "pin-project-lite",
  "rustversion",
  "serde",
- "serde_json",
- "serde_path_to_error",
- "serde_urlencoded",
  "sync_wrapper 1.0.1",
- "tokio",
  "tower",
  "tower-layer",
  "tower-service",
- "tracing",
 ]
 
 [[package]]
@@ -457,19 +462,6 @@ dependencies = [
  "sync_wrapper 0.1.2",
  "tower-layer",
  "tower-service",
- "tracing",
-]
-
-[[package]]
-name = "axum-macros"
-version = "0.4.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "00c055ee2d014ae5981ce1016374e8213682aa14d9bf40e48ab48b5f3ef20eaa"
-dependencies = [
- "heck 0.4.1",
- "proc-macro2",
- "quote",
- "syn 2.0.67",
 ]
 
 [[package]]
@@ -659,12 +651,10 @@ checksum = "186dce98367766de751c42c4f03970fc60fc012296e706ccbb9d5df9b6c1e271"
 name = "common"
 version = "0.1.0"
 dependencies = [
- "axum",
+ "app_errors",
  "cfg-if",
  "derive_builder",
- "errors",
  "leptos",
- "leptos_axum",
  "leptos_meta",
  "leptos_router",
  "refinery",
@@ -1027,19 +1017,6 @@ checksum = "534c5cf6194dfab3db3242765c03bbe257cf92f22b38f6bc0c58d59108a820ba"
 dependencies = [
  "libc",
  "windows-sys 0.52.0",
-]
-
-[[package]]
-name = "errors"
-version = "0.1.0"
-dependencies = [
- "cfg-if",
- "http 1.1.0",
- "miette",
- "serde",
- "strum",
- "strum_macros",
- "thiserror",
 ]
 
 [[package]]
@@ -1900,42 +1877,18 @@ dependencies = [
 name = "leptos_app"
 version = "0.1.0"
 dependencies = [
+ "app_errors",
  "camino",
  "cfg-if",
  "common",
- "errors",
  "http 1.1.0",
  "leptos",
- "leptos_axum",
  "leptos_meta",
  "leptos_router",
  "rusqlite",
  "serde",
  "serde_json",
  "thiserror",
-]
-
-[[package]]
-name = "leptos_axum"
-version = "0.7.0-preview2"
-source = "git+https://github.com/leptos-rs/leptos?branch=leptos_0.7#bda037a2536533104c89223264d0f9c876adeb03"
-dependencies = [
- "any_spawner 0.1.0 (git+https://github.com/leptos-rs/leptos?branch=leptos_0.7)",
- "axum",
- "futures",
- "http 1.1.0",
- "http-body-util",
- "hydration_context",
- "leptos",
- "leptos_integration_utils",
- "leptos_macro",
- "leptos_meta",
- "leptos_router",
- "parking_lot",
- "serde_json",
- "server_fn",
- "tokio",
- "tracing",
 ]
 
 [[package]]

@@ -5,7 +5,7 @@ members = [
     "server",
     "workspace_hack",
     "leptos_app",
-    "errors",
+    "app_errors",
     "frontend",
     "common",
 ]
@@ -39,7 +39,6 @@ leptos_meta = { git = "https://github.com/leptos-rs/leptos", branch = "leptos_0.
 leptos_router = { git = "https://github.com/leptos-rs/leptos", branch = "leptos_0.7" }
 leptos_axum = { git = "https://github.com/leptos-rs/leptos", branch = "leptos_0.7" }
 
-axum = { version = "0.7", features = ["macros"] }
 cfg-if = "1"
 console_error_panic_hook = "0.1.7"
 console_log = "1"
@@ -53,8 +52,6 @@ simple_logger = "5"
 thiserror = "1"
 tokio = { version = "1.33.0", features = ["full"] }
 tokio-stream = { version = "0.1.15" }
-tower = { version = "0.4.13", features = ["full"] }
-tower-http = { version = "0.5", features = ["full"] }
 wasm-bindgen = "=0.2.92"
 rusqlite = "0.31.0"
 camino = "1.1.7"
@@ -64,7 +61,7 @@ camino = "1.1.7"
 # that are used together frontend (lib) & server (bin)
 [[workspace.metadata.leptos]]
 # this name is used for the wasm, js and css file names
-name = "start_axum"
+name = "start_pavex"
 
 # the package in the workspace that contains the server binary (binary crate)
 bin-package = "server"
