@@ -10,10 +10,10 @@ use pavex::request::RequestHead;
 use leptos_meta::MetaTags;
 use leptos::prelude::*;
 
-pub fn generate_app() -> AppFunction {
-    let leptos_conf = get_configuration(None).await.unwrap();
-    let leptos_options = leptos_conf.leptos_options.clone();
-    generate_app_function(move || {
+pub fn generate_app(options: LeptosOptions) -> AppFunction {
+  
+    generate_app_function( move || {
+        let options2: LeptosOptions = options.clone();
         view! {
             <!DOCTYPE html>
             <html lang="en">
@@ -21,7 +21,7 @@ pub fn generate_app() -> AppFunction {
                     <meta charset="utf-8"/>
                     <meta name="viewport" content="width=device-width, initial-scale=1"/>
                     // <AutoReload options=app_state.leptos_options.clone() />
-                    <HydrationScripts options=leptos_options.clone()/>
+                    <HydrationScripts options=options2.clone()/>
                     <MetaTags/>
                 </head>
                 <body>
@@ -31,7 +31,8 @@ pub fn generate_app() -> AppFunction {
         }
     })
 }
-pub fn generate_route_app() -> RouteAppFunction {
+pub fn generate_route_app(options: LeptosOptions) -> RouteAppFunction {
+    let options2: LeptosOptions = options.clone();
     generate_route_app_function( move || {
         view! {
             <!DOCTYPE html>
@@ -40,7 +41,7 @@ pub fn generate_route_app() -> RouteAppFunction {
                     <meta charset="utf-8"/>
                     <meta name="viewport" content="width=device-width, initial-scale=1"/>
                     // <AutoReload options=app_state.leptos_options.clone() />
-                    <HydrationScripts options=leptos_options.clone()/>
+                    <HydrationScripts options=options2.clone()/>
                     <MetaTags/>
                 </head>
                 <body>
