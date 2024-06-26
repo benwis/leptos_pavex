@@ -1,3 +1,4 @@
+use leptos::config::LeptosOptions;
 use leptos::prelude::IntoAny;
 use leptos::{
     tachys::{renderer::dom::Dom, view::any_view::AnyView},

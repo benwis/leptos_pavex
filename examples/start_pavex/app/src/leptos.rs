@@ -1,5 +1,4 @@
 use leptos::context::provide_context;
-use leptos::prelude::ElementChild;
 use leptos::view;
 use leptos_app::pages::App;
 use leptos_pavex::pavex_helpers::{
@@ -8,12 +7,48 @@ use leptos_pavex::pavex_helpers::{
 };
 use leptos_pavex::{pass_leptos_context, RouteType};
 use pavex::request::RequestHead;
+use leptos_meta::MetaTags;
+use leptos::prelude::*;
 
 pub fn generate_app() -> AppFunction {
-    generate_app_function(App)
+    let leptos_conf = get_configuration(None).await.unwrap();
+    let leptos_options = leptos_conf.leptos_options.clone();
+    generate_app_function(move || {
+        view! {
+            <!DOCTYPE html>
+            <html lang="en">
+                <head>
+                    <meta charset="utf-8"/>
+                    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+                    // <AutoReload options=app_state.leptos_options.clone() />
+                    <HydrationScripts options=leptos_options.clone()/>
+                    <MetaTags/>
+                </head>
+                <body>
+                    <App/>
+                </body>
+            </html>
+        }
+    })
 }
 pub fn generate_route_app() -> RouteAppFunction {
-    generate_route_app_function(App)
+    generate_route_app_function( move || {
+        view! {
+            <!DOCTYPE html>
+            <html lang="en">
+                <head>
+                    <meta charset="utf-8"/>
+                    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+                    // <AutoReload options=app_state.leptos_options.clone() />
+                    <HydrationScripts options=leptos_options.clone()/>
+                    <MetaTags/>
+                </head>
+                <body>
+                    <App/>
+                </body>
+            </html>
+        }
+    })
 }
 
 pub fn additional_context_components(req_head: &RequestHead) -> AdditionalContextComponent {

@@ -1,13 +1,15 @@
 pub mod greet;
 pub mod ping;
 
+use leptos::config::get_configuration;
 use leptos_pavex::leptos_routes::generate_leptos_routes;
 use pavex::blueprint::{router::GET, Blueprint};
 use pavex::f;
 
 use crate::leptos::generate_route_app;
 
-pub fn register(bp: &mut Blueprint) {
+pub async fn register(bp: &mut Blueprint) {
+
     // Generate routes for routes defined in Leptos for components and server fns
     let routes = leptos_pavex::generate_route_list(generate_route_app());
     generate_leptos_routes(&routes, bp);

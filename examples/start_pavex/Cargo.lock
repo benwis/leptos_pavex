@@ -179,6 +179,7 @@ dependencies = [
  "leptos",
  "leptos-pavex",
  "leptos_app",
+ "leptos_meta",
  "pavex",
  "pavex_cli_client",
  "pavex_tracing",
