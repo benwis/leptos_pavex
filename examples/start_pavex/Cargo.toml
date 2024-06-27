@@ -127,3 +127,6 @@ lib-features = []
 lib-default-features = false
 
 lib-profile-release = "wasm-release"
+
+# Optional. No default. Env: LEPTOS_BIN_CARGO_COMMAND
+bin-cargo-command = "cargo px"
