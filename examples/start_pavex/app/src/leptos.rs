@@ -32,24 +32,25 @@ pub fn generate_app(options: LeptosOptions) -> AppFunction {
     })
 }
 pub fn generate_route_app(options: LeptosOptions) -> RouteAppFunction {
-    let options2: LeptosOptions = options.clone();
-    generate_route_app_function( move || {
+   let blah = move || {
         view! {
             <!DOCTYPE html>
-            <html lang="en">
-                <head>
-                    <meta charset="utf-8"/>
-                    <meta name="viewport" content="width=device-width, initial-scale=1"/>
-                    // <AutoReload options=app_state.leptos_options.clone() />
-                    <HydrationScripts options=options2.clone()/>
-                    <MetaTags/>
-                </head>
-                <body>
-                    <App/>
-                </body>
-            </html>
+        <html lang="en">
+            <head>
+                <meta charset="utf-8"/>
+                <meta name="viewport" content="width=device-width, initial-scale=1"/>
+                <AutoReload options=options.clone() />
+                <HydrationScripts options/>
+                <MetaTags/>
+            </head>
+            <body>
+                <App/>
+            </body>
+        </html>
         }
-    })
+    };
+    RouteAppFunction::new(blah().into_any())
+
 }
 
 pub fn additional_context_components(req_head: &RequestHead) -> AdditionalContextComponent {

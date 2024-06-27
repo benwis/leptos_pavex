@@ -34,10 +34,10 @@ panic = "abort"
 #leptos_router = { version = "0.7.0-preview2" }
 #leptos_axum = { version = "0.7.0-preview2" }
 
-leptos = { git = "https://github.com/leptos-rs/leptos", branch = "leptos_0.7" }
-leptos_meta = { git = "https://github.com/leptos-rs/leptos", branch = "leptos_0.7" }
-leptos_router = { git = "https://github.com/leptos-rs/leptos", branch = "leptos_0.7" }
-leptos_axum = { git = "https://github.com/leptos-rs/leptos", branch = "leptos_0.7" }
+leptos = { git = "https://github.com/leptos-rs/leptos", branch = "leptos_0.7_sync" }
+leptos_meta = { git = "https://github.com/leptos-rs/leptos", branch = "leptos_0.7_sync" }
+leptos_router = { git = "https://github.com/leptos-rs/leptos", branch = "leptos_0.7_sync" }
+leptos_axum = { git = "https://github.com/leptos-rs/leptos", branch = "leptos_0.7_sync" }
 
 cfg-if = "1"
 console_error_panic_hook = "0.1.7"

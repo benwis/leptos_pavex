@@ -158,16 +158,6 @@ dependencies = [
 [[package]]
 name = "any_spawner"
 version = "0.1.0"
-source = "git+https://github.com/leptos-rs/leptos?branch=leptos_0.7#9d4b648b55c482701b9206a0182a2dec17f04966"
-dependencies = [
- "futures",
- "thiserror",
- "wasm-bindgen-futures",
-]
-
-[[package]]
-name = "any_spawner"
-version = "0.1.0"
 source = "git+https://github.com/leptos-rs/leptos?branch=leptos_0.7_sync#75cf1ce5d8c1af8a30140fbf06ff057db3bac0e0"
 dependencies = [
  "futures",
@@ -186,10 +176,10 @@ name = "app"
 version = "0.1.0"
 dependencies = [
  "cargo_px_env",
- "leptos 0.7.0-preview2 (git+https://github.com/leptos-rs/leptos?branch=leptos_0.7_sync)",
+ "leptos",
  "leptos-pavex",
  "leptos_app",
- "leptos_meta 0.7.0-preview2 (git+https://github.com/leptos-rs/leptos?branch=leptos_0.7_sync)",
+ "leptos_meta",
  "pavex",
  "pavex_cli_client",
  "pavex_tracing",
@@ -659,8 +649,8 @@ dependencies = [
  "app_errors",
  "cfg-if",
  "derive_builder",
- "leptos 0.7.0-preview2 (git+https://github.com/leptos-rs/leptos?branch=leptos_0.7)",
- "leptos_meta 0.7.0-preview2 (git+https://github.com/leptos-rs/leptos?branch=leptos_0.7)",
+ "leptos",
+ "leptos_meta",
  "leptos_router",
  "refinery",
  "rusqlite",
@@ -739,11 +729,6 @@ dependencies = [
  "quote",
  "unicode-xid",
 ]
-
-[[package]]
-name = "const_str_slice_concat"
-version = "0.1.0"
-source = "git+https://github.com/leptos-rs/leptos?branch=leptos_0.7#9d4b648b55c482701b9206a0182a2dec17f04966"
 
 [[package]]
 name = "const_str_slice_concat"
@@ -999,14 +984,6 @@ checksum = "60b1af1c220855b6ceac025d3f6ecdd2b7c4894bfe9cd9bda4fbb4bc7c0d4cf0"
 [[package]]
 name = "either_of"
 version = "0.1.0"
-source = "git+https://github.com/leptos-rs/leptos?branch=leptos_0.7#9d4b648b55c482701b9206a0182a2dec17f04966"
-dependencies = [
- "pin-project-lite",
-]
-
-[[package]]
-name = "either_of"
-version = "0.1.0"
 source = "git+https://github.com/leptos-rs/leptos?branch=leptos_0.7_sync#75cf1ce5d8c1af8a30140fbf06ff057db3bac0e0"
 dependencies = [
  "pin-project-lite",
@@ -1142,7 +1119,7 @@ dependencies = [
  "common",
  "console_error_panic_hook",
  "console_log",
- "leptos 0.7.0-preview2 (git+https://github.com/leptos-rs/leptos?branch=leptos_0.7)",
+ "leptos",
  "leptos_app",
  "log",
  "wasm-bindgen",
@@ -1590,29 +1567,16 @@ dependencies = [
 [[package]]
 name = "hydration_context"
 version = "0.1.0"
-source = "git+https://github.com/leptos-rs/leptos?branch=leptos_0.7#9d4b648b55c482701b9206a0182a2dec17f04966"
+source = "git+https://github.com/leptos-rs/leptos?branch=leptos_0.7_sync#75cf1ce5d8c1af8a30140fbf06ff057db3bac0e0"
 dependencies = [
  "futures",
  "js-sys",
  "once_cell",
- "or_poisoned 0.1.0 (git+https://github.com/leptos-rs/leptos?branch=leptos_0.7)",
+ "or_poisoned",
  "pin-project-lite",
  "serde",
- "throw_error 0.1.0 (git+https://github.com/leptos-rs/leptos?branch=leptos_0.7)",
+ "throw_error",
  "wasm-bindgen",
-]
-
-[[package]]
-name = "hydration_context"
-version = "0.1.0"
-source = "git+https://github.com/leptos-rs/leptos?branch=leptos_0.7_sync#75cf1ce5d8c1af8a30140fbf06ff057db3bac0e0"
-dependencies = [
- "futures",
- "once_cell",
- "or_poisoned 0.1.0 (git+https://github.com/leptos-rs/leptos?branch=leptos_0.7_sync)",
- "pin-project-lite",
- "serde",
- "throw_error 0.1.0 (git+https://github.com/leptos-rs/leptos?branch=leptos_0.7_sync)",
 ]
 
 [[package]]
@@ -1841,66 +1805,32 @@ checksum = "bbd2bcb4c963f2ddae06a2efc7e9f3591312473c50c6685e1f298068316e66fe"
 [[package]]
 name = "leptos"
 version = "0.7.0-preview2"
-source = "git+https://github.com/leptos-rs/leptos?branch=leptos_0.7#9d4b648b55c482701b9206a0182a2dec17f04966"
-dependencies = [
- "any_spawner 0.1.0 (git+https://github.com/leptos-rs/leptos?branch=leptos_0.7)",
- "base64 0.22.1",
- "cfg-if",
- "either_of 0.1.0 (git+https://github.com/leptos-rs/leptos?branch=leptos_0.7)",
- "futures",
- "hydration_context 0.1.0 (git+https://github.com/leptos-rs/leptos?branch=leptos_0.7)",
- "leptos_config 0.7.0-preview2 (git+https://github.com/leptos-rs/leptos?branch=leptos_0.7)",
- "leptos_dom 0.7.0-preview2 (git+https://github.com/leptos-rs/leptos?branch=leptos_0.7)",
- "leptos_macro 0.7.0-preview2 (git+https://github.com/leptos-rs/leptos?branch=leptos_0.7)",
- "leptos_server 0.7.0-preview2 (git+https://github.com/leptos-rs/leptos?branch=leptos_0.7)",
- "oco_ref 0.2.0 (git+https://github.com/leptos-rs/leptos?branch=leptos_0.7)",
- "or_poisoned 0.1.0 (git+https://github.com/leptos-rs/leptos?branch=leptos_0.7)",
- "paste",
- "rand 0.8.5",
- "reactive_graph 0.1.0-preview (git+https://github.com/leptos-rs/leptos?branch=leptos_0.7)",
- "rustc-hash",
- "send_wrapper",
- "serde",
- "serde_qs 0.12.0",
- "server_fn 0.7.0-preview2 (git+https://github.com/leptos-rs/leptos?branch=leptos_0.7)",
- "slotmap",
- "tachys 0.1.0-preview (git+https://github.com/leptos-rs/leptos?branch=leptos_0.7)",
- "thiserror",
- "throw_error 0.1.0 (git+https://github.com/leptos-rs/leptos?branch=leptos_0.7)",
- "tracing",
- "typed-builder",
- "typed-builder-macro",
- "wasm-bindgen",
- "web-sys",
-]
-
-[[package]]
-name = "leptos"
-version = "0.7.0-preview2"
 source = "git+https://github.com/leptos-rs/leptos?branch=leptos_0.7_sync#75cf1ce5d8c1af8a30140fbf06ff057db3bac0e0"
 dependencies = [
  "any_spawner 0.1.0 (git+https://github.com/leptos-rs/leptos?branch=leptos_0.7_sync)",
+ "base64 0.22.1",
  "cfg-if",
- "either_of 0.1.0 (git+https://github.com/leptos-rs/leptos?branch=leptos_0.7_sync)",
+ "either_of",
  "futures",
- "hydration_context 0.1.0 (git+https://github.com/leptos-rs/leptos?branch=leptos_0.7_sync)",
- "leptos_config 0.7.0-preview2 (git+https://github.com/leptos-rs/leptos?branch=leptos_0.7_sync)",
- "leptos_dom 0.7.0-preview2 (git+https://github.com/leptos-rs/leptos?branch=leptos_0.7_sync)",
- "leptos_macro 0.7.0-preview2 (git+https://github.com/leptos-rs/leptos?branch=leptos_0.7_sync)",
- "leptos_server 0.7.0-preview2 (git+https://github.com/leptos-rs/leptos?branch=leptos_0.7_sync)",
- "oco_ref 0.2.0 (git+https://github.com/leptos-rs/leptos?branch=leptos_0.7_sync)",
- "or_poisoned 0.1.0 (git+https://github.com/leptos-rs/leptos?branch=leptos_0.7_sync)",
+ "hydration_context",
+ "leptos_config",
+ "leptos_dom",
+ "leptos_macro",
+ "leptos_server",
+ "oco_ref",
+ "or_poisoned",
  "paste",
- "reactive_graph 0.1.0-preview (git+https://github.com/leptos-rs/leptos?branch=leptos_0.7_sync)",
+ "rand 0.8.5",
+ "reactive_graph",
  "rustc-hash",
  "send_wrapper",
  "serde",
  "serde_qs 0.12.0",
- "server_fn 0.7.0-preview2 (git+https://github.com/leptos-rs/leptos?branch=leptos_0.7_sync)",
+ "server_fn",
  "slotmap",
- "tachys 0.1.0-preview (git+https://github.com/leptos-rs/leptos?branch=leptos_0.7_sync)",
+ "tachys",
  "thiserror",
- "throw_error 0.1.0 (git+https://github.com/leptos-rs/leptos?branch=leptos_0.7_sync)",
+ "throw_error",
  "tracing",
  "typed-builder",
  "typed-builder-macro",
@@ -1921,19 +1851,19 @@ dependencies = [
  "http-body",
  "http-body-util",
  "http-types",
- "hydration_context 0.1.0 (git+https://github.com/leptos-rs/leptos?branch=leptos_0.7)",
- "leptos 0.7.0-preview2 (git+https://github.com/leptos-rs/leptos?branch=leptos_0.7)",
+ "hydration_context",
+ "leptos",
  "leptos_integration_utils",
- "leptos_meta 0.7.0-preview2 (git+https://github.com/leptos-rs/leptos?branch=leptos_0.7)",
+ "leptos_meta",
  "leptos_router",
  "multimap",
  "once_cell",
  "parking_lot",
  "pavex",
  "pin-project",
- "reactive_graph 0.1.0-preview (git+https://github.com/leptos-rs/leptos?branch=leptos_0.7)",
+ "reactive_graph",
  "serde",
- "server_fn 0.7.0-preview2 (git+https://github.com/leptos-rs/leptos?branch=leptos_0.7)",
+ "server_fn",
  "tracing",
  "url",
 ]
@@ -1947,8 +1877,8 @@ dependencies = [
  "cfg-if",
  "common",
  "http 1.1.0",
- "leptos 0.7.0-preview2 (git+https://github.com/leptos-rs/leptos?branch=leptos_0.7)",
- "leptos_meta 0.7.0-preview2 (git+https://github.com/leptos-rs/leptos?branch=leptos_0.7)",
+ "leptos",
+ "leptos_meta",
  "leptos_router",
  "rusqlite",
  "serde",
@@ -1959,18 +1889,6 @@ dependencies = [
 [[package]]
 name = "leptos_config"
 version = "0.7.0-preview2"
-source = "git+https://github.com/leptos-rs/leptos?branch=leptos_0.7#9d4b648b55c482701b9206a0182a2dec17f04966"
-dependencies = [
- "config",
- "regex",
- "serde",
- "thiserror",
- "typed-builder",
-]
-
-[[package]]
-name = "leptos_config"
-version = "0.7.0-preview2"
 source = "git+https://github.com/leptos-rs/leptos?branch=leptos_0.7_sync#75cf1ce5d8c1af8a30140fbf06ff057db3bac0e0"
 dependencies = [
  "config",
@@ -1983,53 +1901,20 @@ dependencies = [
 [[package]]
 name = "leptos_dom"
 version = "0.7.0-preview2"
-source = "git+https://github.com/leptos-rs/leptos?branch=leptos_0.7#9d4b648b55c482701b9206a0182a2dec17f04966"
+source = "git+https://github.com/leptos-rs/leptos?branch=leptos_0.7_sync#75cf1ce5d8c1af8a30140fbf06ff057db3bac0e0"
 dependencies = [
  "base64 0.21.7",
  "getrandom 0.2.15",
- "hydration_context 0.1.0 (git+https://github.com/leptos-rs/leptos?branch=leptos_0.7)",
+ "hydration_context",
  "js-sys",
- "or_poisoned 0.1.0 (git+https://github.com/leptos-rs/leptos?branch=leptos_0.7)",
+ "or_poisoned",
  "rand 0.8.5",
- "reactive_graph 0.1.0-preview (git+https://github.com/leptos-rs/leptos?branch=leptos_0.7)",
+ "reactive_graph",
  "send_wrapper",
- "tachys 0.1.0-preview (git+https://github.com/leptos-rs/leptos?branch=leptos_0.7)",
+ "tachys",
  "tracing",
  "wasm-bindgen",
  "web-sys",
-]
-
-[[package]]
-name = "leptos_dom"
-version = "0.7.0-preview2"
-source = "git+https://github.com/leptos-rs/leptos?branch=leptos_0.7_sync#75cf1ce5d8c1af8a30140fbf06ff057db3bac0e0"
-dependencies = [
- "hydration_context 0.1.0 (git+https://github.com/leptos-rs/leptos?branch=leptos_0.7_sync)",
- "js-sys",
- "or_poisoned 0.1.0 (git+https://github.com/leptos-rs/leptos?branch=leptos_0.7_sync)",
- "reactive_graph 0.1.0-preview (git+https://github.com/leptos-rs/leptos?branch=leptos_0.7_sync)",
- "send_wrapper",
- "tachys 0.1.0-preview (git+https://github.com/leptos-rs/leptos?branch=leptos_0.7_sync)",
- "tracing",
- "wasm-bindgen",
- "web-sys",
-]
-
-[[package]]
-name = "leptos_hot_reload"
-version = "0.7.0-preview2"
-source = "git+https://github.com/leptos-rs/leptos?branch=leptos_0.7#9d4b648b55c482701b9206a0182a2dec17f04966"
-dependencies = [
- "anyhow",
- "camino",
- "indexmap",
- "parking_lot",
- "proc-macro2",
- "quote",
- "rstml",
- "serde",
- "syn 2.0.68",
- "walkdir",
 ]
 
 [[package]]
@@ -2052,38 +1937,16 @@ dependencies = [
 [[package]]
 name = "leptos_integration_utils"
 version = "0.7.0-preview2"
-source = "git+https://github.com/leptos-rs/leptos?branch=leptos_0.7#9d4b648b55c482701b9206a0182a2dec17f04966"
+source = "git+https://github.com/leptos-rs/leptos?branch=leptos_0.7_sync#75cf1ce5d8c1af8a30140fbf06ff057db3bac0e0"
 dependencies = [
  "futures",
- "hydration_context 0.1.0 (git+https://github.com/leptos-rs/leptos?branch=leptos_0.7)",
- "leptos 0.7.0-preview2 (git+https://github.com/leptos-rs/leptos?branch=leptos_0.7)",
- "leptos_config 0.7.0-preview2 (git+https://github.com/leptos-rs/leptos?branch=leptos_0.7)",
- "leptos_meta 0.7.0-preview2 (git+https://github.com/leptos-rs/leptos?branch=leptos_0.7)",
+ "hydration_context",
+ "leptos",
+ "leptos_config",
+ "leptos_meta",
  "leptos_router",
- "reactive_graph 0.1.0-preview (git+https://github.com/leptos-rs/leptos?branch=leptos_0.7)",
+ "reactive_graph",
  "tracing",
-]
-
-[[package]]
-name = "leptos_macro"
-version = "0.7.0-preview2"
-source = "git+https://github.com/leptos-rs/leptos?branch=leptos_0.7#9d4b648b55c482701b9206a0182a2dec17f04966"
-dependencies = [
- "attribute-derive",
- "cfg-if",
- "convert_case",
- "html-escape",
- "itertools",
- "leptos_hot_reload 0.7.0-preview2 (git+https://github.com/leptos-rs/leptos?branch=leptos_0.7)",
- "prettyplease",
- "proc-macro-error",
- "proc-macro2",
- "quote",
- "rstml",
- "server_fn_macro 0.7.0-preview2 (git+https://github.com/leptos-rs/leptos?branch=leptos_0.7)",
- "syn 2.0.68",
- "tracing",
- "uuid",
 ]
 
 [[package]]
@@ -2096,32 +1959,16 @@ dependencies = [
  "convert_case",
  "html-escape",
  "itertools",
- "leptos_hot_reload 0.7.0-preview2 (git+https://github.com/leptos-rs/leptos?branch=leptos_0.7_sync)",
+ "leptos_hot_reload",
  "prettyplease",
  "proc-macro-error",
  "proc-macro2",
  "quote",
  "rstml",
- "server_fn_macro 0.7.0-preview2 (git+https://github.com/leptos-rs/leptos?branch=leptos_0.7_sync)",
+ "server_fn_macro",
  "syn 2.0.68",
  "tracing",
  "uuid",
-]
-
-[[package]]
-name = "leptos_meta"
-version = "0.7.0-preview2"
-source = "git+https://github.com/leptos-rs/leptos?branch=leptos_0.7#9d4b648b55c482701b9206a0182a2dec17f04966"
-dependencies = [
- "futures",
- "indexmap",
- "leptos 0.7.0-preview2 (git+https://github.com/leptos-rs/leptos?branch=leptos_0.7)",
- "once_cell",
- "or_poisoned 0.1.0 (git+https://github.com/leptos-rs/leptos?branch=leptos_0.7)",
- "send_wrapper",
- "tracing",
- "wasm-bindgen",
- "web-sys",
 ]
 
 [[package]]
@@ -2131,9 +1978,9 @@ source = "git+https://github.com/leptos-rs/leptos?branch=leptos_0.7_sync#75cf1ce
 dependencies = [
  "futures",
  "indexmap",
- "leptos 0.7.0-preview2 (git+https://github.com/leptos-rs/leptos?branch=leptos_0.7_sync)",
+ "leptos",
  "once_cell",
- "or_poisoned 0.1.0 (git+https://github.com/leptos-rs/leptos?branch=leptos_0.7_sync)",
+ "or_poisoned",
  "send_wrapper",
  "tracing",
  "wasm-bindgen",
@@ -2143,20 +1990,20 @@ dependencies = [
 [[package]]
 name = "leptos_router"
 version = "0.7.0-preview2"
-source = "git+https://github.com/leptos-rs/leptos?branch=leptos_0.7#9d4b648b55c482701b9206a0182a2dec17f04966"
+source = "git+https://github.com/leptos-rs/leptos?branch=leptos_0.7_sync#75cf1ce5d8c1af8a30140fbf06ff057db3bac0e0"
 dependencies = [
- "any_spawner 0.1.0 (git+https://github.com/leptos-rs/leptos?branch=leptos_0.7)",
- "either_of 0.1.0 (git+https://github.com/leptos-rs/leptos?branch=leptos_0.7)",
+ "any_spawner 0.1.0 (git+https://github.com/leptos-rs/leptos?branch=leptos_0.7_sync)",
+ "either_of",
  "futures",
  "js-sys",
- "leptos 0.7.0-preview2 (git+https://github.com/leptos-rs/leptos?branch=leptos_0.7)",
+ "leptos",
  "once_cell",
- "or_poisoned 0.1.0 (git+https://github.com/leptos-rs/leptos?branch=leptos_0.7)",
+ "or_poisoned",
  "paste",
  "percent-encoding",
- "reactive_graph 0.1.0-preview (git+https://github.com/leptos-rs/leptos?branch=leptos_0.7)",
+ "reactive_graph",
  "send_wrapper",
- "tachys 0.1.0-preview (git+https://github.com/leptos-rs/leptos?branch=leptos_0.7)",
+ "tachys",
  "thiserror",
  "url",
  "wasm-bindgen",
@@ -2166,30 +2013,15 @@ dependencies = [
 [[package]]
 name = "leptos_server"
 version = "0.7.0-preview2"
-source = "git+https://github.com/leptos-rs/leptos?branch=leptos_0.7#9d4b648b55c482701b9206a0182a2dec17f04966"
-dependencies = [
- "futures",
- "hydration_context 0.1.0 (git+https://github.com/leptos-rs/leptos?branch=leptos_0.7)",
- "reactive_graph 0.1.0-preview (git+https://github.com/leptos-rs/leptos?branch=leptos_0.7)",
- "serde",
- "serde_json",
- "server_fn 0.7.0-preview2 (git+https://github.com/leptos-rs/leptos?branch=leptos_0.7)",
- "tachys 0.1.0-preview (git+https://github.com/leptos-rs/leptos?branch=leptos_0.7)",
- "thiserror",
-]
-
-[[package]]
-name = "leptos_server"
-version = "0.7.0-preview2"
 source = "git+https://github.com/leptos-rs/leptos?branch=leptos_0.7_sync#75cf1ce5d8c1af8a30140fbf06ff057db3bac0e0"
 dependencies = [
  "futures",
- "hydration_context 0.1.0 (git+https://github.com/leptos-rs/leptos?branch=leptos_0.7_sync)",
- "reactive_graph 0.1.0-preview (git+https://github.com/leptos-rs/leptos?branch=leptos_0.7_sync)",
+ "hydration_context",
+ "reactive_graph",
  "serde",
  "serde_json",
- "server_fn 0.7.0-preview2 (git+https://github.com/leptos-rs/leptos?branch=leptos_0.7_sync)",
- "tachys 0.1.0-preview (git+https://github.com/leptos-rs/leptos?branch=leptos_0.7_sync)",
+ "server_fn",
+ "tachys",
  "thiserror",
 ]
 
@@ -2391,11 +2223,6 @@ dependencies = [
 [[package]]
 name = "next_tuple"
 version = "0.1.0-preview"
-source = "git+https://github.com/leptos-rs/leptos?branch=leptos_0.7#9d4b648b55c482701b9206a0182a2dec17f04966"
-
-[[package]]
-name = "next_tuple"
-version = "0.1.0-preview"
 source = "git+https://github.com/leptos-rs/leptos?branch=leptos_0.7_sync#75cf1ce5d8c1af8a30140fbf06ff057db3bac0e0"
 
 [[package]]
@@ -2450,15 +2277,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "576dfe1fc8f9df304abb159d767a29d0476f7750fbf8aa7ad07816004a207434"
 dependencies = [
  "memchr",
-]
-
-[[package]]
-name = "oco_ref"
-version = "0.2.0"
-source = "git+https://github.com/leptos-rs/leptos?branch=leptos_0.7#9d4b648b55c482701b9206a0182a2dec17f04966"
-dependencies = [
- "serde",
- "thiserror",
 ]
 
 [[package]]
@@ -2525,11 +2343,6 @@ dependencies = [
  "pkg-config",
  "vcpkg",
 ]
-
-[[package]]
-name = "or_poisoned"
-version = "0.1.0"
-source = "git+https://github.com/leptos-rs/leptos?branch=leptos_0.7#9d4b648b55c482701b9206a0182a2dec17f04966"
 
 [[package]]
 name = "or_poisoned"
@@ -3063,34 +2876,14 @@ dependencies = [
 [[package]]
 name = "reactive_graph"
 version = "0.1.0-preview"
-source = "git+https://github.com/leptos-rs/leptos?branch=leptos_0.7#9d4b648b55c482701b9206a0182a2dec17f04966"
-dependencies = [
- "any_spawner 0.1.0 (git+https://github.com/leptos-rs/leptos?branch=leptos_0.7)",
- "async-lock 3.4.0",
- "futures",
- "guardian",
- "hydration_context 0.1.0 (git+https://github.com/leptos-rs/leptos?branch=leptos_0.7)",
- "or_poisoned 0.1.0 (git+https://github.com/leptos-rs/leptos?branch=leptos_0.7)",
- "pin-project-lite",
- "rustc-hash",
- "send_wrapper",
- "serde",
- "slotmap",
- "thiserror",
- "web-sys",
-]
-
-[[package]]
-name = "reactive_graph"
-version = "0.1.0-preview"
 source = "git+https://github.com/leptos-rs/leptos?branch=leptos_0.7_sync#75cf1ce5d8c1af8a30140fbf06ff057db3bac0e0"
 dependencies = [
  "any_spawner 0.1.0 (git+https://github.com/leptos-rs/leptos?branch=leptos_0.7_sync)",
  "async-lock 3.4.0",
  "futures",
  "guardian",
- "hydration_context 0.1.0 (git+https://github.com/leptos-rs/leptos?branch=leptos_0.7_sync)",
- "or_poisoned 0.1.0 (git+https://github.com/leptos-rs/leptos?branch=leptos_0.7_sync)",
+ "hydration_context",
+ "or_poisoned",
  "pin-project-lite",
  "rustc-hash",
  "send_wrapper",
@@ -3619,7 +3412,7 @@ dependencies = [
 [[package]]
 name = "server_fn"
 version = "0.7.0-preview2"
-source = "git+https://github.com/leptos-rs/leptos?branch=leptos_0.7#9d4b648b55c482701b9206a0182a2dec17f04966"
+source = "git+https://github.com/leptos-rs/leptos?branch=leptos_0.7_sync#75cf1ce5d8c1af8a30140fbf06ff057db3bac0e0"
 dependencies = [
  "axum",
  "bytes",
@@ -3638,9 +3431,9 @@ dependencies = [
  "serde",
  "serde_json",
  "serde_qs 0.12.0",
- "server_fn_macro_default 0.7.0-preview2 (git+https://github.com/leptos-rs/leptos?branch=leptos_0.7)",
+ "server_fn_macro_default",
  "thiserror",
- "throw_error 0.1.0 (git+https://github.com/leptos-rs/leptos?branch=leptos_0.7)",
+ "throw_error",
  "tower",
  "tower-layer",
  "url",
@@ -3652,48 +3445,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "server_fn"
-version = "0.7.0-preview2"
-source = "git+https://github.com/leptos-rs/leptos?branch=leptos_0.7_sync#75cf1ce5d8c1af8a30140fbf06ff057db3bac0e0"
-dependencies = [
- "bytes",
- "const_format",
- "dashmap",
- "futures",
- "gloo-net",
- "http 1.1.0",
- "js-sys",
- "once_cell",
- "pin-project-lite",
- "send_wrapper",
- "serde",
- "serde_json",
- "serde_qs 0.12.0",
- "server_fn_macro_default 0.7.0-preview2 (git+https://github.com/leptos-rs/leptos?branch=leptos_0.7_sync)",
- "thiserror",
- "throw_error 0.1.0 (git+https://github.com/leptos-rs/leptos?branch=leptos_0.7_sync)",
- "url",
- "wasm-bindgen",
- "wasm-bindgen-futures",
- "wasm-streams",
- "web-sys",
- "xxhash-rust",
-]
-
-[[package]]
-name = "server_fn_macro"
-version = "0.7.0-preview2"
-source = "git+https://github.com/leptos-rs/leptos?branch=leptos_0.7#9d4b648b55c482701b9206a0182a2dec17f04966"
-dependencies = [
- "const_format",
- "convert_case",
- "proc-macro2",
- "quote",
- "syn 2.0.68",
- "xxhash-rust",
-]
-
-[[package]]
 name = "server_fn_macro"
 version = "0.7.0-preview2"
 source = "git+https://github.com/leptos-rs/leptos?branch=leptos_0.7_sync#75cf1ce5d8c1af8a30140fbf06ff057db3bac0e0"
@@ -3709,18 +3460,9 @@ dependencies = [
 [[package]]
 name = "server_fn_macro_default"
 version = "0.7.0-preview2"
-source = "git+https://github.com/leptos-rs/leptos?branch=leptos_0.7#9d4b648b55c482701b9206a0182a2dec17f04966"
-dependencies = [
- "server_fn_macro 0.7.0-preview2 (git+https://github.com/leptos-rs/leptos?branch=leptos_0.7)",
- "syn 2.0.68",
-]
-
-[[package]]
-name = "server_fn_macro_default"
-version = "0.7.0-preview2"
 source = "git+https://github.com/leptos-rs/leptos?branch=leptos_0.7_sync#75cf1ce5d8c1af8a30140fbf06ff057db3bac0e0"
 dependencies = [
- "server_fn_macro 0.7.0-preview2 (git+https://github.com/leptos-rs/leptos?branch=leptos_0.7_sync)",
+ "server_fn_macro",
  "syn 2.0.68",
 ]
 
@@ -4010,61 +3752,30 @@ dependencies = [
 [[package]]
 name = "tachys"
 version = "0.1.0-preview"
-source = "git+https://github.com/leptos-rs/leptos?branch=leptos_0.7#9d4b648b55c482701b9206a0182a2dec17f04966"
-dependencies = [
- "any_spawner 0.1.0 (git+https://github.com/leptos-rs/leptos?branch=leptos_0.7)",
- "const_str_slice_concat 0.1.0 (git+https://github.com/leptos-rs/leptos?branch=leptos_0.7)",
- "drain_filter_polyfill",
- "either_of 0.1.0 (git+https://github.com/leptos-rs/leptos?branch=leptos_0.7)",
- "futures",
- "html-escape",
- "indexmap",
- "itertools",
- "js-sys",
- "linear-map",
- "next_tuple 0.1.0-preview (git+https://github.com/leptos-rs/leptos?branch=leptos_0.7)",
- "oco_ref 0.2.0 (git+https://github.com/leptos-rs/leptos?branch=leptos_0.7)",
- "once_cell",
- "or_poisoned 0.1.0 (git+https://github.com/leptos-rs/leptos?branch=leptos_0.7)",
- "parking_lot",
- "paste",
- "pin-project-lite",
- "reactive_graph 0.1.0-preview (git+https://github.com/leptos-rs/leptos?branch=leptos_0.7)",
- "rustc-hash",
- "send_wrapper",
- "slotmap",
- "throw_error 0.1.0 (git+https://github.com/leptos-rs/leptos?branch=leptos_0.7)",
- "wasm-bindgen",
- "web-sys",
-]
-
-[[package]]
-name = "tachys"
-version = "0.1.0-preview"
 source = "git+https://github.com/leptos-rs/leptos?branch=leptos_0.7_sync#75cf1ce5d8c1af8a30140fbf06ff057db3bac0e0"
 dependencies = [
  "any_spawner 0.1.0 (git+https://github.com/leptos-rs/leptos?branch=leptos_0.7_sync)",
- "const_str_slice_concat 0.1.0 (git+https://github.com/leptos-rs/leptos?branch=leptos_0.7_sync)",
+ "const_str_slice_concat",
  "drain_filter_polyfill",
- "either_of 0.1.0 (git+https://github.com/leptos-rs/leptos?branch=leptos_0.7_sync)",
+ "either_of",
  "futures",
  "html-escape",
  "indexmap",
  "itertools",
  "js-sys",
  "linear-map",
- "next_tuple 0.1.0-preview (git+https://github.com/leptos-rs/leptos?branch=leptos_0.7_sync)",
- "oco_ref 0.2.0 (git+https://github.com/leptos-rs/leptos?branch=leptos_0.7_sync)",
+ "next_tuple",
+ "oco_ref",
  "once_cell",
- "or_poisoned 0.1.0 (git+https://github.com/leptos-rs/leptos?branch=leptos_0.7_sync)",
+ "or_poisoned",
  "parking_lot",
  "paste",
  "pin-project-lite",
- "reactive_graph 0.1.0-preview (git+https://github.com/leptos-rs/leptos?branch=leptos_0.7_sync)",
+ "reactive_graph",
  "rustc-hash",
  "send_wrapper",
  "slotmap",
- "throw_error 0.1.0 (git+https://github.com/leptos-rs/leptos?branch=leptos_0.7_sync)",
+ "throw_error",
  "wasm-bindgen",
  "web-sys",
 ]
@@ -4109,14 +3820,6 @@ checksum = "8b9ef9bad013ada3808854ceac7b46812a6465ba368859a37e2100283d2d719c"
 dependencies = [
  "cfg-if",
  "once_cell",
-]
-
-[[package]]
-name = "throw_error"
-version = "0.1.0"
-source = "git+https://github.com/leptos-rs/leptos?branch=leptos_0.7#9d4b648b55c482701b9206a0182a2dec17f04966"
-dependencies = [
- "pin-project-lite",
 ]
 
 [[package]]
