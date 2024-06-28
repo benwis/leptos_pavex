@@ -42,6 +42,7 @@ use pavex_helpers::{AdditionalContextComponent, AppFunction, RouteAppFunction};
 use reactive_graph::computed::ScopedFuture;
 use response::PavexResponse;
 use route_generation::RouteList;
+
 /// Provides an easy way to redirect the user from within a server function. Mimicking the Remix `redirect()`,
 /// it sets a StatusCode of 302 and a LOCATION header with the provided value.
 /// If looking to redirect from the client, `leptos_router::use_navigate()` should be used instead
@@ -100,22 +101,6 @@ fn init_executor() {
 
 pub type PinnedHtmlStream = Pin<Box<dyn Stream<Item = io::Result<Bytes>> + Send>>;
 
-/// Returns an Axum [Handler](axum::handler::Handler) that listens for a `GET` request and tries
-/// to route it using [leptos_router], serving an HTML stream of your application.
-///
-/// This provides a [MetaContext] and a [RouterIntegrationContext] to app’s context before
-/// rendering it, and includes any meta tags injected using [leptos_meta].
-///
-/// The HTML stream is rendered using [render_to_stream](leptos::ssr::render_to_stream), and
-/// includes everything described in the documentation for that function.
-///
-/// This can then be set up at an appropriate route in your application:
-/// ## Provided Context Types
-/// This function always provides context values including the following types:
-/// - [`Parts`]
-/// - [`ResponseOptions`]
-/// - [`ServerMetaContext`](leptos_meta::ServerMetaContext)
-/// - [`RouterIntegrationContext`](leptos_router::RouterIntegrationContext)
 #[tracing::instrument(level = "trace", fields(error), skip_all)]
 pub async fn render_app_to_stream(
     req_head: RequestHead,
@@ -125,11 +110,6 @@ pub async fn render_app_to_stream(
     render_app_to_stream_with_context(req_head, req_body, app_fn).await
 }
 
-/// Returns an Axum [Handler](axum::handler::Handler) that listens for a `GET` request and tries
-/// to route it using [leptos_router], serving an HTML stream of your application.
-/// The difference between calling this and `render_app_to_stream_with_context()` is that this
-/// one respects the `SsrMode` on each Route and thus requires `Vec<PavexRouteListing>` for route checking.
-/// This is useful if you are using `.leptos_routes_with_handler()`
 #[tracing::instrument(level = "trace", fields(error), skip_all)]
 pub async fn render_route<IV>(
     paths: Vec<PavexRouteListing>,
@@ -142,24 +122,7 @@ pub async fn render_route<IV>(
     render_route_with_context(paths, req_head, req_body, matched_path, context, app_fn).await
 }
 
-/// Returns an Axum [Handler](axum::handler::Handler) that listens for a `GET` request and tries
-/// to route it using [leptos_router], serving an in-order HTML stream of your application.
-/// This stream will pause at each `<Suspense/>` node and wait for it to resolve before
-/// sending down its HTML. The app will become interactive once it has fully loaded.
-///
-/// This provides a [MetaContext] and a [RouterIntegrationContext] to app’s context before
-/// rendering it, and includes any meta tags injected using [leptos_meta].
-///
-/// The HTML stream is rendered using [render_to_stream_in_order], and includes everything described in
-/// the documentation for that function.
-///
 
-/// ## Provided Context Types
-/// This function always provides context values including the following types:
-/// - [`Parts`]
-/// - [`ResponseOptions`]
-/// - [`ServerMetaContext`](leptos_meta::ServerMetaContext)
-/// - [`RouterIntegrationContext`](leptos_router::RouterIntegrationContext)
 #[tracing::instrument(level = "trace", fields(error), skip_all)]
 pub async fn render_app_to_stream_in_order(
     req_head: RequestHead,
@@ -169,31 +132,7 @@ pub async fn render_app_to_stream_in_order(
     render_app_to_stream_in_order_with_context(req_head, req_body, app_fn).await
 }
 
-/// Returns an Axum [Handler](axum::handler::Handler) that listens for a `GET` request and tries
-/// to route it using [leptos_router], serving an HTML stream of your application.
-///
-/// This version allows us to pass Axum State/Extension/Extractor or other infro from Axum or network
-/// layers above Leptos itself. To use it, you'll need to write your own handler function that provides
-/// the data to leptos in a closure. An example is below
-/// ```ignore
-/// async fn custom_handler(Path(id): Path<String>, Extension(options): Extension<Arc<LeptosOptions>>, req: PavexRequest) -> Response{
-///     let handler = leptos_axum::render_app_to_stream_with_context((*options).clone(),
-///     || {
-///         provide_context(id.clone());
-///     },
-///     || view! { <TodoApp/> }
-/// );
-///     handler(req).await.into_response()
-/// }
-/// ```
-/// Otherwise, this function is identical to [render_app_to_stream].
-///
-/// ## Provided Context Types
-/// This function always provides context values including the following types:
-/// - [`Parts`]
-/// - [`ResponseOptions`]
-/// - [`ServerMetaContext`](leptos_meta::ServerMetaContext)
-/// - [`RouterIntegrationContext`](leptos_router::RouterIntegrationContext)
+
 #[tracing::instrument(level = "trace", fields(error), skip_all)]
 pub async fn render_app_to_stream_with_context(
     req_head: RequestHead,
@@ -202,12 +141,7 @@ pub async fn render_app_to_stream_with_context(
 ) -> Response {
     render_app_to_stream_with_context_and_replace_blocks(req_head, req_body, app_fn, false).await
 }
-/// Returns an Axum [Handler](axum::handler::Handler) that listens for a `GET` request and tries
-/// to route it using [leptos_router], serving an HTML stream of your application. It allows you
-/// to pass in a context function with additional info to be made available to the app
-/// The difference between calling this and `render_app_to_stream_with_context()` is that this
-/// one respects the `SsrMode` on each Route, and thus requires `Vec<PavexRouteListing>` for route checking.
-/// This is useful if you are using `.leptos_routes_with_handler()`.
+
 #[tracing::instrument(level = "trace", fields(error), skip_all)]
 pub async fn render_route_with_context(
     paths: Vec<PavexRouteListing>,
@@ -273,26 +207,7 @@ pub async fn render_route_with_context(
     }
 }
 
-/// Returns an Axum [Handler](axum::handler::Handler) that listens for a `GET` request and tries
-/// to route it using [leptos_router], serving an HTML stream of your application.
-///
-/// This version allows us to pass Axum State/Extension/Extractor or other info from Axum or network
-/// layers above Leptos itself. To use it, you'll need to write your own handler function that provides
-/// the data to leptos in a closure.
-///
-/// `replace_blocks` additionally lets you specify whether `<Suspense/>` fragments that read
-/// from blocking resources should be retrojected into the HTML that's initially served, rather
-/// than dynamically inserting them with JavaScript on the client. This means you will have
-/// better support if JavaScript is not enabled, in exchange for a marginally slower response time.
-///
-/// Otherwise, this function is identical to [render_app_to_stream_with_context].
-///
-/// ## Provided Context Types
-/// This function always provides context values including the following types:
-/// - [`Parts`]
-/// - [`ResponseOptions`]
-/// - [`ServerMetaContext`](leptos_meta::ServerMetaContext)
-/// - [`RouterIntegrationContext`](leptos_router::RouterIntegrationContext)
+
 #[tracing::instrument(level = "trace", fields(error), skip_all)]
 pub async fn render_app_to_stream_with_context_and_replace_blocks(
     req_head: RequestHead,
@@ -310,33 +225,7 @@ pub async fn render_app_to_stream_with_context_and_replace_blocks(
     .await
 }
 
-/// Returns an Axum [Handler](axum::handler::Handler) that listens for a `GET` request and tries
-/// to route it using [leptos_router], serving an in-order HTML stream of your application.
-/// This stream will pause at each `<Suspense/>` node and wait for it to resolve before
-/// sending down its HTML. The app will become interactive once it has fully loaded.
-///
-/// This version allows us to pass Axum State/Extension/Extractor or other infro from Axum or network
-/// layers above Leptos itself. To use it, you'll need to write your own handler function that provides
-/// the data to leptos in a closure. An example is below
-/// ```ignore
-/// async fn custom_handler(Path(id): Path<String>, Extension(options): Extension<Arc<LeptosOptions>>, req: PavexRequest) -> Response{
-///     let handler = leptos_axum::render_app_to_stream_in_order_with_context((*options).clone(),
-///     move || {
-///         provide_context(id.clone());
-///     },
-///     || view! { <TodoApp/> }
-/// );
-///     handler(req).await.into_response()
-/// }
-/// ```
-/// Otherwise, this function is identical to [render_app_to_stream].
-///
-/// ## Provided Context Types
-/// This function always provides context values including the following types:
-/// - [`Parts`]
-/// - [`ResponseOptions`]
-/// - [`ServerMetaContext`](leptos_meta::ServerMetaContext)
-/// - [`RouterIntegrationContext`](leptos_router::RouterIntegrationContext)
+
 #[tracing::instrument(level = "trace", fields(error), skip_all)]
 pub async fn render_app_to_stream_in_order_with_context(
     req_head: RequestHead,
@@ -425,21 +314,6 @@ fn provide_post_contexts(
     leptos::nonce::provide_nonce();
 }
 
-/// Returns an Axum [Handler](axum::handler::Handler) that listens for a `GET` request and tries
-/// to route it using [leptos_router], asynchronously rendering an HTML page after all
-/// `async` [Resource](leptos::Resource)s have loaded.
-///
-/// The provides a [MetaContext] and a [RouterIntegrationContext] to app’s context before
-/// rendering it, and includes any meta tags injected using [leptos_meta].
-///
-/// The HTML stream is rendered using [render_to_string_async], and includes everything described in
-/// the documentation for that function.
-/// ## Provided Context Types
-/// This function always provides context values including the following types:
-/// - [`Parts`]
-/// - [`ResponseOptions`]
-/// - [`ServerMetaContext`](leptos_meta::ServerMetaContext)
-/// - [`RouterIntegrationContext`](leptos_router::RouterIntegrationContext)
 #[tracing::instrument(level = "trace", fields(error), skip_all)]
 pub async fn render_app_async(
     req_head: RequestHead,
@@ -449,32 +323,7 @@ pub async fn render_app_async(
     render_app_async_with_context(req_head, req_body, app_fn).await
 }
 
-/// Returns an Axum [Handler](axum::handler::Handler) that listens for a `GET` request and tries
-/// to route it using [leptos_router], asynchronously rendering an HTML page after all
-/// `async` [Resource](leptos::Resource)s have loaded.
-///
-/// This version allows us to pass Axum State/Extension/Extractor or other infro from Axum or network
-/// layers above Leptos itself. To use it, you'll need to write your own handler function that provides
-/// the data to leptos in a closure. An example is below
-/// ```ignore
-/// async fn custom_handler(Path(id): Path<String>, Extension(options): Extension<Arc<LeptosOptions>>, req: PavexRequest) -> Response{
-///     let handler = leptos_axum::render_app_async_with_context((*options).clone(),
-///     move || {
-///         provide_context(id.clone());
-///     },
-///     || view! { <TodoApp/> }
-/// );
-///     handler(req).await.into_response()
-/// }
-/// ```
-/// Otherwise, this function is identical to [render_app_to_stream].
-///
-/// ## Provided Context Types
-/// This function always provides context values including the following types:
-/// - [`Parts`]
-/// - [`ResponseOptions`]
-/// - [`ServerMetaContext`](leptos_meta::ServerMetaContext)
-/// - [`RouterIntegrationContext`](leptos_router::RouterIntegrationContext)
+
 #[tracing::instrument(level = "trace", fields(error), skip_all)]
 pub async fn render_app_async_stream_with_context(
     req_head: RequestHead,
@@ -495,32 +344,7 @@ pub async fn render_app_async_stream_with_context(
     .await
 }
 
-/// Returns an Axum [Handler](axum::handler::Handler) that listens for a `GET` request and tries
-/// to route it using [leptos_router], asynchronously rendering an HTML page after all
-/// `async` [Resource](leptos::Resource)s have loaded.
-///
-/// This version allows us to pass Axum State/Extension/Extractor or other infro from Axum or network
-/// layers above Leptos itself. To use it, you'll need to write your own handler function that provides
-/// the data to leptos in a closure. An example is below
-/// ```ignore
-/// async fn custom_handler(Path(id): Path<String>, Extension(options): Extension<Arc<LeptosOptions>>, req: PavexRequest) -> Response{
-///     let handler = leptos_axum::render_app_async_with_context((*options).clone(),
-///     move || {
-///         provide_context(id.clone());
-///     },
-///     || view! { <TodoApp/> }
-/// );
-///     handler(req).await.into_response()
-/// }
-/// ```
-/// Otherwise, this function is identical to [render_app_to_stream].
-///
-/// ## Provided Context Types
-/// This function always provides context values including the following types:
-/// - [`Parts`]
-/// - [`ResponseOptions`]
-/// - [`ServerMetaContext`](leptos_meta::ServerMetaContext)
-/// - [`RouterIntegrationContext`](leptos_router::RouterIntegrationContext)
+
 #[tracing::instrument(level = "trace", fields(error), skip_all)]
 pub async fn render_app_async_with_context(
     req_head: RequestHead,

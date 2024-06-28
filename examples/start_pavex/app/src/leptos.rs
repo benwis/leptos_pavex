@@ -11,34 +11,36 @@ use pavex::request::RequestHead;
 use leptos_meta::MetaTags;
 use leptos::prelude::*;
 
-pub fn generate_app(options: LeptosOptions) -> AppFunction {
+pub fn generate_app(options: LeptosOptions, req_head: &RequestHead) -> AppFunction {
   
-    generate_app_function( move || {
-        let options2: LeptosOptions = options.clone();
+    let context = additional_context_components(req_head);
+    let owner = context.owner();
+    let blah = move || {
         view! {
             <!DOCTYPE html>
-            <html lang="en">
-                <head>
-                    <meta charset="utf-8"/>
-                    <meta name="viewport" content="width=device-width, initial-scale=1"/>
-                    // <AutoReload options=app_state.leptos_options.clone() />
-                    <HydrationScripts options=options2.clone()/>
-                    <MetaTags/>
-                </head>
-                <body>
-                    <App/>
-                </body>
-            </html>
+        <html lang="en">
+            <head>
+                <meta charset="utf-8"/>
+                <meta name="viewport" content="width=device-width, initial-scale=1"/>
+                <AutoReload options=options.clone() />
+                <HydrationScripts options/>
+                <MetaTags/>
+            </head>
+            <body>
+                <App/>
+            </body>
+        </html>
         }
-    })
+    };
+    AppFunction::new(owner.with(blah).into_any())
 }
-pub fn generate_route_app(options: LeptosOptions ) -> RouteAppFunction {
+pub fn generate_route_app(options: LeptosOptions, req_head: &RequestHead ) -> RouteAppFunction {
     
-    let mock_request = Request::builder()
-    .uri("https://www.leptos.dev/").body(()).unwrap();
-    let mock_req_head: RequestHead = mock_request.into_parts().0.into();
+    // let mock_request = Request::builder()
+    // .uri("https://www.leptos.dev/").body(()).unwrap();
+    // let mock_req_head: RequestHead = mock_request.into_parts().0.into();
 
-   let context = additional_context_components(&mock_req_head);
+   let context = additional_context_components(req_head);
    let owner = context.owner();
    let blah = move || {
         view! {

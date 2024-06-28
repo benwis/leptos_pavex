@@ -1,5 +1,6 @@
 use crate::{configuration, routes, telemetry};
 use pavex::blueprint::constructor::Lifecycle;
+use pavex::blueprint::linter::Lint;
 use pavex::blueprint::Blueprint;
 use pavex::f;
 use pavex::kit::ApiKit;
@@ -25,7 +26,7 @@ pub fn blueprint() -> Blueprint {
     bp.constructor(
         f!(super::leptos::additional_context_serverfn),
         Lifecycle::RequestScoped,
-    );
+    ).ignore(Lint::Unused);
     bp.constructor(f!(super::leptos::generate_app), Lifecycle::RequestScoped);
     bp.constructor(
         f!(super::leptos::generate_route_app),

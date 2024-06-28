@@ -253,9 +253,9 @@ pub mod route_0 {
         v3: &pavex::request::path::MatchedPathPattern,
     ) -> pavex::response::Response {
         let v4 = <leptos_config::LeptosOptions as core::clone::Clone>::clone(&v2);
-        let v5 = app::leptos::generate_app(v4);
+        let v5 = app::leptos::generate_app(v4, &v0);
         let v6 = app::leptos::additional_context_components(&v0);
-        let v7 = app::leptos::generate_route_app(v2);
+        let v7 = app::leptos::generate_route_app(v2, &v0);
         let v8 = leptos_pavex::generate_route_list(v7);
         let v9 = leptos_pavex::render_route_with_context(v8, v0, v1, v3, v6, v5).await;
         <pavex::response::Response as pavex::response::IntoResponse>::into_response(v9)

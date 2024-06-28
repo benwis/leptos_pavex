@@ -35,3 +35,4 @@ http.workspace = true
 [features]
 default = []
 wasm = []
+nonce = []
