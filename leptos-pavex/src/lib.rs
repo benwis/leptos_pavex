@@ -112,7 +112,7 @@ pub async fn render_app_to_stream(
 
 #[tracing::instrument(level = "trace", fields(error), skip_all)]
 pub async fn render_route<IV>(
-    paths: Vec<PavexRouteListing>,
+    paths: PavexRouteList,
     req_head: RequestHead,
     req_body: RawIncomingBody,
     matched_path: &MatchedPathPattern,
@@ -144,7 +144,7 @@ pub async fn render_app_to_stream_with_context(
 
 #[tracing::instrument(level = "trace", fields(error), skip_all)]
 pub async fn render_route_with_context(
-    paths: Vec<PavexRouteListing>,
+    paths: PavexRouteList,
     req_head: RequestHead,
     req_body: RawIncomingBody,
     matched_path: &MatchedPathPattern,
@@ -369,7 +369,7 @@ pub async fn render_app_async_with_context(
 /// create routes in Axum's Router without having to use wildcard matching or fallbacks. Takes in your root app Element
 /// as an argument, so it can walk your app tree. This version is tailored to generate Axum compatible paths.
 #[tracing::instrument(level = "trace", fields(error), skip_all)]
-pub fn generate_route_list(app_fn: RouteAppFunction) -> Vec<PavexRouteListing> {
+pub fn generate_route_list(app_fn: RouteAppFunction) -> PavexRouteList {
     generate_route_list_with_exclusions_and_ssg(app_fn, None).0
 }
 
@@ -379,7 +379,7 @@ pub fn generate_route_list(app_fn: RouteAppFunction) -> Vec<PavexRouteListing> {
 #[tracing::instrument(level = "trace", fields(error), skip_all)]
 pub fn generate_route_list_with_ssg(
     app_fn: RouteAppFunction,
-) -> (Vec<PavexRouteListing>, StaticDataMap) {
+) -> (PavexRouteList, StaticDataMap) {
     generate_route_list_with_exclusions_and_ssg(app_fn, None)
 }
 
@@ -391,7 +391,7 @@ pub fn generate_route_list_with_ssg(
 pub fn generate_route_list_with_exclusions(
     app_fn: RouteAppFunction,
     excluded_routes: Option<Vec<String>>,
-) -> Vec<PavexRouteListing> {
+) -> PavexRouteList {
     generate_route_list_with_exclusions_and_ssg(app_fn, excluded_routes).0
 }
 
@@ -403,9 +403,13 @@ pub fn generate_route_list_with_exclusions(
 pub fn generate_route_list_with_exclusions_and_ssg(
     app_fn: RouteAppFunction,
     excluded_routes: Option<Vec<String>>,
-) -> (Vec<PavexRouteListing>, StaticDataMap) {
+) -> (PavexRouteList, StaticDataMap) {
     generate_route_list_with_exclusions_and_ssg_and_context(app_fn, excluded_routes, || {})
 }
+
+/// Pavex Route List
+pub type PavexRouteList = Vec<PavexRouteListing>;
+
 #[derive(Clone, Debug, Default)]
 /// A route that this application can serve.
 pub struct PavexRouteListing {
@@ -513,7 +517,7 @@ pub fn generate_route_list_with_exclusions_and_ssg_and_context(
     app_fn: RouteAppFunction,
     excluded_routes: Option<Vec<String>>,
     additional_context: impl Fn() + 'static + Clone,
-) -> (Vec<PavexRouteListing>, StaticDataMap) {
+) -> (PavexRouteList, StaticDataMap) {
     init_executor();
 
     let owner = Owner::new_root(None);

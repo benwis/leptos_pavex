@@ -14,7 +14,7 @@ pub fn generate_app(options: LeptosOptions, req_head: &RequestHead) -> AppFuncti
   
     let context = additional_context_components(req_head);
     let owner = context.owner();
-    let blah = move || {
+    let fun = move || {
         view! {
             <!DOCTYPE html>
         <html lang="en">
@@ -31,13 +31,13 @@ pub fn generate_app(options: LeptosOptions, req_head: &RequestHead) -> AppFuncti
         </html>
         }
     };
-    AppFunction::new(owner.with(blah).into_any())
+    AppFunction::new(owner.with(fun).into_any())
 }
 pub fn generate_route_app(options: LeptosOptions, req_head: &RequestHead ) -> RouteAppFunction {
     
    let context = additional_context_components(req_head);
    let owner = context.owner();
-   let blah = move || {
+   let fun = move || {
         view! {
             <!DOCTYPE html>
         <html lang="en">
@@ -54,7 +54,7 @@ pub fn generate_route_app(options: LeptosOptions, req_head: &RequestHead ) -> Ro
         </html>
         }
     };
-    RouteAppFunction::new(owner.with(blah).into_any())
+    RouteAppFunction::new(owner.with(fun).into_any())
 
 }
 
