@@ -176,6 +176,7 @@ name = "app"
 version = "0.1.0"
 dependencies = [
  "cargo_px_env",
+ "http 1.1.0",
  "leptos",
  "leptos-pavex",
  "leptos_app",
@@ -3474,6 +3475,7 @@ dependencies = [
  "http 1.1.0",
  "hyper",
  "leptos-pavex",
+ "leptos_config",
  "pavex",
  "pavex_matchit",
  "pavex_tracing",

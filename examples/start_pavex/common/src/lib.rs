@@ -2,7 +2,6 @@
 //! for the ecommerce platform.
 mod models;
 
-pub use models::{bill::*, customer::*, inventory::*, types::*};
 
 use cfg_if::cfg_if;
 

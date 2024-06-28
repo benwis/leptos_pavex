@@ -31,6 +31,10 @@ pub fn blueprint() -> Blueprint {
         f!(super::leptos::generate_route_app),
         Lifecycle::RequestScoped,
     );
+    bp.constructor(
+        f!(super::leptos::handle_leptos_options),
+        Lifecycle::Singleton,
+    ).clone_if_necessary();
 
     routes::register(&mut bp);
     bp

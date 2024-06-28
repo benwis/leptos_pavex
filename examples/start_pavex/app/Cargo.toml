@@ -19,7 +19,11 @@ cargo_px_env = "0.1"
 pavex = { version = "0.1.43" }
 pavex_tracing = { version = "0.1.43" }
 pavex_cli_client = { version = "0.1.43" }
+#pavex = { git = "https://github.com/benwis/pavex" }
+#pavex_tracing = { git = "https://github.com/benwis/pavex" }
+#pavex_cli_client = { git = "https://github.com/benwis/pavex" }
 tracing = "0.1"
+http = "1.1.0"
 serde = { version = "1", features = ["derive"] }
 workspace_hack = { path = "../workspace_hack" }
 leptos-pavex = { path = "../../../leptos-pavex" }

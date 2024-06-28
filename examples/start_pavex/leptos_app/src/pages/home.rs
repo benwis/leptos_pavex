@@ -1,4 +1,4 @@
-use leptos::prelude::{signal, ClassAttribute, ElementChild, OnAttribute, Update};
+use leptos::prelude::{ElementChild};
 use leptos::{component, view, IntoView};
 
 /// Renders the home page of your application.

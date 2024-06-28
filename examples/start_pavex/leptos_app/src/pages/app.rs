@@ -1,6 +1,5 @@
 use crate::pages::home::__Home;
 use leptos::prelude::*;
-use leptos::*;
 use leptos::{component, view, IntoView};
 use leptos_meta::*;
 use leptos_router::components::*;
@@ -14,12 +13,6 @@ pub fn App() -> impl IntoView {
     // Provides context that manages stylesheets, titles, meta tags, etc.
     provide_meta_context();
 
-    let fallback = || {
-        {
-            view! { <p>"Error"</p> }
-        }
-        .into_view()
-    };
     view! {
         <Meta charset="utf-8" />
         <Meta name="viewport" content="width=device-width,inistial-scale=1.0" />

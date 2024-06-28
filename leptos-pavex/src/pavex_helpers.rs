@@ -39,7 +39,6 @@ where
     let any_view = app_fn().into_any();
     RouteAppFunction::new(any_view)
 }
-
 //A type to hold the result of the App Function Closure so Pavex is happy
 pub struct RouteAppFunction(AnyView<Dom>);
 impl RouteAppFunction {

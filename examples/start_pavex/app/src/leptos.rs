@@ -1,8 +1,9 @@
+use http::Request;
 use leptos::context::provide_context;
 use leptos::view;
 use leptos_app::pages::App;
 use leptos_pavex::pavex_helpers::{
-    generate_app_function, generate_route_app_function, AdditionalContextComponent,
+    generate_app_function, AdditionalContextComponent,
     AdditionalContextServerFn, AppFunction, RouteAppFunction,
 };
 use leptos_pavex::{pass_leptos_context, RouteType};
@@ -31,7 +32,14 @@ pub fn generate_app(options: LeptosOptions) -> AppFunction {
         }
     })
 }
-pub fn generate_route_app(options: LeptosOptions) -> RouteAppFunction {
+pub fn generate_route_app(options: LeptosOptions ) -> RouteAppFunction {
+    
+    let mock_request = Request::builder()
+    .uri("https://www.leptos.dev/").body(()).unwrap();
+    let mock_req_head: RequestHead = mock_request.into_parts().0.into();
+
+   let context = additional_context_components(&mock_req_head);
+   let owner = context.owner();
    let blah = move || {
         view! {
             <!DOCTYPE html>
@@ -49,7 +57,7 @@ pub fn generate_route_app(options: LeptosOptions) -> RouteAppFunction {
         </html>
         }
     };
-    RouteAppFunction::new(blah().into_any())
+    RouteAppFunction::new(owner.with(blah).into_any())
 
 }
 
@@ -67,4 +75,8 @@ pub fn additional_context_serverfn(req_head: &RequestHead) -> AdditionalContextS
         provide_context("Test".to_string());
     });
     AdditionalContextServerFn::new(owner)
+}
+
+pub fn handle_leptos_options() -> LeptosOptions{
+   get_configuration(None).unwrap().leptos_options
 }
