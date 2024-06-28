@@ -1,9 +1,8 @@
-use http::Request;
 use leptos::context::provide_context;
 use leptos::view;
 use leptos_app::pages::App;
 use leptos_pavex::pavex_helpers::{
-    generate_app_function, AdditionalContextComponent,
+    AdditionalContextComponent,
     AdditionalContextServerFn, AppFunction, RouteAppFunction,
 };
 use leptos_pavex::{pass_leptos_context, RouteType};
@@ -36,10 +35,6 @@ pub fn generate_app(options: LeptosOptions, req_head: &RequestHead) -> AppFuncti
 }
 pub fn generate_route_app(options: LeptosOptions, req_head: &RequestHead ) -> RouteAppFunction {
     
-    // let mock_request = Request::builder()
-    // .uri("https://www.leptos.dev/").body(()).unwrap();
-    // let mock_req_head: RequestHead = mock_request.into_parts().0.into();
-
    let context = additional_context_components(req_head);
    let owner = context.owner();
    let blah = move || {

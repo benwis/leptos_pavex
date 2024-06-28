@@ -22,6 +22,5 @@ pub fn register(bp: &mut Blueprint) {
     generate_leptos_routes(&routes, bp);
     bp.route(GET, "/api/ping", f!(self::ping::get));
     bp.route(GET, "/api/greet/:name", f!(self::greet::get));
-    //bp.route(GET, "/", f!(leptos_pavex::render_route_with_context));
     bp.route(GET, "/*path", f!(leptos_pavex::file_helpers::serve_files));
 }
