@@ -21,7 +21,7 @@ pub fn generate_app(options: LeptosOptions, req_head: &RequestHead) -> AppFuncti
             <head>
                 <meta charset="utf-8"/>
                 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-                <AutoReload options=options.clone() />
+                //<AutoReload options=options.clone() />
                 <HydrationScripts options/>
                 <MetaTags/>
             </head>
@@ -44,7 +44,7 @@ pub fn generate_route_app(options: LeptosOptions, req_head: &RequestHead ) -> Ro
             <head>
                 <meta charset="utf-8"/>
                 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-                <AutoReload options=options.clone() />
+                //<AutoReload options=options.clone() />
                 <HydrationScripts options/>
                 <MetaTags/>
             </head>

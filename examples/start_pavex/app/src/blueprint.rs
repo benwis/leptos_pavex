@@ -2,7 +2,7 @@ use crate::{configuration, routes, telemetry};
 use pavex::blueprint::constructor::Lifecycle;
 use pavex::blueprint::linter::Lint;
 use pavex::blueprint::Blueprint;
-use pavex::{f, t};
+use pavex::f;
 use pavex::kit::ApiKit;
 
 /// The main blueprint, containing all the routes, middlewares, constructors and error handlers
@@ -14,6 +14,11 @@ pub fn blueprint() -> Blueprint {
     configuration::register(&mut bp);
 
     // Register the Leptos types we need to pass to render_routes_with_context
+    bp.constructor(
+        f!(leptos_pavex::generate_route_list),
+        Lifecycle::RequestScoped,
+    )
+    .clone_if_necessary();
     bp.constructor(
         f!(super::leptos::additional_context_components),
         Lifecycle::RequestScoped,
@@ -31,8 +36,6 @@ pub fn blueprint() -> Blueprint {
         f!(super::leptos::handle_leptos_options),
         Lifecycle::Singleton,
     ).clone_if_necessary();
-
-    bp.prebuilt(t!(std::vec::Vec<leptos_pavex::PavexRouteListing>));
 
     routes::register(&mut bp);
     bp

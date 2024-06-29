@@ -7,7 +7,6 @@ pub mod request;
 pub mod request_parts;
 pub mod response;
 pub mod response_options;
-pub mod route_generation;
 pub mod server_fn;
 pub mod stream;
 
@@ -29,7 +28,7 @@ use leptos_integration_utils::{BoxedFnOnce, PinnedFuture, PinnedStream};
 use leptos_meta::ServerMetaContext;
 use leptos_router::components::provide_server_redirect;
 use leptos_router::location::RequestUrl;
-use leptos_router::{PathSegment, RouteListing, SsrMode, StaticDataMap, StaticMode};
+use leptos_router::{PathSegment, RouteList, RouteListing, SsrMode, StaticDataMap, StaticMode};
 use pavex::http::header::{ACCEPT, LOCATION};
 use pavex::http::uri::PathAndQuery;
 use pavex::http::StatusCode;
@@ -41,7 +40,6 @@ use pavex::response::Response;
 use pavex_helpers::{AdditionalContextComponent, AppFunction, RouteAppFunction};
 use reactive_graph::computed::ScopedFuture;
 use response::PavexResponse;
-use route_generation::RouteList;
 
 /// Provides an easy way to redirect the user from within a server function. Mimicking the Remix `redirect()`,
 /// it sets a StatusCode of 302 and a LOCATION header with the provided value.
@@ -224,7 +222,6 @@ pub async fn render_app_to_stream_with_context_and_replace_blocks(
     })
     .await
 }
-
 
 #[tracing::instrument(level = "trace", fields(error), skip_all)]
 pub async fn render_app_to_stream_in_order_with_context(
@@ -529,9 +526,10 @@ pub fn generate_route_list_with_exclusions_and_ssg_and_context(
 
             provide_post_contexts("", &Default::default(), mock_parts, Default::default());
             additional_context();
-            RouteList::generate(app_fn)
+            let foo = RouteList::generate(move ||{app_fn.inner()});
+            foo
         })
-        .unwrap_or_default();
+        .unwrap();
 
     // Axum's Router defines Root routes as "/" not ""
     let mut routes = routes

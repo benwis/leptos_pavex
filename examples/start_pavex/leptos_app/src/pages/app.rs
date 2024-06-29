@@ -19,7 +19,9 @@ pub fn App() -> impl IntoView {
         <Link rel="preconnect" href="https://fonts.googleapis.com" />
         <Link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous" />
         <Link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700;800&display=swap" rel="stylesheet" />
-        <Stylesheet id="leptos" href="/pkg/leptos-ecommerce.css"/>
+        // <Stylesheet id="leptos" href="/pkg/start-pavex.css"/>
+        <link rel="stylesheet" href="/pkg/start_pavex.css"/>
+
 
         // sets the document title
         <Title text="Leptos Pavex Starter"/>

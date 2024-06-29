@@ -16,7 +16,7 @@ pub fn register(bp: &mut Blueprint) {
     let leptos_options = conf.leptos_options;
 
     // Generate routes for routes defined in Leptos for components and server fns
-    let mock_request = Request::builder().uri("https://www.leptos.dev/").body(()).unwrap();
+    let mock_request = Request::builder().uri("https://www.leptos.dev/about").body(()).unwrap();
     let mock_req_head: RequestHead = mock_request.into_parts().0.into();
     let routes = leptos_pavex::generate_route_list(generate_route_app(leptos_options, &mock_req_head));
     generate_leptos_routes(&routes, bp);

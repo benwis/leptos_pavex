@@ -56,9 +56,11 @@ pub async fn handle_server_fns_with_context(
     req_body: RawIncomingBody,
     context: AdditionalContextServerFn,
 ) -> Response {
+    eprintln!("HANDLING SERVER FN REQUEST");
     let pq = req_head.target.path_and_query().unwrap();
     match crate::server_fn::get_server_fn_by_path(pq.as_str()) {
         Some(lepfn) => {
+            eprintln!("FOUND SERVER FN BY PATH");
             let owner = context.owner();
             let blah = owner.with(|| {
                 ScopedFuture::new(async move {
@@ -67,9 +69,10 @@ pub async fn handle_server_fns_with_context(
                     let res_options = ResponseOptions::default();
                     provide_context(res_options.clone());
                     let pavex_req = PavexRequest::new_from_req(req_head, req_body);
+                    eprintln!("WHAT");
                     let (mut pavex_res, req_parts, res_options) =
                         (lepfn.clone().run(pavex_req).await, req_parts, res_options);
-
+                    eprintln!("WHAT2");
                     // If the Accept header contains text/html, then this is a request from
                     // a regular html form, so we should set up a redirect to either the referrer
                     // or the user specified location
@@ -84,6 +87,7 @@ pub async fn handle_server_fns_with_context(
                         None => false,
                     };
 
+                    eprintln!("GOT HERE");
                     if accepts_html_bool {
                         let referrer = &req_headers.get("Referer");
                         let location = &req_headers.get("Location");
@@ -109,6 +113,7 @@ pub async fn handle_server_fns_with_context(
                     if let Some(status) = res_options.status() {
                         pavex_res.0 = pavex_res.0.set_status(status);
                     }
+                    eprintln!("RESPONSE!");
                     pavex_res.0
                 })
             });

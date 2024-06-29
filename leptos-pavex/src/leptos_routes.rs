@@ -14,8 +14,8 @@ pub fn generate_leptos_routes(paths: &PavexRouteList, bp: &mut Blueprint) {
     init_executor();
 
     // register server functions
-    for (path, method) in server_fn::axum::server_fn_paths() {
-        println!("REGISTERING SERVER FN ROUTE:{path}");
+    for (path, method) in crate::server_fn::server_fn_paths() {
+        eprintln!("REGISTERING SERVER FN ROUTE: {path}");
         bp.route(
             match method {
                 Method::GET => GET,
@@ -38,8 +38,6 @@ pub fn generate_leptos_routes(paths: &PavexRouteList, bp: &mut Blueprint) {
     // register router paths
     for listing in paths.iter() {
         let path = listing.path();
-        println!("REGISTERING COMPONENT ROUTE:{path}");
-
 
         for method in listing.methods() {
             bp.route(

@@ -12,15 +12,16 @@ pub struct SubPath<'a> {
 }
 
 pub fn serve_files(subpath: &PathParams<SubPath>) -> Response {
-    let prefix = "assets";
+    let prefix = "target/site";
 
     // TODO: Here's where we would modify it for the incoming path. Check how Leptos does it
     let basepath = Path::new(&format!("./{}", prefix)).to_path_buf();
-
     let mut path = match basepath.join(subpath.0.path).canonicalize() {
         Ok(p) => p,
-        Err(_) => return Response::not_found(),
+        Err(e) => {eprintln!("Path Failure: {e}");return Response::not_found()},
     };
+
+    eprintln!("FETCHING PATH {path:?}");
 
     if path.is_dir() {
         path.push("index.html");
