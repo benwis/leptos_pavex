@@ -32,6 +32,8 @@ async fn _main() -> anyhow::Result<()> {
     // Load environment variables from a .env file, if it exists.
     let _ = dotenvy::dotenv();
 
+    leptos_pavex::server_fn::register_explicit();
+
     let config = Config::load(None)?;
     let application_state = build_application_state(config.app).await;
     let tcp_listener = config

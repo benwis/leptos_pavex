@@ -1,6 +1,7 @@
 use bytes::Bytes;
 use futures::{Stream, StreamExt};
 use http_body_util::BodyExt;
+use leptos::server_fn::error::NoCustomError;
 use leptos::server_fn::{error::ServerFnError, request::Req};
 use pavex::request::body::{BodySizeLimit, BufferedBody, RawIncomingBody};
 use pavex::request::RequestHead;

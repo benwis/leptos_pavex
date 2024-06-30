@@ -20,6 +20,7 @@ serde-aux = "4"
 
 anyhow = "1"
 pavex = { version = "0.1.43" }
+leptos_pavex = {path="../../../leptos_pavex"}
 #pavex = { git = "https://github.com/benwis/pavex" }
 
 tokio = { version = "1", features = ["full"] }

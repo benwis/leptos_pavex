@@ -26,18 +26,18 @@ panic = "abort"
 #leptos = { version = "0.6" }
 #leptos_meta = { version = "0.6" }
 #leptos_router = { version = "0.6" }
-#leptos_axum = { version = "0.6" }
 
 
 #leptos = { version = "0.7.0-preview2" }
 #leptos_meta = { version = "0.7.0-preview2" }
 #leptos_router = { version = "0.7.0-preview2" }
-#leptos_axum = { version = "0.7.0-preview2" }
 
-leptos = { git = "https://github.com/leptos-rs/leptos", branch = "leptos_0.7" }
-leptos_meta = { git = "https://github.com/leptos-rs/leptos", branch = "leptos_0.7" }
-leptos_router = { git = "https://github.com/leptos-rs/leptos", branch = "leptos_0.7" }
-leptos_axum = { git = "https://github.com/leptos-rs/leptos", branch = "leptos_0.7" }
+leptos = { git = "https://github.com/leptos-rs/leptos", branch = "leptos_0.7", features=["ssr"] }
+leptos_meta = { git = "https://github.com/leptos-rs/leptos", branch = "leptos_0.7", features=["ssr"] }
+leptos_router = { git = "https://github.com/leptos-rs/leptos", branch = "leptos_0.7", features=["ssr"] }
+leptos_pavex = { path = "../../../leptos_pavex/leptos_pavex" }
+
+leptos_pavex_macro = { path = "../../../leptos_pavex/leptos_pavex_macro" }
 
 cfg-if = "1"
 console_error_panic_hook = "0.1.7"
@@ -55,6 +55,7 @@ tokio-stream = { version = "0.1.15" }
 wasm-bindgen = "=0.2.92"
 rusqlite = "0.31.0"
 camino = "1.1.7"
+pavex = { version = "0.1.43" }
 # See https://github.com/akesson/cargo-leptos for documentation of all the parameters.
 
 # A leptos project defines which workspace members

@@ -1369,45 +1369,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "leptos-pavex"
-version = "0.1.0"
-dependencies = [
- "any_spawner 0.1.0",
- "bytes",
- "dashmap",
- "futures",
- "futures-util",
- "http 1.1.0",
- "http-body",
- "http-body-util",
- "http-types",
- "hydration_context",
- "leptos",
- "leptos_integration_utils",
- "leptos_meta",
- "leptos_router",
- "multimap",
- "once_cell",
- "parking_lot",
- "pavex",
- "pin-project",
- "reactive_graph",
- "serde",
- "tracing",
- "url",
-]
-
-[[package]]
-name = "leptos-pavex-macro"
-version = "0.0.1"
-dependencies = [
- "http 1.1.0",
- "proc-macro-error",
- "server_fn_macro 0.6.12",
- "syn 2.0.68",
-]
-
-[[package]]
 name = "leptos_config"
 version = "0.7.0-alpha"
 source = "git+https://github.com/leptos-rs/leptos?branch=leptos_0.7#5506c1a7af26ed2f64eaf1d52fa62361d94eadd5"
@@ -1486,7 +1447,7 @@ dependencies = [
  "proc-macro2",
  "quote",
  "rstml",
- "server_fn_macro 0.7.0-alpha",
+ "server_fn_macro",
  "syn 2.0.68",
  "tracing",
  "uuid",
@@ -1506,6 +1467,45 @@ dependencies = [
  "tracing",
  "wasm-bindgen",
  "web-sys",
+]
+
+[[package]]
+name = "leptos_pavex"
+version = "0.1.0"
+dependencies = [
+ "any_spawner 0.1.0",
+ "bytes",
+ "dashmap",
+ "futures",
+ "futures-util",
+ "http 1.1.0",
+ "http-body",
+ "http-body-util",
+ "http-types",
+ "hydration_context",
+ "leptos",
+ "leptos_integration_utils",
+ "leptos_meta",
+ "leptos_router",
+ "multimap",
+ "once_cell",
+ "parking_lot",
+ "pavex",
+ "pin-project",
+ "reactive_graph",
+ "serde",
+ "tracing",
+ "url",
+]
+
+[[package]]
+name = "leptos_pavex_macro"
+version = "0.0.1"
+dependencies = [
+ "http 1.1.0",
+ "proc-macro-error",
+ "server_fn_macro",
+ "syn 2.0.68",
 ]
 
 [[package]]
@@ -2443,20 +2443,6 @@ dependencies = [
 
 [[package]]
 name = "server_fn_macro"
-version = "0.6.12"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "09c216bb1c1ac890151397643c663c875a1836adf0b269be4e389cb1b48c173c"
-dependencies = [
- "const_format",
- "convert_case",
- "proc-macro2",
- "quote",
- "syn 2.0.68",
- "xxhash-rust",
-]
-
-[[package]]
-name = "server_fn_macro"
 version = "0.7.0-alpha"
 source = "git+https://github.com/leptos-rs/leptos?branch=leptos_0.7#5506c1a7af26ed2f64eaf1d52fa62361d94eadd5"
 dependencies = [
@@ -2473,7 +2459,7 @@ name = "server_fn_macro_default"
 version = "0.7.0-alpha"
 source = "git+https://github.com/leptos-rs/leptos?branch=leptos_0.7#5506c1a7af26ed2f64eaf1d52fa62361d94eadd5"
 dependencies = [
- "server_fn_macro 0.7.0-alpha",
+ "server_fn_macro",
  "syn 2.0.68",
 ]
 
@@ -3361,3 +3347,23 @@ name = "zeroize"
 version = "1.8.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "ced3678a2879b30306d323f4542626697a464a97c0a07c9aebf7ebca65cd4dde"
+
+[[patch.unused]]
+name = "leptos"
+version = "0.7.0-alpha"
+
+[[patch.unused]]
+name = "leptos_integration_utils"
+version = "0.7.0-alpha"
+
+[[patch.unused]]
+name = "leptos_meta"
+version = "0.7.0-alpha"
+
+[[patch.unused]]
+name = "leptos_router"
+version = "0.7.0-alpha"
+
+[[patch.unused]]
+name = "server_fn"
+version = "0.7.0-alpha"

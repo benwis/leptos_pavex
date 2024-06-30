@@ -178,9 +178,9 @@ dependencies = [
  "cargo_px_env",
  "http 1.1.0",
  "leptos",
- "leptos-pavex",
  "leptos_app",
  "leptos_meta",
+ "leptos_pavex",
  "pavex",
  "pavex_cli_client",
  "pavex_tracing",
@@ -1792,35 +1792,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "leptos-pavex"
-version = "0.1.0"
-dependencies = [
- "any_spawner 0.1.0",
- "bytes",
- "dashmap",
- "futures",
- "futures-util",
- "http 1.1.0",
- "http-body",
- "http-body-util",
- "http-types",
- "hydration_context",
- "leptos",
- "leptos_integration_utils",
- "leptos_meta",
- "leptos_router",
- "multimap",
- "once_cell",
- "parking_lot",
- "pavex",
- "pin-project",
- "reactive_graph",
- "serde",
- "tracing",
- "url",
-]
-
-[[package]]
 name = "leptos_app"
 version = "0.1.0"
 dependencies = [
@@ -1831,6 +1802,8 @@ dependencies = [
  "http 1.1.0",
  "leptos",
  "leptos_meta",
+ "leptos_pavex",
+ "leptos_pavex_macro",
  "leptos_router",
  "rusqlite",
  "serde",
@@ -1937,6 +1910,45 @@ dependencies = [
  "tracing",
  "wasm-bindgen",
  "web-sys",
+]
+
+[[package]]
+name = "leptos_pavex"
+version = "0.1.0"
+dependencies = [
+ "any_spawner 0.1.0",
+ "bytes",
+ "dashmap",
+ "futures",
+ "futures-util",
+ "http 1.1.0",
+ "http-body",
+ "http-body-util",
+ "http-types",
+ "hydration_context",
+ "leptos",
+ "leptos_integration_utils",
+ "leptos_meta",
+ "leptos_router",
+ "multimap",
+ "once_cell",
+ "parking_lot",
+ "pavex",
+ "pin-project",
+ "reactive_graph",
+ "serde",
+ "tracing",
+ "url",
+]
+
+[[package]]
+name = "leptos_pavex_macro"
+version = "0.0.1"
+dependencies = [
+ "http 1.1.0",
+ "proc-macro-error",
+ "server_fn_macro",
+ "syn 2.0.68",
 ]
 
 [[package]]
@@ -2599,6 +2611,7 @@ dependencies = [
  "proc-macro-error-attr",
  "proc-macro2",
  "quote",
+ "syn 1.0.109",
  "version_check",
 ]
 
@@ -3324,6 +3337,7 @@ dependencies = [
  "dotenvy",
  "figment",
  "humantime-serde",
+ "leptos_pavex",
  "pavex",
  "pavex_tracing",
  "reqwest",
@@ -3397,8 +3411,8 @@ dependencies = [
  "app",
  "http 1.1.0",
  "hyper",
- "leptos-pavex",
  "leptos_config",
+ "leptos_pavex",
  "pavex",
  "pavex_matchit",
  "pavex_tracing",

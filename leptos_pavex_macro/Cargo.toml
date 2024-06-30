@@ -1,5 +1,5 @@
 [package]
-name = "leptos-pavex-macro"
+name = "leptos_pavex_macro"
 version = "0.0.1"
 edition = "2021"
 description = "Pavex support for Leptos"
@@ -12,8 +12,9 @@ proc-macro = true
 [dependencies]
 http = "1.0.0"
 proc-macro-error = "1.0.4"
-server_fn_macro = "0.6.3"
+server_fn_macro = {git="https://github.com/leptos-rs/leptos", branch="leptos_0.7"}
 syn = "2.0.48"
+
 
 [features]
 nightly = ["server_fn_macro/nightly"]

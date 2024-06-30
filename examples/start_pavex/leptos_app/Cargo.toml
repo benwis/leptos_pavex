@@ -13,7 +13,8 @@ rusqlite = { workspace = true, optional = true }
 leptos.workspace = true
 leptos_meta.workspace = true
 leptos_router.workspace = true
-
+leptos_pavex = {workspace = true, optional=false}
+leptos_pavex_macro.workspace = true
 http.workspace = true
 cfg-if.workspace = true
 thiserror.workspace = true

@@ -43,7 +43,6 @@ pub fn server_fn_paths() -> impl Iterator<Item = (&'static str, HttpMethod)> {
         .iter()
         .map(|item| (item.path(), item.method()))
 }
-
 pub async fn handle_server_fns(
     req_head: RequestHead,
     req_body: RawIncomingBody,

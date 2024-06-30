@@ -10,8 +10,8 @@ pub fn server(args: proc_macro::TokenStream, s: TokenStream) -> TokenStream {
         s.into(),
         Some(syn::parse_quote!(leptos::server_fn)),
         "/api",
-        Some(syn::parse_quote!(::leptos_spin::request::SpinRequest)),
-        Some(syn::parse_quote!(::leptos_spin::response::SpinResponse)),
+        Some(syn::parse_quote!(::leptos_pavex::request::PavexRequest)),
+        Some(syn::parse_quote!(::leptos_pavex::response::PavexResponse)),
     ) {
         Err(e) => e.to_compile_error().into(),
         Ok(s) => s.to_token_stream().into(),

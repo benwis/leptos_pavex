@@ -12,24 +12,29 @@ use crate::{init_executor, PavexRouteList};
 
 pub fn generate_leptos_routes(paths: &PavexRouteList, bp: &mut Blueprint) {
     init_executor();
+    println!("GENERATE LEPTOS ROUTES");
 
     // register server functions
     for (path, method) in crate::server_fn::server_fn_paths() {
-        eprintln!("REGISTERING SERVER FN ROUTE: {path}");
+        println!("REGISTERING SERVER FN ROUTE: {path}");
+        let method = match method {
+            Method::GET => GET,
+            Method::POST => POST,
+            Method::PUT => PUT,
+            Method::DELETE => DELETE,
+            Method::PATCH => PATCH,
+            _ => {
+                panic!(
+                    "Unsupported server function HTTP method: \
+                 {method:?}"
+                );
+            }
+        };
+        println!("METHOD: {method:?}");
+        println!("PATH: {path}");
         bp.route(
-            match method {
-                Method::GET => GET,
-                Method::POST => POST,
-                Method::PUT => PUT,
-                Method::DELETE => DELETE,
-                Method::PATCH => PATCH,
-                _ => {
-                    panic!(
-                        "Unsupported server function HTTP method: \
-                     {method:?}"
-                    );
-                }
-            },
+            
+            method,
             path,
             f!(crate::server_fn::handle_server_fns),
         );
@@ -38,7 +43,7 @@ pub fn generate_leptos_routes(paths: &PavexRouteList, bp: &mut Blueprint) {
     // register router paths
     for listing in paths.iter() {
         let path = listing.path();
-
+        println!("REGISTERING REGULAR PATH: {path}");
         for method in listing.methods() {
             bp.route(
                 match method {
