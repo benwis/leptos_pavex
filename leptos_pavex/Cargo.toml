@@ -29,9 +29,11 @@ futures-util.workspace = true
 any_spawner = { workspace = true, features = ["tokio"] }
 serde.workspace = true
 http-types.workspace = true
+tokio = { version = "1", default-features = false }
+
 http.workspace = true
 
 [features]
-default = []
+default = ["tokio/fs", "tokio/sync"]
 wasm = []
 nonce = []

@@ -30,9 +30,6 @@ http-body-util = "0.1.2"
 http-body = "1.0.0"
 pin-project = "1"
 hydration_context = { git = "https://github.com/leptos-rs/leptos", branch = "leptos_0.7" }
-server_fn = { git = "https://github.com/leptos-rs/leptos", branch = "leptos_0.7", features = [
-    "axum-no-default",
-] }
 reactive_graph = { git = "https://github.com/leptos-rs/leptos", branch = "leptos_0.7", features = [
     "sandboxed-arenas",
     "hydration",
@@ -42,9 +39,9 @@ any_spawner = "0.1.0"
 serde = { version = "1.0.203", features = ["derive"] }
 http-types = "2.12.0"
 http = "1.1.0"
-[patch.crates-io]
-leptos = { path = "../leptos/leptos"}
-server_fn = { path = "../leptos/server_fn"}
-leptos_integration_utils = {path = "../leptos/integrations/utils"}
-leptos_meta = { path = "../leptos/meta"}
-leptos_router = { path = "../leptos/router"}
+# [patch.crates-io]
+# leptos = { path = "../leptos/leptos"}
+# server_fn = { path = "../leptos/server_fn"}
+# leptos_integration_utils = {path = "../leptos/integrations/utils"}
+# leptos_meta = { path = "../leptos/meta"}
+# leptos_router = { path = "../leptos/router"}
