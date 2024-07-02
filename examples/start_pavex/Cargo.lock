@@ -3844,7 +3844,6 @@ dependencies = [
  "serde_json",
  "smallvec",
  "syn 2.0.68",
- "tokio",
  "tracing",
  "tracing-core",
 ]
