@@ -2,7 +2,8 @@ use app_errors::EcommerceAppError;
 use cfg_if::cfg_if;
 use leptos::prelude::*;
 #[cfg(feature = "ssr")]
-use leptos_pavex::ResponseOptions;
+use leptos_pavex::response_options::ResponseOptions;
+
 
 // A basic function to display errors served by the error boundaries.
 // Feel free to do more complicated things here than just displaying the error.

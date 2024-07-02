@@ -35,7 +35,7 @@ panic = "abort"
 leptos = { git = "https://github.com/leptos-rs/leptos", branch = "leptos_0.7" }
 leptos_meta = { git = "https://github.com/leptos-rs/leptos", branch = "leptos_0.7" }
 leptos_router = { git = "https://github.com/leptos-rs/leptos", branch = "leptos_0.7" }
-leptos_pavex = { path = "../../../leptos_pavex/leptos_pavex", default-features=false }
+leptos_pavex = { path = "../../../leptos_pavex/leptos_pavex"}
 
 leptos_pavex_macro = { path = "../../../leptos_pavex/leptos_pavex_macro"}
 
@@ -128,7 +128,7 @@ lib-profile-release = "wasm-release"
 # Optional. No default. Env: LEPTOS_BIN_CARGO_COMMAND
 bin-cargo-command = "cargo px"
 
-[patch.crates-io]
+#[patch.crates-io]
 # leptos = { path = "../../../leptos/leptos"}
 # server_fn = { path = "../../../leptos/server_fn"}
 # leptos_integration_utils = {path = "../../../leptos/integrations/utils"}

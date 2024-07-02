@@ -7,7 +7,7 @@ edition = "2021"
 
 [dependencies]
 
-leptos.workspace = true
+leptos = {workspace = true, features=["ssr"]}
 leptos_integration_utils.workspace = true
 leptos_meta.workspace = true
 leptos_router.workspace = true
@@ -35,5 +35,5 @@ http.workspace = true
 [features]
 nonce = ["leptos/nonce"]
 wasm = []
-ssr = ["dep:tokio","any_spawner/tokio", "leptos/ssr","dep:http-types"]
+ssr = ["dep:tokio","any_spawner/tokio", "dep:http-types",]
 default=[]
