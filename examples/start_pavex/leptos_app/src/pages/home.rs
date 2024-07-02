@@ -1,4 +1,4 @@
-use leptos::prelude::{ElementChild, ClassAttribute};
+use leptos::prelude::{ClassAttribute, ElementChild};
 use leptos::{component, view, IntoView};
 
 /// Renders the home page of your application.
@@ -12,7 +12,6 @@ fn Home() -> impl IntoView {
                 <img src="/img/pavex_logo.webp" alt="Pavex Logo" width="300"/>
             </div>
             <h1>"Starter"</h1>
-
 
         </main>
     }

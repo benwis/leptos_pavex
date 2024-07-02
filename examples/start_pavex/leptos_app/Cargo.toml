@@ -8,12 +8,12 @@ edition = "2021"
 [dependencies]
 common = { path = "../common" }
 app_errors = { path = "../app_errors" }
-camino = { workspace = true }
+camino = { workspace = true, optional=true }
 rusqlite = { workspace = true, optional = true }
 leptos.workspace = true
 leptos_meta.workspace = true
 leptos_router.workspace = true
-leptos_pavex = {workspace = true, optional=true}
+leptos_pavex = {workspace = true}
 leptos_pavex_macro.workspace = true
 http.workspace = true
 cfg-if.workspace = true
@@ -23,12 +23,14 @@ serde_json.workspace = true
 
 [features]
 default = []
-hydrate = ["leptos/hydrate", "common/hydrate"]
+hydrate = ["leptos/hydrate", "common/hydrate", "leptos_pavex/wasm"]
+
 ssr = [
     "leptos/ssr",
     "leptos_meta/ssr",
     "leptos_router/ssr",
+    "leptos_pavex_macro/ssr",
     "dep:rusqlite",
-    "dep:leptos_pavex",
+    "dep:camino",
     "common/ssr",
 ]

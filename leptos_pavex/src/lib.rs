@@ -1,9 +1,13 @@
+#[allow(dead_code)]
+
 pub mod extend_response;
+#[cfg(feature = "ssr")]
 pub mod file_helpers;
+#[cfg(feature = "ssr")]
+#[cfg(feature = "ssr")]
 pub mod leptos_routes;
 pub mod pavex_helpers;
 pub mod request;
-#[allow(dead_code)]
 pub mod request_parts;
 pub mod response;
 pub mod response_options;
@@ -67,7 +71,7 @@ pub fn redirect(path: &str) {
             res.set_status(StatusCode::FOUND);
         } else {
             // otherwise, we sent it from the server fn client and actually don't want
-            // to set a real redirect, as this will break the ability to return data
+            // to set a real redirect, as this wila break the ability to return data
             // instead, set the REDIRECT_HEADER to indicate that the client should redirect
             res.insert_header(
                 HeaderName::from_static(REDIRECT_HEADER),
@@ -84,9 +88,9 @@ pub fn redirect(path: &str) {
 fn init_executor() {
     #[cfg(feature = "wasm")]
     let _ = any_spawner::Executor::init_wasm_bindgen();
-    #[cfg(all(not(feature = "wasm"), feature = "default"))]
+    #[cfg(all(not(feature = "wasm"), feature = "ssr"))]
     let _ = any_spawner::Executor::init_tokio();
-    #[cfg(all(not(feature = "wasm"), not(feature = "default")))]
+    #[cfg(all(not(feature = "wasm"), not(feature = "ssr")))]
     {
         eprintln!(
             "It appears you have set 'default-features = false' on \
@@ -120,7 +124,6 @@ pub async fn render_route<IV>(
     render_route_with_context(paths, req_head, req_body, matched_path, context, app_fn).await
 }
 
-
 #[tracing::instrument(level = "trace", fields(error), skip_all)]
 pub async fn render_app_to_stream_in_order(
     req_head: RequestHead,
@@ -129,7 +132,6 @@ pub async fn render_app_to_stream_in_order(
 ) -> Response {
     render_app_to_stream_in_order_with_context(req_head, req_body, app_fn).await
 }
-
 
 #[tracing::instrument(level = "trace", fields(error), skip_all)]
 pub async fn render_app_to_stream_with_context(
@@ -204,7 +206,6 @@ pub async fn render_route_with_context(
         }
     }
 }
-
 
 #[tracing::instrument(level = "trace", fields(error), skip_all)]
 pub async fn render_app_to_stream_with_context_and_replace_blocks(
@@ -320,7 +321,6 @@ pub async fn render_app_async(
     render_app_async_with_context(req_head, req_body, app_fn).await
 }
 
-
 #[tracing::instrument(level = "trace", fields(error), skip_all)]
 pub async fn render_app_async_stream_with_context(
     req_head: RequestHead,
@@ -340,7 +340,6 @@ pub async fn render_app_async_stream_with_context(
     })
     .await
 }
-
 
 #[tracing::instrument(level = "trace", fields(error), skip_all)]
 pub async fn render_app_async_with_context(
@@ -374,9 +373,7 @@ pub fn generate_route_list(app_fn: RouteAppFunction) -> PavexRouteList {
 /// create routes in Axum's Router without having to use wildcard matching or fallbacks. Take in your root app Element
 /// as an argument, so it can walk your app tree. This version is tailored to generate Axum compatible paths.
 #[tracing::instrument(level = "trace", fields(error), skip_all)]
-pub fn generate_route_list_with_ssg(
-    app_fn: RouteAppFunction,
-) -> (PavexRouteList, StaticDataMap) {
+pub fn generate_route_list_with_ssg(app_fn: RouteAppFunction) -> (PavexRouteList, StaticDataMap) {
     generate_route_list_with_exclusions_and_ssg(app_fn, None)
 }
 
@@ -526,7 +523,7 @@ pub fn generate_route_list_with_exclusions_and_ssg_and_context(
 
             provide_post_contexts("", &Default::default(), mock_parts, Default::default());
             additional_context();
-            let foo = RouteList::generate(move ||{app_fn.inner()});
+            let foo = RouteList::generate(move || app_fn.inner());
             foo
         })
         .unwrap();

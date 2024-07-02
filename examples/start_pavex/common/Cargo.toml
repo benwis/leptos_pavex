@@ -13,12 +13,12 @@ leptos_router = { workspace = true, optional = true }
 
 app_errors = { path = "../app_errors" }
 derive_builder.workspace = true
-tokio-stream.workspace = true
+tokio-stream = {version="0.1.15", optional=true}
 thiserror.workspace = true
 serde.workspace = true
 serde_json.workspace = true
 cfg-if.workspace = true
-tokio = { workspace = true, optional = true }
+tokio = { version = "1.38.0", features = ["full"], optional=true }
 rusqlite = { workspace = true, optional = true }
 refinery = { workspace = true, optional = true }
 
@@ -32,6 +32,7 @@ ssr = [
     "leptos_meta/ssr",
     "leptos_router/ssr",
     "dep:tokio",
+    "dep:tokio-stream",
     "dep:rusqlite",
     "dep:refinery",
 ]

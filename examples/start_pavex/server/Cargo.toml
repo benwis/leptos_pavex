@@ -30,3 +30,6 @@ workspace_hack = { path = "../workspace_hack" }
 
 [dev-dependencies]
 reqwest = "0.12"
+
+[features]
+ssr = ["app/ssr" ]

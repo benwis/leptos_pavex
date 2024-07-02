@@ -30,3 +30,6 @@ leptos_pavex = { path = "../../../leptos_pavex" }
 leptos = { git = "https://github.com/leptos-rs/leptos", branch = "leptos_0.7" }
 leptos_meta = { git = "https://github.com/leptos-rs/leptos", branch = "leptos_0.7" }
 leptos_app = { path = "../leptos_app" }
+
+[features]
+ssr = ["leptos_app/ssr", "leptos/ssr", "leptos_meta/ssr"]
