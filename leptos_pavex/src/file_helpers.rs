@@ -1,4 +1,3 @@
-use http_types::mime::{Mime, BYTE_STREAM};
 use pavex::http::header::{CONTENT_LENGTH, CONTENT_TYPE};
 use pavex::request::path::PathParams;
 use pavex::response::body::raw::Full;
@@ -18,7 +17,10 @@ pub fn serve_files(subpath: &PathParams<SubPath>) -> Response {
     let basepath = Path::new(&format!("./{}", prefix)).to_path_buf();
     let mut path = match basepath.join(subpath.0.path).canonicalize() {
         Ok(p) => p,
-        Err(e) => {eprintln!("Path Failure: {e}");return Response::not_found()},
+        Err(e) => {
+            eprintln!("Path Failure: {e}");
+            return Response::not_found();
+        }
     };
 
     if path.is_dir() {
@@ -31,11 +33,8 @@ pub fn serve_files(subpath: &PathParams<SubPath>) -> Response {
         Err(_) => return Response::internal_server_error(),
     }
 
-    let mime = path
-        .extension()
-        .and_then(|e| e.to_str())
-        .and_then(Mime::from_extension)
-        .unwrap_or(BYTE_STREAM)
+    let mime = mime_guess::from_path(&path)
+        .first_or_octet_stream()
         .to_string();
 
     let hv = pavex::http::HeaderValue::from_str(&mime).expect("valid mime type");
