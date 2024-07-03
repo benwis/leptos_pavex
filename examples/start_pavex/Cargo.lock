@@ -179,6 +179,7 @@ dependencies = [
  "http 1.1.0",
  "leptos",
  "leptos_app",
+ "leptos_config",
  "leptos_meta",
  "leptos_pavex",
  "pavex",

@@ -1,5 +1,3 @@
-use leptos::context::provide_context;
-use leptos::view;
 use leptos_app::pages::App;
 use leptos_pavex::pavex_helpers::{
     AdditionalContextComponent,
@@ -8,7 +6,7 @@ use leptos_pavex::pavex_helpers::{
 use leptos_pavex::{pass_leptos_context, RouteType};
 use pavex::request::RequestHead;
 use leptos_meta::MetaTags;
-use leptos::prelude::*;
+use leptos::prelude::{ElementChild, view, provide_context, GlobalAttributes, IntoAny, LeptosOptions, HydrationScripts};
 
 pub fn generate_app(options: LeptosOptions, req_head: &RequestHead) -> AppFunction {
   
@@ -48,8 +46,4 @@ pub fn additional_context_serverfn(req_head: &RequestHead) -> AdditionalContextS
         provide_context("Test".to_string());
     });
     AdditionalContextServerFn::new(owner)
-}
-
-pub fn handle_leptos_options() -> LeptosOptions{
-   get_configuration(None).unwrap().leptos_options
 }

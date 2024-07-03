@@ -46,9 +46,9 @@ async fn _main() -> anyhow::Result<()> {
     // Generate Leptos Route list
     let mock_request = Request::builder().uri("https://www.leptos.dev/about").body(()).unwrap();
     let mock_req_head: RequestHead = mock_request.into_parts().0.into();
-    let routes = generate_route_list(generate_app(leptos_options, &mock_req_head));
-    
-    let application_state = build_application_state(routes,config.app).await;
+    let routes = generate_route_list(generate_app(leptos_options.clone(), &mock_req_head));
+
+    let application_state = build_application_state(routes,leptos_options,config.app).await;
     let tcp_listener = config
         .server
         .listener()

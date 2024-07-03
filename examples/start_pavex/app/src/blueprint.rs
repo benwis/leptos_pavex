@@ -22,12 +22,9 @@ pub fn blueprint() -> Blueprint {
         Lifecycle::RequestScoped,
     ).ignore(Lint::Unused);
     bp.constructor(f!(super::leptos::generate_app), Lifecycle::RequestScoped);
-    bp.constructor(
-        f!(super::leptos::handle_leptos_options),
-        Lifecycle::Singleton,
-    ).clone_if_necessary();
 
-     bp.prebuilt(t!(std::vec::Vec<leptos_pavex::PavexRouteListing>)).clone_if_necessary();
+    bp.prebuilt(t!(leptos_config::LeptosOptions)).clone_if_necessary();
+    bp.prebuilt(t!(std::vec::Vec<leptos_pavex::PavexRouteListing>)).clone_if_necessary();
 
     routes::register(&mut bp);
     bp

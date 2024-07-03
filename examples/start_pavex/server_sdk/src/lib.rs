@@ -13,13 +13,13 @@ pub struct ApplicationState {
 }
 pub async fn build_application_state(
     v0: alloc::vec::Vec<leptos_pavex::PavexRouteListing>,
-    v1: app::configuration::AppConfig,
+    v1: leptos_config::LeptosOptions,
+    v2: app::configuration::AppConfig,
 ) -> crate::ApplicationState {
-    let v2 = app::leptos::handle_leptos_options();
     crate::ApplicationState {
         s0: v0,
-        s1: v2,
-        s2: v1,
+        s1: v1,
+        s2: v2,
     }
 }
 pub fn run(
