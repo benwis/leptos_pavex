@@ -16,11 +16,11 @@ verifier_args = ["--check"]
 clippy = { all = "allow" }
 
 [dependencies]
-app = {  path = "../app" }
+app = { version = "0.1.0", path = "../app" }
 http = "1.1.0"
 hyper = "1.3.1"
-leptos_config = { git = "https://github.com/leptos-rs/leptos", branch = "leptos_0.7" }
-leptos_pavex = {  path = "../../../leptos_pavex"}
+leptos_config = { version = "0.7.0-alpha", git = "https://github.com/leptos-rs/leptos", branch = "leptos_0.7" }
+leptos_pavex = { version = "0.1.0", path = "../../../leptos_pavex" }
 pavex = "0.1.44"
 pavex_matchit = "0.7.4"
 pavex_tracing = "0.1.44"

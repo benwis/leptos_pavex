@@ -3,8 +3,7 @@
 pub mod extend_response;
 #[cfg(feature = "ssr")]
 pub mod file_helpers;
-#[cfg(feature = "ssr")]
-#[cfg(feature = "ssr")]
+
 pub mod leptos_routes;
 pub mod pavex_helpers;
 pub mod request;

@@ -2,10 +2,8 @@
 <module type="EMPTY_MODULE" version="4">
   <component name="NewModuleRootManager">
     <content url="file://$MODULE_DIR$">
-      <sourceFolder url="file://$MODULE_DIR$/examples" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/leptos-pavex-macro/src" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/leptos-pavex/src" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/leptos_pavex/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/leptos_pavex_macro/src" isTestSource="false" />
       <excludeFolder url="file://$MODULE_DIR$/target" />
     </content>
     <orderEntry type="inheritedJdk" />

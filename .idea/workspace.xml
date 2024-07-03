@@ -8,8 +8,13 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="dc9646a2-d8ac-4395-ab6f-1cce323c37f6" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/leptos_pavex.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/leptos_pavex.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/leptos-pavex/src/lib.rs" beforeDir="false" afterPath="$PROJECT_DIR$/leptos-pavex/src/lib.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/examples/start_pavex/app/Cargo.toml" beforeDir="false" afterPath="$PROJECT_DIR$/examples/start_pavex/app/Cargo.toml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/leptos_pavex/src/lib.rs" beforeDir="false" afterPath="$PROJECT_DIR$/leptos_pavex/src/lib.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/leptos_pavex/src/response.rs" beforeDir="false" afterPath="$PROJECT_DIR$/leptos_pavex/src/response.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/leptos_pavex/src/stream.rs" beforeDir="false" afterPath="$PROJECT_DIR$/leptos_pavex/src/stream.rs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -35,7 +40,7 @@
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.rust.reset.selective.auto.import": "true",
     "git-widget-placeholder": "main",
-    "last_opened_file_path": "/celCluster/projects/leptos",
+    "last_opened_file_path": "/celCluster/projects/leptos_pavex",
     "node.js.detected.package.eslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
     "nodejs_package_manager_path": "npm",
@@ -80,6 +85,7 @@
       <option name="presentableId" value="Default" />
       <updated>1718506299833</updated>
       <workItem from="1718506300834" duration="24933000" />
+      <workItem from="1719966078447" duration="1973000" />
     </task>
     <servers />
   </component>

@@ -26,7 +26,7 @@ tracing = "0.1"
 http = "1.1.0"
 serde = { version = "1", features = ["derive"] }
 workspace_hack = { path = "../workspace_hack" }
-leptos_pavex = { path = "../../../leptos_pavex" }
+leptos_pavex = { path = "../../../leptos_pavex", features=["ssr"] }
 leptos = { git = "https://github.com/leptos-rs/leptos", branch = "leptos_0.7", features=["ssr"] }
 leptos_meta = { git = "https://github.com/leptos-rs/leptos", branch = "leptos_0.7", features=["ssr"] }
 leptos_app = { path = "../leptos_app", features=["ssr"] }
