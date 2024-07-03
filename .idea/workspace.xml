@@ -9,7 +9,10 @@
   <component name="ChangeListManager">
     <list default="true" id="dc9646a2-d8ac-4395-ab6f-1cce323c37f6" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/leptos_pavex/src/file_helpers.rs" beforeDir="false" afterPath="$PROJECT_DIR$/leptos_pavex/src/file_helpers.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/leptos_pavex/src/leptos_routes.rs" beforeDir="false" afterPath="$PROJECT_DIR$/leptos_pavex/src/leptos_routes.rs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/leptos_pavex/src/lib.rs" beforeDir="false" afterPath="$PROJECT_DIR$/leptos_pavex/src/lib.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/leptos_pavex/src/server_fn.rs" beforeDir="false" afterPath="$PROJECT_DIR$/leptos_pavex/src/server_fn.rs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -80,7 +83,7 @@
       <option name="presentableId" value="Default" />
       <updated>1718506299833</updated>
       <workItem from="1718506300834" duration="24933000" />
-      <workItem from="1719966078447" duration="5256000" />
+      <workItem from="1719966078447" duration="7547000" />
     </task>
     <servers />
   </component>

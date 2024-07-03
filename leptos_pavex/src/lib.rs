@@ -108,11 +108,12 @@ pub async fn render_app_to_stream(
     req_body: RawIncomingBody,
     app_fn: AppFunction,
 ) -> Response {
-    render_app_to_stream_with_context(req_head, req_body, app_fn).await
+    render_app_to_stream_and_replace_blocks(req_head, req_body, app_fn, false).await
 }
 
+
 #[tracing::instrument(level = "trace", fields(error), skip_all)]
-pub async fn render_route<IV>(
+pub async fn render_route(
     paths: PavexRouteList,
     req_head: RequestHead,
     req_body: RawIncomingBody,
@@ -120,37 +121,6 @@ pub async fn render_route<IV>(
     context: AdditionalContextComponent,
     app_fn: AppFunction,
 ) -> Response {
-    render_route_with_context(paths, req_head, req_body, matched_path, context, app_fn).await
-}
-
-#[tracing::instrument(level = "trace", fields(error), skip_all)]
-pub async fn render_app_to_stream_in_order(
-    req_head: RequestHead,
-    req_body: RawIncomingBody,
-    app_fn: AppFunction,
-) -> Response {
-    render_app_to_stream_in_order_with_context(req_head, req_body, app_fn).await
-}
-
-#[tracing::instrument(level = "trace", fields(error), skip_all)]
-pub async fn render_app_to_stream_with_context(
-    req_head: RequestHead,
-    req_body: RawIncomingBody,
-    app_fn: AppFunction,
-) -> Response {
-    render_app_to_stream_with_context_and_replace_blocks(req_head, req_body, app_fn, false).await
-}
-
-#[tracing::instrument(level = "trace", fields(error), skip_all)]
-pub async fn render_route_with_context(
-    paths: PavexRouteList,
-    req_head: RequestHead,
-    req_body: RawIncomingBody,
-    matched_path: &MatchedPathPattern,
-    context: AdditionalContextComponent,
-    app_fn: AppFunction,
-) -> Response {
-    eprintln!("RENDERING ROUTE WITH CONTEXT");
     // 1. Process route to match the values in routeListing
     let path = &matched_path.to_string();
     // 2. Find RouteListing in paths. This should probably be optimized, we probably don't want to
@@ -171,8 +141,7 @@ pub async fn render_route_with_context(
         SsrMode::OutOfOrder => {
             owner
                 .with(|| {
-                    eprintln!("STEP 2");
-                    ScopedFuture::new(render_app_to_stream_with_context(
+                    ScopedFuture::new(render_app_to_stream(
                         req_head, req_body, app_fn,
                     ))
                 })
@@ -181,7 +150,7 @@ pub async fn render_route_with_context(
         SsrMode::PartiallyBlocked => {
             owner
                 .with(|| {
-                    ScopedFuture::new(render_app_to_stream_with_context_and_replace_blocks(
+                    ScopedFuture::new(render_app_to_stream_and_replace_blocks(
                         req_head, req_body, app_fn, true,
                     ))
                 })
@@ -190,7 +159,7 @@ pub async fn render_route_with_context(
         SsrMode::InOrder => {
             owner
                 .with(|| {
-                    ScopedFuture::new(render_app_to_stream_in_order_with_context(
+                    ScopedFuture::new(render_app_to_stream_in_order(
                         req_head, req_body, app_fn,
                     ))
                 })
@@ -199,7 +168,7 @@ pub async fn render_route_with_context(
         SsrMode::Async => {
             owner
                 .with(|| {
-                    ScopedFuture::new(render_app_async_stream_with_context(
+                    ScopedFuture::new(render_app_async(
                         req_head, req_body, app_fn,
                     ))
                 })
@@ -209,7 +178,7 @@ pub async fn render_route_with_context(
 }
 
 #[tracing::instrument(level = "trace", fields(error), skip_all)]
-pub async fn render_app_to_stream_with_context_and_replace_blocks(
+pub async fn render_app_to_stream_and_replace_blocks(
     req_head: RequestHead,
     req_body: RawIncomingBody,
     app_fn: AppFunction,
@@ -226,7 +195,7 @@ pub async fn render_app_to_stream_with_context_and_replace_blocks(
 }
 
 #[tracing::instrument(level = "trace", fields(error), skip_all)]
-pub async fn render_app_to_stream_in_order_with_context(
+pub async fn render_app_to_stream_in_order(
     req_head: RequestHead,
     req_body: RawIncomingBody,
     app_fn: AppFunction,
@@ -248,7 +217,6 @@ async fn handle_response(
         BoxedFnOnce<PinnedStream<String>>,
     ) -> PinnedFuture<PinnedStream<String>>,
 ) -> Response {
-    eprintln!("HANDLING RESPONSE");
     let res_options = ResponseOptions::default();
     let meta_context = ServerMetaContext::new();
 
@@ -317,35 +285,6 @@ fn provide_post_contexts(
 
 #[tracing::instrument(level = "trace", fields(error), skip_all)]
 pub async fn render_app_async(
-    req_head: RequestHead,
-    req_body: RawIncomingBody,
-    app_fn: AppFunction,
-) -> Response {
-    render_app_async_with_context(req_head, req_body, app_fn).await
-}
-
-#[tracing::instrument(level = "trace", fields(error), skip_all)]
-pub async fn render_app_async_stream_with_context(
-    req_head: RequestHead,
-    req_body: RawIncomingBody,
-    app_fn: AppFunction,
-) -> Response {
-    handle_response(req_head, req_body, app_fn, |app, chunks| {
-        Box::pin(async move {
-            let app = app
-                .inner()
-                .to_html_stream_in_order()
-                .collect::<String>()
-                .await;
-            let chunks = chunks();
-            Box::pin(once(async move { app }).chain(chunks)) as PinnedStream<String>
-        })
-    })
-    .await
-}
-
-#[tracing::instrument(level = "trace", fields(error), skip_all)]
-pub async fn render_app_async_with_context(
     req_head: RequestHead,
     req_body: RawIncomingBody,
     app_fn: AppFunction,

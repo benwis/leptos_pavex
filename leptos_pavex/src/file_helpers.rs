@@ -21,8 +21,6 @@ pub fn serve_files(subpath: &PathParams<SubPath>) -> Response {
         Err(e) => {eprintln!("Path Failure: {e}");return Response::not_found()},
     };
 
-    eprintln!("FETCHING PATH {path:?}");
-
     if path.is_dir() {
         path.push("index.html");
     }

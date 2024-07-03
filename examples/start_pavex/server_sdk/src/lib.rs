@@ -435,7 +435,7 @@ pub mod route_1 {
         let v6 = app::leptos::additional_context_components(&v0);
         let v7 = app::leptos::generate_route_app(v2, &v0);
         let v8 = leptos_pavex::generate_route_list(v7);
-        let v9 = leptos_pavex::render_route_with_context(v8, v0, v1, v3, v6, v5).await;
+        let v9 = leptos_pavex::render_route(v8, v0, v1, v3, v6, v5).await;
         <pavex::response::Response as pavex::response::IntoResponse>::into_response(v9)
     }
     async fn post_processing_0(
@@ -577,7 +577,7 @@ pub mod route_2 {
         let v6 = app::leptos::additional_context_components(&v0);
         let v7 = app::leptos::generate_route_app(v2, &v0);
         let v8 = leptos_pavex::generate_route_list(v7);
-        let v9 = leptos_pavex::render_route_with_context(v8, v0, v1, v3, v6, v5).await;
+        let v9 = leptos_pavex::render_route(v8, v0, v1, v3, v6, v5).await;
         <pavex::response::Response as pavex::response::IntoResponse>::into_response(v9)
     }
     async fn post_processing_0(
