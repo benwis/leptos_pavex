@@ -70,7 +70,7 @@ pub fn redirect(path: &str) {
             res.set_status(StatusCode::FOUND);
         } else {
             // otherwise, we sent it from the server fn client and actually don't want
-            // to set a real redirect, as this wila break the ability to return data
+            // to set a real redirect, as this will break the ability to return data
             // instead, set the REDIRECT_HEADER to indicate that the client should redirect
             res.insert_header(
                 HeaderName::from_static(REDIRECT_HEADER),
@@ -150,6 +150,7 @@ pub async fn render_route_with_context(
     context: AdditionalContextComponent,
     app_fn: AppFunction,
 ) -> Response {
+    eprintln!("RENDERING ROUTE WITH CONTEXT");
     // 1. Process route to match the values in routeListing
     let path = &matched_path.to_string();
     // 2. Find RouteListing in paths. This should probably be optimized, we probably don't want to
@@ -170,6 +171,7 @@ pub async fn render_route_with_context(
         SsrMode::OutOfOrder => {
             owner
                 .with(|| {
+                    eprintln!("STEP 2");
                     ScopedFuture::new(render_app_to_stream_with_context(
                         req_head, req_body, app_fn,
                     ))
@@ -246,6 +248,7 @@ async fn handle_response(
         BoxedFnOnce<PinnedStream<String>>,
     ) -> PinnedFuture<PinnedStream<String>>,
 ) -> Response {
+    eprintln!("HANDLING RESPONSE");
     let res_options = ResponseOptions::default();
     let meta_context = ServerMetaContext::new();
 
@@ -285,6 +288,7 @@ pub fn provide_initial_contexts(req_head: &RequestHead, parts: RequestParts) {
         .unwrap_or(PathAndQuery::from_static("/"));
     provide_context(RequestUrl::new(&path.to_string()));
     provide_context(parts);
+    provide_context(ServerMetaContext::new());
     provide_server_redirect(redirect);
     #[cfg(feature = "nonce")]
     leptos::nonce::provide_nonce();
