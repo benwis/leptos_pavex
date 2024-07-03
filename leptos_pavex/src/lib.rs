@@ -40,7 +40,7 @@ use pavex::request::body::RawIncomingBody;
 use pavex::request::path::MatchedPathPattern;
 use pavex::request::RequestHead;
 use pavex::response::Response;
-use pavex_helpers::{AdditionalContextComponent, AppFunction, RouteAppFunction};
+use pavex_helpers::{AdditionalContextComponent, AppFunction};
 use reactive_graph::computed::ScopedFuture;
 use response::PavexResponse;
 
@@ -307,7 +307,7 @@ pub async fn render_app_async(
 /// create routes in Axum's Router without having to use wildcard matching or fallbacks. Takes in your root app Element
 /// as an argument, so it can walk your app tree. This version is tailored to generate Axum compatible paths.
 #[tracing::instrument(level = "trace", fields(error), skip_all)]
-pub fn generate_route_list(app_fn: RouteAppFunction) -> PavexRouteList {
+pub fn generate_route_list(app_fn: AppFunction) -> PavexRouteList {
     generate_route_list_with_exclusions_and_ssg(app_fn, None).0
 }
 
@@ -315,7 +315,7 @@ pub fn generate_route_list(app_fn: RouteAppFunction) -> PavexRouteList {
 /// create routes in Axum's Router without having to use wildcard matching or fallbacks. Take in your root app Element
 /// as an argument, so it can walk your app tree. This version is tailored to generate Axum compatible paths.
 #[tracing::instrument(level = "trace", fields(error), skip_all)]
-pub fn generate_route_list_with_ssg(app_fn: RouteAppFunction) -> (PavexRouteList, StaticDataMap) {
+pub fn generate_route_list_with_ssg(app_fn: AppFunction) -> (PavexRouteList, StaticDataMap) {
     generate_route_list_with_exclusions_and_ssg(app_fn, None)
 }
 
@@ -325,7 +325,7 @@ pub fn generate_route_list_with_ssg(app_fn: RouteAppFunction) -> (PavexRouteList
 /// to this function will stop `.leptos_routes()` from generating a route for it, allowing a custom handler. These need to be in Axum path format
 #[tracing::instrument(level = "trace", fields(error), skip_all)]
 pub fn generate_route_list_with_exclusions(
-    app_fn: RouteAppFunction,
+    app_fn: AppFunction,
     excluded_routes: Option<Vec<String>>,
 ) -> PavexRouteList {
     generate_route_list_with_exclusions_and_ssg(app_fn, excluded_routes).0
@@ -337,7 +337,7 @@ pub fn generate_route_list_with_exclusions(
 /// to this function will stop `.leptos_routes()` from generating a route for it, allowing a custom handler. These need to be in Axum path format
 #[tracing::instrument(level = "trace", fields(error), skip_all)]
 pub fn generate_route_list_with_exclusions_and_ssg(
-    app_fn: RouteAppFunction,
+    app_fn: AppFunction,
     excluded_routes: Option<Vec<String>>,
 ) -> (PavexRouteList, StaticDataMap) {
     generate_route_list_with_exclusions_and_ssg_and_context(app_fn, excluded_routes, || {})
@@ -450,7 +450,7 @@ impl PavexPath for &[PathSegment] {
 /// Additional context will be provided to the app Element.
 #[tracing::instrument(level = "trace", fields(error), skip_all)]
 pub fn generate_route_list_with_exclusions_and_ssg_and_context(
-    app_fn: RouteAppFunction,
+    app_fn: AppFunction,
     excluded_routes: Option<Vec<String>>,
     additional_context: impl Fn() + 'static + Clone,
 ) -> (PavexRouteList, StaticDataMap) {

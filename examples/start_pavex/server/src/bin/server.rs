@@ -7,6 +7,11 @@ use server::{
 };
 use server_sdk::{build_application_state, run};
 use std::time::Duration;
+use leptos_pavex::generate_route_list;
+use pavex::request::RequestHead;
+use app::leptos::generate_app;
+use http::Request;
+use leptos::prelude::get_configuration;
 
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
@@ -33,7 +38,17 @@ async fn _main() -> anyhow::Result<()> {
     let _ = dotenvy::dotenv();
 
     let config = Config::load(None)?;
-    let application_state = build_application_state(config.app).await;
+
+    // Get Leptos config
+    let conf = get_configuration(None).unwrap();
+    let leptos_options = conf.leptos_options;
+
+    // Generate Leptos Route list
+    let mock_request = Request::builder().uri("https://www.leptos.dev/about").body(()).unwrap();
+    let mock_req_head: RequestHead = mock_request.into_parts().0.into();
+    let routes = generate_route_list(generate_app(leptos_options, &mock_req_head));
+    
+    let application_state = build_application_state(routes,config.app).await;
     let tcp_listener = config
         .server
         .listener()

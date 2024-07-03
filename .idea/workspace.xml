@@ -7,12 +7,9 @@
     <cargoProject FILE="$PROJECT_DIR$/Cargo.toml" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="dc9646a2-d8ac-4395-ab6f-1cce323c37f6" name="Changes" comment="">
+    <list default="true" id="dc9646a2-d8ac-4395-ab6f-1cce323c37f6" name="Changes" comment="General cleanup, removal of with_context functions">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/leptos_pavex/src/file_helpers.rs" beforeDir="false" afterPath="$PROJECT_DIR$/leptos_pavex/src/file_helpers.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/leptos_pavex/src/leptos_routes.rs" beforeDir="false" afterPath="$PROJECT_DIR$/leptos_pavex/src/leptos_routes.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/leptos_pavex/src/lib.rs" beforeDir="false" afterPath="$PROJECT_DIR$/leptos_pavex/src/lib.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/leptos_pavex/src/server_fn.rs" beforeDir="false" afterPath="$PROJECT_DIR$/leptos_pavex/src/server_fn.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/examples/start_pavex/app/src/blueprint.rs" beforeDir="false" afterPath="$PROJECT_DIR$/examples/start_pavex/app/src/blueprint.rs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -83,11 +80,24 @@
       <option name="presentableId" value="Default" />
       <updated>1718506299833</updated>
       <workItem from="1718506300834" duration="24933000" />
-      <workItem from="1719966078447" duration="7547000" />
+      <workItem from="1719966078447" duration="8900000" />
     </task>
+    <task id="LOCAL-00001" summary="General cleanup, removal of with_context functions">
+      <option name="closed" value="true" />
+      <created>1720025664438</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1720025664438</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="General cleanup, removal of with_context functions" />
+    <option name="LAST_COMMIT_MESSAGE" value="General cleanup, removal of with_context functions" />
   </component>
 </project>

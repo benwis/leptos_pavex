@@ -3,7 +3,7 @@ use leptos::view;
 use leptos_app::pages::App;
 use leptos_pavex::pavex_helpers::{
     AdditionalContextComponent,
-    AdditionalContextServerFn, AppFunction, RouteAppFunction,
+    AdditionalContextServerFn, AppFunction,
 };
 use leptos_pavex::{pass_leptos_context, RouteType};
 use pavex::request::RequestHead;
@@ -32,30 +32,6 @@ pub fn generate_app(options: LeptosOptions, req_head: &RequestHead) -> AppFuncti
         }
     };
     AppFunction::new(owner.with(fun).into_any())
-}
-pub fn generate_route_app(options: LeptosOptions, req_head: &RequestHead ) -> RouteAppFunction {
-    
-   let context = additional_context_components(req_head);
-   let owner = context.owner();
-   let fun = move || {
-        view! {
-            <!DOCTYPE html>
-        <html lang="en">
-            <head>
-                <meta charset="utf-8"/>
-                <meta name="viewport" content="width=device-width, initial-scale=1"/>
-                //<AutoReload options=options.clone() />
-                <HydrationScripts options/>
-                <MetaTags/>
-            </head>
-            <body>
-                <App/>
-            </body>
-        </html>
-        }
-    };
-    RouteAppFunction::new(owner.with(fun).into_any())
-
 }
 
 pub fn additional_context_components(req_head: &RequestHead) -> AdditionalContextComponent {

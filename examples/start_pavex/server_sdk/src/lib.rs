@@ -7,16 +7,19 @@ struct ServerState {
     application_state: ApplicationState,
 }
 pub struct ApplicationState {
-    s0: leptos_config::LeptosOptions,
-    s1: app::configuration::AppConfig,
+    s0: alloc::vec::Vec<leptos_pavex::PavexRouteListing>,
+    s1: leptos_config::LeptosOptions,
+    s2: app::configuration::AppConfig,
 }
 pub async fn build_application_state(
-    v0: app::configuration::AppConfig,
+    v0: alloc::vec::Vec<leptos_pavex::PavexRouteListing>,
+    v1: app::configuration::AppConfig,
 ) -> crate::ApplicationState {
-    let v1 = app::leptos::handle_leptos_options();
+    let v2 = app::leptos::handle_leptos_options();
     crate::ApplicationState {
-        s0: v1,
-        s1: v0,
+        s0: v0,
+        s1: v2,
+        s2: v1,
     }
 }
 pub fn run(
@@ -79,9 +82,10 @@ async fn route_request(
             match &request_head.method {
                 &pavex::http::Method::GET => {
                     route_1::entrypoint(
+                            server_state.application_state.s0.clone(),
                             request_head,
                             request_body,
-                            server_state.application_state.s0.clone(),
+                            server_state.application_state.s1.clone(),
                             matched_route_template,
                         )
                         .await
@@ -134,9 +138,10 @@ async fn route_request(
             match &request_head.method {
                 &pavex::http::Method::GET => {
                     route_2::entrypoint(
+                            server_state.application_state.s0.clone(),
                             request_head,
                             request_body,
-                            server_state.application_state.s0.clone(),
+                            server_state.application_state.s1.clone(),
                             matched_route_template,
                         )
                         .await
@@ -192,7 +197,7 @@ async fn route_request(
                             url_params,
                             &request_head,
                             matched_route_template,
-                            &server_state.application_state.s1,
+                            &server_state.application_state.s2,
                         )
                         .await
                 }
@@ -358,85 +363,90 @@ pub mod route_0 {
 }
 pub mod route_1 {
     pub async fn entrypoint(
-        s_0: pavex::request::RequestHead,
-        s_1: pavex::request::body::RawIncomingBody,
-        s_2: leptos_config::LeptosOptions,
-        s_3: pavex::request::path::MatchedPathPattern,
+        s_0: alloc::vec::Vec<leptos_pavex::PavexRouteListing>,
+        s_1: pavex::request::RequestHead,
+        s_2: pavex::request::body::RawIncomingBody,
+        s_3: leptos_config::LeptosOptions,
+        s_4: pavex::request::path::MatchedPathPattern,
     ) -> pavex::response::Response {
-        let response = wrapping_0(s_0, s_1, s_2, s_3).await;
+        let response = wrapping_0(s_0, s_1, s_2, s_3, s_4).await;
         response
     }
     async fn stage_1(
-        s_0: pavex::request::RequestHead,
-        s_1: pavex::request::body::RawIncomingBody,
-        s_2: leptos_config::LeptosOptions,
-        s_3: pavex::request::path::MatchedPathPattern,
+        s_0: alloc::vec::Vec<leptos_pavex::PavexRouteListing>,
+        s_1: pavex::request::RequestHead,
+        s_2: pavex::request::body::RawIncomingBody,
+        s_3: leptos_config::LeptosOptions,
+        s_4: pavex::request::path::MatchedPathPattern,
     ) -> pavex::response::Response {
-        let response = wrapping_1(s_0, s_1, s_2, s_3).await;
+        let response = wrapping_1(s_0, s_1, s_2, s_3, s_4).await;
         response
     }
     async fn stage_2<'a, 'b>(
-        s_0: pavex::request::RequestHead,
-        s_1: pavex::request::body::RawIncomingBody,
-        s_2: leptos_config::LeptosOptions,
-        s_3: &'a pavex::request::path::MatchedPathPattern,
-        s_4: &'b pavex_tracing::RootSpan,
+        s_0: alloc::vec::Vec<leptos_pavex::PavexRouteListing>,
+        s_1: pavex::request::RequestHead,
+        s_2: pavex::request::body::RawIncomingBody,
+        s_3: leptos_config::LeptosOptions,
+        s_4: &'a pavex::request::path::MatchedPathPattern,
+        s_5: &'b pavex_tracing::RootSpan,
     ) -> pavex::response::Response {
-        let response = handler(s_0, s_1, s_2, s_3).await;
-        let response = post_processing_0(response, s_4).await;
+        let response = handler(s_0, s_1, s_2, s_3, s_4).await;
+        let response = post_processing_0(response, s_5).await;
         response
     }
     async fn wrapping_0(
-        v0: pavex::request::RequestHead,
-        v1: pavex::request::body::RawIncomingBody,
-        v2: leptos_config::LeptosOptions,
-        v3: pavex::request::path::MatchedPathPattern,
+        v0: alloc::vec::Vec<leptos_pavex::PavexRouteListing>,
+        v1: pavex::request::RequestHead,
+        v2: pavex::request::body::RawIncomingBody,
+        v3: leptos_config::LeptosOptions,
+        v4: pavex::request::path::MatchedPathPattern,
     ) -> pavex::response::Response {
-        let v4 = crate::route_1::Next0 {
+        let v5 = crate::route_1::Next0 {
             s_0: v0,
             s_1: v1,
             s_2: v2,
             s_3: v3,
+            s_4: v4,
             next: stage_1,
         };
-        let v5 = pavex::middleware::Next::new(v4);
-        let v6 = pavex::middleware::wrap_noop(v5).await;
-        <pavex::response::Response as pavex::response::IntoResponse>::into_response(v6)
+        let v6 = pavex::middleware::Next::new(v5);
+        let v7 = pavex::middleware::wrap_noop(v6).await;
+        <pavex::response::Response as pavex::response::IntoResponse>::into_response(v7)
     }
     async fn wrapping_1(
-        v0: pavex::request::RequestHead,
-        v1: pavex::request::body::RawIncomingBody,
-        v2: leptos_config::LeptosOptions,
-        v3: pavex::request::path::MatchedPathPattern,
+        v0: alloc::vec::Vec<leptos_pavex::PavexRouteListing>,
+        v1: pavex::request::RequestHead,
+        v2: pavex::request::body::RawIncomingBody,
+        v3: leptos_config::LeptosOptions,
+        v4: pavex::request::path::MatchedPathPattern,
     ) -> pavex::response::Response {
-        let v4 = pavex::telemetry::ServerRequestId::generate();
-        let v5 = app::telemetry::root_span(&v0, v3, v4);
-        let v6 = crate::route_1::Next1 {
+        let v5 = pavex::telemetry::ServerRequestId::generate();
+        let v6 = app::telemetry::root_span(&v1, v4, v5);
+        let v7 = crate::route_1::Next1 {
             s_0: v0,
             s_1: v1,
             s_2: v2,
-            s_3: &v3,
-            s_4: &v5,
+            s_3: v3,
+            s_4: &v4,
+            s_5: &v6,
             next: stage_2,
         };
-        let v7 = pavex::middleware::Next::new(v6);
-        let v8 = <pavex_tracing::RootSpan as core::clone::Clone>::clone(&v5);
-        let v9 = pavex_tracing::logger(v8, v7).await;
-        <pavex::response::Response as pavex::response::IntoResponse>::into_response(v9)
+        let v8 = pavex::middleware::Next::new(v7);
+        let v9 = <pavex_tracing::RootSpan as core::clone::Clone>::clone(&v6);
+        let v10 = pavex_tracing::logger(v9, v8).await;
+        <pavex::response::Response as pavex::response::IntoResponse>::into_response(v10)
     }
     async fn handler(
-        v0: pavex::request::RequestHead,
-        v1: pavex::request::body::RawIncomingBody,
-        v2: leptos_config::LeptosOptions,
-        v3: &pavex::request::path::MatchedPathPattern,
+        v0: alloc::vec::Vec<leptos_pavex::PavexRouteListing>,
+        v1: pavex::request::RequestHead,
+        v2: pavex::request::body::RawIncomingBody,
+        v3: leptos_config::LeptosOptions,
+        v4: &pavex::request::path::MatchedPathPattern,
     ) -> pavex::response::Response {
-        let v4 = <leptos_config::LeptosOptions as core::clone::Clone>::clone(&v2);
-        let v5 = app::leptos::generate_app(v4, &v0);
-        let v6 = app::leptos::additional_context_components(&v0);
-        let v7 = app::leptos::generate_route_app(v2, &v0);
-        let v8 = leptos_pavex::generate_route_list(v7);
-        let v9 = leptos_pavex::render_route(v8, v0, v1, v3, v6, v5).await;
-        <pavex::response::Response as pavex::response::IntoResponse>::into_response(v9)
+        let v5 = app::leptos::generate_app(v3, &v1);
+        let v6 = app::leptos::additional_context_components(&v1);
+        let v7 = leptos_pavex::render_route(v0, v1, v2, v4, v6, v5).await;
+        <pavex::response::Response as pavex::response::IntoResponse>::into_response(v7)
     }
     async fn post_processing_0(
         v0: pavex::response::Response,
@@ -449,11 +459,13 @@ pub mod route_1 {
     where
         T: std::future::Future<Output = pavex::response::Response>,
     {
-        s_0: pavex::request::RequestHead,
-        s_1: pavex::request::body::RawIncomingBody,
-        s_2: leptos_config::LeptosOptions,
-        s_3: pavex::request::path::MatchedPathPattern,
+        s_0: alloc::vec::Vec<leptos_pavex::PavexRouteListing>,
+        s_1: pavex::request::RequestHead,
+        s_2: pavex::request::body::RawIncomingBody,
+        s_3: leptos_config::LeptosOptions,
+        s_4: pavex::request::path::MatchedPathPattern,
         next: fn(
+            alloc::vec::Vec<leptos_pavex::PavexRouteListing>,
             pavex::request::RequestHead,
             pavex::request::body::RawIncomingBody,
             leptos_config::LeptosOptions,
@@ -467,19 +479,21 @@ pub mod route_1 {
         type Output = pavex::response::Response;
         type IntoFuture = T;
         fn into_future(self) -> Self::IntoFuture {
-            (self.next)(self.s_0, self.s_1, self.s_2, self.s_3)
+            (self.next)(self.s_0, self.s_1, self.s_2, self.s_3, self.s_4)
         }
     }
     struct Next1<'a, 'b, T>
     where
         T: std::future::Future<Output = pavex::response::Response>,
     {
-        s_0: pavex::request::RequestHead,
-        s_1: pavex::request::body::RawIncomingBody,
-        s_2: leptos_config::LeptosOptions,
-        s_3: &'a pavex::request::path::MatchedPathPattern,
-        s_4: &'b pavex_tracing::RootSpan,
+        s_0: alloc::vec::Vec<leptos_pavex::PavexRouteListing>,
+        s_1: pavex::request::RequestHead,
+        s_2: pavex::request::body::RawIncomingBody,
+        s_3: leptos_config::LeptosOptions,
+        s_4: &'a pavex::request::path::MatchedPathPattern,
+        s_5: &'b pavex_tracing::RootSpan,
         next: fn(
+            alloc::vec::Vec<leptos_pavex::PavexRouteListing>,
             pavex::request::RequestHead,
             pavex::request::body::RawIncomingBody,
             leptos_config::LeptosOptions,
@@ -494,91 +508,96 @@ pub mod route_1 {
         type Output = pavex::response::Response;
         type IntoFuture = T;
         fn into_future(self) -> Self::IntoFuture {
-            (self.next)(self.s_0, self.s_1, self.s_2, self.s_3, self.s_4)
+            (self.next)(self.s_0, self.s_1, self.s_2, self.s_3, self.s_4, self.s_5)
         }
     }
 }
 pub mod route_2 {
     pub async fn entrypoint(
-        s_0: pavex::request::RequestHead,
-        s_1: pavex::request::body::RawIncomingBody,
-        s_2: leptos_config::LeptosOptions,
-        s_3: pavex::request::path::MatchedPathPattern,
+        s_0: alloc::vec::Vec<leptos_pavex::PavexRouteListing>,
+        s_1: pavex::request::RequestHead,
+        s_2: pavex::request::body::RawIncomingBody,
+        s_3: leptos_config::LeptosOptions,
+        s_4: pavex::request::path::MatchedPathPattern,
     ) -> pavex::response::Response {
-        let response = wrapping_0(s_0, s_1, s_2, s_3).await;
+        let response = wrapping_0(s_0, s_1, s_2, s_3, s_4).await;
         response
     }
     async fn stage_1(
-        s_0: pavex::request::RequestHead,
-        s_1: pavex::request::body::RawIncomingBody,
-        s_2: leptos_config::LeptosOptions,
-        s_3: pavex::request::path::MatchedPathPattern,
+        s_0: alloc::vec::Vec<leptos_pavex::PavexRouteListing>,
+        s_1: pavex::request::RequestHead,
+        s_2: pavex::request::body::RawIncomingBody,
+        s_3: leptos_config::LeptosOptions,
+        s_4: pavex::request::path::MatchedPathPattern,
     ) -> pavex::response::Response {
-        let response = wrapping_1(s_0, s_1, s_2, s_3).await;
+        let response = wrapping_1(s_0, s_1, s_2, s_3, s_4).await;
         response
     }
     async fn stage_2<'a, 'b>(
-        s_0: pavex::request::RequestHead,
-        s_1: pavex::request::body::RawIncomingBody,
-        s_2: leptos_config::LeptosOptions,
-        s_3: &'a pavex::request::path::MatchedPathPattern,
-        s_4: &'b pavex_tracing::RootSpan,
+        s_0: alloc::vec::Vec<leptos_pavex::PavexRouteListing>,
+        s_1: pavex::request::RequestHead,
+        s_2: pavex::request::body::RawIncomingBody,
+        s_3: leptos_config::LeptosOptions,
+        s_4: &'a pavex::request::path::MatchedPathPattern,
+        s_5: &'b pavex_tracing::RootSpan,
     ) -> pavex::response::Response {
-        let response = handler(s_0, s_1, s_2, s_3).await;
-        let response = post_processing_0(response, s_4).await;
+        let response = handler(s_0, s_1, s_2, s_3, s_4).await;
+        let response = post_processing_0(response, s_5).await;
         response
     }
     async fn wrapping_0(
-        v0: pavex::request::RequestHead,
-        v1: pavex::request::body::RawIncomingBody,
-        v2: leptos_config::LeptosOptions,
-        v3: pavex::request::path::MatchedPathPattern,
+        v0: alloc::vec::Vec<leptos_pavex::PavexRouteListing>,
+        v1: pavex::request::RequestHead,
+        v2: pavex::request::body::RawIncomingBody,
+        v3: leptos_config::LeptosOptions,
+        v4: pavex::request::path::MatchedPathPattern,
     ) -> pavex::response::Response {
-        let v4 = crate::route_2::Next0 {
+        let v5 = crate::route_2::Next0 {
             s_0: v0,
             s_1: v1,
             s_2: v2,
             s_3: v3,
+            s_4: v4,
             next: stage_1,
         };
-        let v5 = pavex::middleware::Next::new(v4);
-        let v6 = pavex::middleware::wrap_noop(v5).await;
-        <pavex::response::Response as pavex::response::IntoResponse>::into_response(v6)
+        let v6 = pavex::middleware::Next::new(v5);
+        let v7 = pavex::middleware::wrap_noop(v6).await;
+        <pavex::response::Response as pavex::response::IntoResponse>::into_response(v7)
     }
     async fn wrapping_1(
-        v0: pavex::request::RequestHead,
-        v1: pavex::request::body::RawIncomingBody,
-        v2: leptos_config::LeptosOptions,
-        v3: pavex::request::path::MatchedPathPattern,
+        v0: alloc::vec::Vec<leptos_pavex::PavexRouteListing>,
+        v1: pavex::request::RequestHead,
+        v2: pavex::request::body::RawIncomingBody,
+        v3: leptos_config::LeptosOptions,
+        v4: pavex::request::path::MatchedPathPattern,
     ) -> pavex::response::Response {
-        let v4 = pavex::telemetry::ServerRequestId::generate();
-        let v5 = app::telemetry::root_span(&v0, v3, v4);
-        let v6 = crate::route_2::Next1 {
+        let v5 = pavex::telemetry::ServerRequestId::generate();
+        let v6 = app::telemetry::root_span(&v1, v4, v5);
+        let v7 = crate::route_2::Next1 {
             s_0: v0,
             s_1: v1,
             s_2: v2,
-            s_3: &v3,
-            s_4: &v5,
+            s_3: v3,
+            s_4: &v4,
+            s_5: &v6,
             next: stage_2,
         };
-        let v7 = pavex::middleware::Next::new(v6);
-        let v8 = <pavex_tracing::RootSpan as core::clone::Clone>::clone(&v5);
-        let v9 = pavex_tracing::logger(v8, v7).await;
-        <pavex::response::Response as pavex::response::IntoResponse>::into_response(v9)
+        let v8 = pavex::middleware::Next::new(v7);
+        let v9 = <pavex_tracing::RootSpan as core::clone::Clone>::clone(&v6);
+        let v10 = pavex_tracing::logger(v9, v8).await;
+        <pavex::response::Response as pavex::response::IntoResponse>::into_response(v10)
     }
     async fn handler(
-        v0: pavex::request::RequestHead,
-        v1: pavex::request::body::RawIncomingBody,
-        v2: leptos_config::LeptosOptions,
-        v3: &pavex::request::path::MatchedPathPattern,
+        v0: alloc::vec::Vec<leptos_pavex::PavexRouteListing>,
+        v1: pavex::request::RequestHead,
+        v2: pavex::request::body::RawIncomingBody,
+        v3: leptos_config::LeptosOptions,
+        v4: &pavex::request::path::MatchedPathPattern,
     ) -> pavex::response::Response {
-        let v4 = <leptos_config::LeptosOptions as core::clone::Clone>::clone(&v2);
-        let v5 = app::leptos::generate_app(v4, &v0);
-        let v6 = app::leptos::additional_context_components(&v0);
-        let v7 = app::leptos::generate_route_app(v2, &v0);
-        let v8 = leptos_pavex::generate_route_list(v7);
-        let v9 = leptos_pavex::render_route(v8, v0, v1, v3, v6, v5).await;
-        <pavex::response::Response as pavex::response::IntoResponse>::into_response(v9)
+        let v5 = app::leptos::generate_app(v3, &v1);
+        let v6 = app::leptos::additional_context_components(&v1);
+        let v7 = leptos_pavex::render_route(v0, v1, v2, v4, v6, v5).await;
+        <pavex::response::Response as pavex::response::IntoResponse>::into_response(v7)
     }
     async fn post_processing_0(
         v0: pavex::response::Response,
@@ -591,11 +610,13 @@ pub mod route_2 {
     where
         T: std::future::Future<Output = pavex::response::Response>,
     {
-        s_0: pavex::request::RequestHead,
-        s_1: pavex::request::body::RawIncomingBody,
-        s_2: leptos_config::LeptosOptions,
-        s_3: pavex::request::path::MatchedPathPattern,
+        s_0: alloc::vec::Vec<leptos_pavex::PavexRouteListing>,
+        s_1: pavex::request::RequestHead,
+        s_2: pavex::request::body::RawIncomingBody,
+        s_3: leptos_config::LeptosOptions,
+        s_4: pavex::request::path::MatchedPathPattern,
         next: fn(
+            alloc::vec::Vec<leptos_pavex::PavexRouteListing>,
             pavex::request::RequestHead,
             pavex::request::body::RawIncomingBody,
             leptos_config::LeptosOptions,
@@ -609,19 +630,21 @@ pub mod route_2 {
         type Output = pavex::response::Response;
         type IntoFuture = T;
         fn into_future(self) -> Self::IntoFuture {
-            (self.next)(self.s_0, self.s_1, self.s_2, self.s_3)
+            (self.next)(self.s_0, self.s_1, self.s_2, self.s_3, self.s_4)
         }
     }
     struct Next1<'a, 'b, T>
     where
         T: std::future::Future<Output = pavex::response::Response>,
     {
-        s_0: pavex::request::RequestHead,
-        s_1: pavex::request::body::RawIncomingBody,
-        s_2: leptos_config::LeptosOptions,
-        s_3: &'a pavex::request::path::MatchedPathPattern,
-        s_4: &'b pavex_tracing::RootSpan,
+        s_0: alloc::vec::Vec<leptos_pavex::PavexRouteListing>,
+        s_1: pavex::request::RequestHead,
+        s_2: pavex::request::body::RawIncomingBody,
+        s_3: leptos_config::LeptosOptions,
+        s_4: &'a pavex::request::path::MatchedPathPattern,
+        s_5: &'b pavex_tracing::RootSpan,
         next: fn(
+            alloc::vec::Vec<leptos_pavex::PavexRouteListing>,
             pavex::request::RequestHead,
             pavex::request::body::RawIncomingBody,
             leptos_config::LeptosOptions,
@@ -636,7 +659,7 @@ pub mod route_2 {
         type Output = pavex::response::Response;
         type IntoFuture = T;
         fn into_future(self) -> Self::IntoFuture {
-            (self.next)(self.s_0, self.s_1, self.s_2, self.s_3, self.s_4)
+            (self.next)(self.s_0, self.s_1, self.s_2, self.s_3, self.s_4, self.s_5)
         }
     }
 }

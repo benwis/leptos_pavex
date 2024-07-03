@@ -8,7 +8,7 @@ use pavex::blueprint::{router::GET, Blueprint};
 use pavex::f;
 use pavex::request::RequestHead;
 
-use crate::leptos::generate_route_app;
+use crate::leptos::generate_app;
 
 pub fn register(bp: &mut Blueprint) {
 
@@ -18,7 +18,7 @@ pub fn register(bp: &mut Blueprint) {
     // Generate routes for routes defined in Leptos for components and server fns
     let mock_request = Request::builder().uri("https://www.leptos.dev/about").body(()).unwrap();
     let mock_req_head: RequestHead = mock_request.into_parts().0.into();
-    let routes = leptos_pavex::generate_route_list(generate_route_app(leptos_options, &mock_req_head));
+    let routes = leptos_pavex::generate_route_list(generate_app(leptos_options, &mock_req_head));
     generate_leptos_routes(&routes, bp);
     bp.route(GET, "/api/ping", f!(self::ping::get));
     bp.route(GET, "/api/greet/:name", f!(self::greet::get));
