@@ -7,7 +7,7 @@ use leptos_meta::Title;
 fn Home() -> impl IntoView {
     view! {
         <Title text="Leptos Pavex Starter"/>
-        <main class="content-section">
+        <div class="content-section">
             <div class="logo-row">
                 <img src="/img/leptos_logo.svg" alt="Leptos Logo" width="300"/>
                 <span class="plus">"+"</span>
@@ -15,6 +15,6 @@ fn Home() -> impl IntoView {
             </div>
             <h1>"Starter"</h1>
 
-        </main>
+        </div>
     }
 }
