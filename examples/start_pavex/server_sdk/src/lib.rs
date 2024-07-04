@@ -443,9 +443,9 @@ pub mod route_1 {
         v3: leptos_config::LeptosOptions,
         v4: &pavex::request::path::MatchedPathPattern,
     ) -> pavex::response::Response {
-        let v5 = app::leptos::generate_app(v3, &v1);
-        let v6 = app::leptos::additional_context_components(&v1);
-        let v7 = leptos_pavex::render_route(v0, v1, v2, v4, v6, v5).await;
+        let v5 = app::leptos::additional_context_components(&v1);
+        let v6 = app::leptos::generate_app(&v5, v3, &v1);
+        let v7 = leptos_pavex::render_route(v0, v1, v2, v4, v5, v6).await;
         <pavex::response::Response as pavex::response::IntoResponse>::into_response(v7)
     }
     async fn post_processing_0(
@@ -594,9 +594,9 @@ pub mod route_2 {
         v3: leptos_config::LeptosOptions,
         v4: &pavex::request::path::MatchedPathPattern,
     ) -> pavex::response::Response {
-        let v5 = app::leptos::generate_app(v3, &v1);
-        let v6 = app::leptos::additional_context_components(&v1);
-        let v7 = leptos_pavex::render_route(v0, v1, v2, v4, v6, v5).await;
+        let v5 = app::leptos::additional_context_components(&v1);
+        let v6 = app::leptos::generate_app(&v5, v3, &v1);
+        let v7 = leptos_pavex::render_route(v0, v1, v2, v4, v5, v6).await;
         <pavex::response::Response as pavex::response::IntoResponse>::into_response(v7)
     }
     async fn post_processing_0(

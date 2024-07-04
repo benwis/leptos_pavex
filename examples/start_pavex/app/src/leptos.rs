@@ -1,32 +1,37 @@
+use leptos::prelude::{
+    provide_context, view, ElementChild, GlobalAttributes, HydrationScripts, IntoAny, LeptosOptions,
+};
+use leptos::reactive_graph::owner::Owner;
 use leptos_app::pages::App;
+use leptos_meta::MetaTags;
 use leptos_pavex::pavex_helpers::{
-    AdditionalContextComponent,
-    AdditionalContextServerFn, AppFunction,
+    AdditionalContextComponent, AdditionalContextServerFn, AppFunction,
 };
 use leptos_pavex::{pass_leptos_context, RouteType};
 use pavex::request::RequestHead;
-use leptos_meta::MetaTags;
-use leptos::prelude::{ElementChild, view, provide_context, GlobalAttributes, IntoAny, LeptosOptions, HydrationScripts};
 
-pub fn generate_app(options: LeptosOptions, req_head: &RequestHead) -> AppFunction {
-  
-    let context = additional_context_components(req_head);
+#[track_caller]
+pub fn generate_app(
+    context: &AdditionalContextComponent,
+    options: LeptosOptions,
+    req_head: &RequestHead,
+) -> AppFunction {
     let owner = context.owner();
     let fun = move || {
         view! {
             <!DOCTYPE html>
-        <html lang="en">
-            <head>
-                <meta charset="utf-8"/>
-                <meta name="viewport" content="width=device-width, initial-scale=1"/>
-                //<AutoReload options=options.clone() />
-                <HydrationScripts options/>
-                <MetaTags/>
-            </head>
-            <body>
-                <App/>
-            </body>
-        </html>
+            <html lang="en">
+                <head>
+                    <meta charset="utf-8"/>
+                    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+                    // <AutoReload options=options.clone() />
+                    <HydrationScripts options/>
+                    <MetaTags/>
+                </head>
+                <body>
+                    <App/>
+                </body>
+            </html>
         }
     };
     AppFunction::new(owner.with(fun).into_any())
