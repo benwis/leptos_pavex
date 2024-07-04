@@ -152,7 +152,7 @@ pub fn build_response(
 }
 impl<CustErr> Res<CustErr> for PavexResponse
 where
-    CustErr: Send + Sync + Debug +  FromStr + Display + 'static,
+    CustErr: Send + Sync + Debug + FromStr + Display + 'static,
 {
     fn try_from_string(content_type: &str, data: String) -> Result<Self, ServerFnError<CustErr>> {
         let mut headers = HeaderMap::new();
@@ -186,9 +186,14 @@ where
         let mut headers = HeaderMap::new();
         headers.insert(CONTENT_TYPE, content_type.parse().unwrap());
 
-        let mapped_stream = data.map(|n| {n.map_err(ServerFnErrorErr::from).map_err(|e| Box::new(e) as Box<dyn std::error::Error + Send + Sync>)});
+        let mapped_stream = data.map(|n| {
+            n.map_err(ServerFnErrorErr::from)
+                .map_err(|e| Box::new(e) as Box<dyn std::error::Error + Send + Sync>)
+        });
 
-        let stream = PavexStream { inner: mapped_stream };
+        let stream = PavexStream {
+            inner: mapped_stream,
+        };
 
         let mut res = Response::ok().set_raw_body(stream);
         *res.headers_mut() = headers;

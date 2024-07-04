@@ -28,7 +28,7 @@ where
     AppFunction::new(any_view)
 }
 
-#[derive(Debug, Default)]
+#[derive(Debug, Default, Clone)]
 /// A dummy type that holds nothing, but allows us to return a value for the Pavex handler that'll
 /// let the user provide stuff to Leptos from the server. Do not register this as a prebuilt type,
 /// for it to work you need to build a constructor that calls `create_owner()` first!
