@@ -3,7 +3,7 @@ pub mod ping;
 
 use http::Request;
 use leptos::config::get_configuration;
-use leptos_pavex::leptos_routes::generate_leptos_routes;
+use leptos_pavex::leptos_routes::add_leptos_routes;
 use pavex::blueprint::{router::GET, Blueprint};
 use pavex::f;
 use pavex::request::RequestHead;
@@ -24,7 +24,7 @@ pub fn register(bp: &mut Blueprint) {
         &crate::leptos::additional_context_components(&mock_req_head),
         leptos_options,
     ));
-    generate_leptos_routes(&routes, bp);
+    add_leptos_routes(&routes, bp);
     bp.route(GET, "/api/ping", f!(self::ping::get));
     bp.route(GET, "/api/greet/:name", f!(self::greet::get));
     bp.route(GET, "/*path", f!(leptos_pavex::file_helpers::serve_files));
