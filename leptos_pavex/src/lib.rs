@@ -183,10 +183,6 @@ pub async fn render_route(
     }
 }
 
-fn bar() -> i16 {
-    "bar"
-}
-
 /// Returns a Pavex Response containing an HTML stream of your application.
 ///
 /// It provides a MetaContext and a RouterIntegrationContext to the app's context
