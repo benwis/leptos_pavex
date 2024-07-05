@@ -15,6 +15,8 @@ name = "bp"
 unexpected_cfgs = { level = "allow", check-cfg = ['cfg(pavex_ide_hint)'] }
 
 [dependencies]
+leptos_app = { path = "../leptos_app", features=["ssr"] }
+
 cargo_px_env = "0.1"
 pavex = { version = "0.1.43" }
 pavex_tracing = { version = "0.1.43" }
@@ -27,7 +29,7 @@ http = "1.1.0"
 serde = { version = "1", features = ["derive"] }
 workspace_hack = { path = "../workspace_hack" }
 leptos_pavex = { path = "../../../leptos_pavex", features=["ssr"] }
-leptos = { git = "https://github.com/leptos-rs/leptos", branch = "leptos_0.7", features=["ssr"] }
-leptos_config = { git = "https://github.com/leptos-rs/leptos", branch = "leptos_0.7" }
-leptos_meta = { git = "https://github.com/leptos-rs/leptos", branch = "leptos_0.7", features=["ssr"] }
-leptos_app = { path = "../leptos_app", features=["ssr"] }
+leptos= {workspace = true, features=["ssr"]}
+leptos_config = {workspace = true}
+leptos_meta = {workspace = true, features=["ssr"]}
+

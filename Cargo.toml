@@ -37,7 +37,11 @@ futures-util = "0.3.30"
 any_spawner = "0.1.0"
 serde = { version = "1.0.203", features = ["derive"] }
 http = "1.1.0"
-# [patch.crates-io]
+
+
+# [patch."https://github.com/leptos-rs/leptos"]
+# hydration_context = { path = "../leptos/hydration_context"}
+# reactive_graph = { path="../leptos/reactive_graph"}
 # leptos = { path = "../leptos/leptos"}
 # server_fn = { path = "../leptos/server_fn"}
 # leptos_integration_utils = {path = "../leptos/integrations/utils"}

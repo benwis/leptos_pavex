@@ -256,7 +256,9 @@ pub fn provide_initial_contexts(req_head: &RequestHead, parts: RequestParts) {
         .unwrap_or(PathAndQuery::from_static("/"));
     provide_context(RequestUrl::new(&path.to_string()));
     provide_context(parts);
-    provide_context(ServerMetaContext::new());
+    if use_context::<ServerMetaContext>().is_none() {
+        provide_context(ServerMetaContext::new());
+    }
     provide_server_redirect(redirect);
     #[cfg(feature = "nonce")]
     leptos::nonce::provide_nonce();
@@ -276,7 +278,9 @@ fn provide_post_contexts(
     if use_context::<RequestParts>().is_none() {
         provide_context(parts);
     }
-    provide_context(meta_context.clone());
+    if use_context::<ServerMetaContext>().is_none() {
+        provide_context(meta_context.clone());
+    }
     provide_context(default_res_options);
     provide_server_redirect(redirect);
     #[cfg(feature = "nonce")]

@@ -1,7 +1,6 @@
 use leptos::prelude::{
     provide_context, view, ElementChild, GlobalAttributes, HydrationScripts, IntoAny, LeptosOptions,
 };
-use leptos::reactive_graph::owner::Owner;
 use leptos_app::pages::App;
 use leptos_meta::MetaTags;
 use leptos_pavex::pavex_helpers::{
@@ -14,7 +13,6 @@ use pavex::request::RequestHead;
 pub fn generate_app(
     context: &AdditionalContextComponent,
     options: LeptosOptions,
-    req_head: &RequestHead,
 ) -> AppFunction {
     let owner = context.owner();
     let fun = move || {

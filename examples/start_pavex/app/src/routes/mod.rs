@@ -23,7 +23,6 @@ pub fn register(bp: &mut Blueprint) {
     let routes = leptos_pavex::generate_route_list(generate_app(
         &crate::leptos::additional_context_components(&mock_req_head),
         leptos_options,
-        &mock_req_head,
     ));
     generate_leptos_routes(&routes, bp);
     bp.route(GET, "/api/ping", f!(self::ping::get));

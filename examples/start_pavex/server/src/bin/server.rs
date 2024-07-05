@@ -52,7 +52,6 @@ async fn _main() -> anyhow::Result<()> {
     let routes = generate_route_list(generate_app(
         &additional_context_components(&mock_req_head),
         leptos_options.clone(),
-        &mock_req_head,
     ));
 
     let application_state = build_application_state(routes, leptos_options, config.app).await;

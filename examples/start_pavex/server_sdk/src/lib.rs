@@ -444,7 +444,7 @@ pub mod route_1 {
         v4: &pavex::request::path::MatchedPathPattern,
     ) -> pavex::response::Response {
         let v5 = app::leptos::additional_context_components(&v1);
-        let v6 = app::leptos::generate_app(&v5, v3, &v1);
+        let v6 = app::leptos::generate_app(&v5, v3);
         let v7 = leptos_pavex::render_route(v0, v1, v2, v4, v5, v6).await;
         <pavex::response::Response as pavex::response::IntoResponse>::into_response(v7)
     }
@@ -595,7 +595,7 @@ pub mod route_2 {
         v4: &pavex::request::path::MatchedPathPattern,
     ) -> pavex::response::Response {
         let v5 = app::leptos::additional_context_components(&v1);
-        let v6 = app::leptos::generate_app(&v5, v3, &v1);
+        let v6 = app::leptos::generate_app(&v5, v3);
         let v7 = leptos_pavex::render_route(v0, v1, v2, v4, v5, v6).await;
         <pavex::response::Response as pavex::response::IntoResponse>::into_response(v7)
     }
