@@ -24,10 +24,10 @@ use std::{
     str::FromStr,
 };
 
-/// This is here because the orphan rule does not allow us to implement it on IncomingRequest with
-/// the generic error. So we have to wrap it to make it happy
+/// This is here because the orphan rule does not allow us to implement foreign traits on a foreign type 
 pub struct PavexResponse(pub Response);
 
+/// Functions used by leptos_pavex to manipulate Responses and make integration easier. 
 impl ExtendResponse for PavexResponse {
     type ResponseOptions = ResponseOptions;
 
@@ -56,7 +56,7 @@ impl ExtendResponse for PavexResponse {
             headers.insert(CONTENT_TYPE, HeaderValue::from_str(content_type).unwrap());
         }
     }
-
+/// Generate a Response from the application function and all other inputs
     fn from_app(
         app_fn: AppFunction,
         meta_context: ServerMetaContext,
@@ -96,7 +96,7 @@ impl ExtendResponse for PavexResponse {
         }
     }
 }
-
+/// Build an HTML stream for the response, returning it and the current reactive Owner
 pub fn build_response(
     app_fn: AppFunction,
     meta_context: ServerMetaContext,

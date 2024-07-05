@@ -1,4 +1,4 @@
-use crate::pavex_helpers::AdditionalContextServerFn;
+use crate::pavex_helpers::ServerFnOwner;
 use crate::request_parts::RequestParts;
 use crate::response_options::ResponseOptions;
 use crate::{request::PavexRequest, response::PavexResponse};
@@ -46,14 +46,14 @@ pub fn server_fn_paths() -> impl Iterator<Item = (&'static str, HttpMethod)> {
 pub async fn handle_server_fns(
     req_head: RequestHead,
     req_body: RawIncomingBody,
-    context: AdditionalContextServerFn,
+    context: ServerFnOwner,
 ) -> Response {
     handle_server_fns_with_context(req_head, req_body, context).await
 }
 pub async fn handle_server_fns_with_context(
     req_head: RequestHead,
     req_body: RawIncomingBody,
-    context: AdditionalContextServerFn,
+    context: ServerFnOwner,
 ) -> Response {
     let pq = req_head.target.path_and_query().unwrap();
     match crate::server_fn::get_server_fn_by_path(pq.as_str()) {

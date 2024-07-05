@@ -2,6 +2,8 @@ use parking_lot::RwLock;
 use pavex::http::{HeaderMap, HeaderName, HeaderValue, StatusCode};
 use std::sync::Arc;
 
+/// Provides a way to set cookies, status codes, and headers on the outgoing Response,
+/// overriding any default values set by the framework
 #[derive(Clone, Debug, Default)]
 pub struct ResponseOptions(pub Arc<RwLock<ResponseParts>>);
 
@@ -43,6 +45,8 @@ impl ResponseOptions {
     }
 }
 
+/// The internal type for ResponseOptions. Most likely it's easier to use the convenience methods
+/// on ResponseOptions than manipulate this
 #[derive(Debug)]
 pub struct ResponseParts {
     pub status: Option<StatusCode>,

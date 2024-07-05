@@ -1,5 +1,4 @@
 #[allow(dead_code)]
-
 pub mod extend_response;
 #[cfg(feature = "ssr")]
 pub mod file_helpers;
@@ -41,7 +40,7 @@ use pavex::request::body::RawIncomingBody;
 use pavex::request::path::MatchedPathPattern;
 use pavex::request::RequestHead;
 use pavex::response::Response;
-use pavex_helpers::{AdditionalContextComponent, AppFunction};
+use pavex_helpers::{ComponentOwner, AppFunction};
 use reactive_graph::computed::ScopedFuture;
 use response::PavexResponse;
 
@@ -85,6 +84,9 @@ pub fn redirect(path: &str) {
         );
     }
 }
+
+/// Spawn an async executor dependent on the environment in which we're running. Tokio for server
+/// environments and wasm-bindgen-futures for wasm ones.
 fn init_executor() {
     #[cfg(feature = "wasm")]
     let _ = any_spawner::Executor::init_wasm_bindgen();
@@ -103,6 +105,13 @@ fn init_executor() {
 
 pub type PinnedHtmlStream = Pin<Box<dyn Stream<Item = io::Result<Bytes>> + Send>>;
 
+/// Returns a Pavex Response containing an HTML stream of your application.
+///
+/// It provides a MetaContext and a RouterIntegrationContext to the app's context
+/// before rendering it, and includes any meta tags injected using leptos_meta.
+///
+/// The HTML stream is rendered using leptos's render_to_stream and includes everything
+/// defined in the documentation for that function.
 #[tracing::instrument(level = "trace", fields(error), skip_all)]
 pub async fn render_app_to_stream(
     req_head: RequestHead,
@@ -112,14 +121,20 @@ pub async fn render_app_to_stream(
     render_app_to_stream_and_replace_blocks(req_head, req_body, app_fn, false).await
 }
 
-
+/// Returns a Pavex Response containing an HTML stream of your application.
+///
+/// It provides a MetaContext and a RouterIntegrationContext to the app's context
+/// before rendering it, and includes any meta tags injected using leptos_meta
+///
+/// This is a handy entrypoint for a Pavex handler, taking in both additional context
+/// and the rendering mode of each route in your Leptos app.
 #[tracing::instrument(level = "trace", fields(error), skip_all)]
 pub async fn render_route(
     paths: PavexRouteList,
     req_head: RequestHead,
     req_body: RawIncomingBody,
     matched_path: &MatchedPathPattern,
-    context: AdditionalContextComponent,
+    context: ComponentOwner,
     app_fn: AppFunction,
 ) -> Response {
     // 1. Process route to match the values in routeListing
@@ -141,11 +156,7 @@ pub async fn render_route(
     match listing.mode() {
         SsrMode::OutOfOrder => {
             owner
-                .with(|| {
-                    ScopedFuture::new(render_app_to_stream(
-                        req_head, req_body, app_fn,
-                    ))
-                })
+                .with(|| ScopedFuture::new(render_app_to_stream(req_head, req_body, app_fn)))
                 .await
         }
         SsrMode::PartiallyBlocked => {
@@ -160,24 +171,31 @@ pub async fn render_route(
         SsrMode::InOrder => {
             owner
                 .with(|| {
-                    ScopedFuture::new(render_app_to_stream_in_order(
-                        req_head, req_body, app_fn,
-                    ))
+                    ScopedFuture::new(render_app_to_stream_in_order(req_head, req_body, app_fn))
                 })
                 .await
         }
         SsrMode::Async => {
             owner
-                .with(|| {
-                    ScopedFuture::new(render_app_async(
-                        req_head, req_body, app_fn,
-                    ))
-                })
+                .with(|| ScopedFuture::new(render_app_async(req_head, req_body, app_fn)))
                 .await
         }
     }
 }
 
+fn bar() -> i16 {
+    "bar"
+}
+
+/// Returns a Pavex Response containing an HTML stream of your application.
+///
+/// It provides a MetaContext and a RouterIntegrationContext to the app's context
+/// before rendering it, and includes any meta tags injected using leptos_meta.
+///
+/// The HTML stream is rendered using leptos's render_to_stream and includes everything
+/// defined in the documentation for that function.
+///
+/// For now, this is identical to render_app_to_stream()
 #[tracing::instrument(level = "trace", fields(error), skip_all)]
 pub async fn render_app_to_stream_and_replace_blocks(
     req_head: RequestHead,
@@ -195,6 +213,13 @@ pub async fn render_app_to_stream_and_replace_blocks(
     .await
 }
 
+/// Returns a Pavex Response containing an HTML stream of your application.
+///
+/// It provides a MetaContext and a RouterIntegrationContext to the app's context
+/// before rendering it, and includes any meta tags injected using leptos_meta.
+///
+/// This will handle Resources in source order, as compared to the default Out of Order streaming.
+/// For more info on the different modes, check out the docs on SsrMode.
 #[tracing::instrument(level = "trace", fields(error), skip_all)]
 pub async fn render_app_to_stream_in_order(
     req_head: RequestHead,
@@ -209,6 +234,33 @@ pub async fn render_app_to_stream_in_order(
     .await
 }
 
+/// Returns a Pavex Response containing an HTML stream of your application.
+///
+/// It provides a MetaContext and a RouterIntegrationContext to the app's context
+/// before rendering it, and includes any meta tags injected using leptos_meta.
+///
+/// This will handle all Resources on the server, waiting for them to complete before returning HTML.
+/// For more info on the different modes, check out the docs on SsrMode.
+#[tracing::instrument(level = "trace", fields(error), skip_all)]
+pub async fn render_app_async(
+    req_head: RequestHead,
+    req_body: RawIncomingBody,
+    app_fn: AppFunction,
+) -> Response {
+    handle_response(req_head, req_body, app_fn, |app, chunks| {
+        Box::pin(async move {
+            let app = app
+                .inner()
+                .to_html_stream_in_order()
+                .collect::<String>()
+                .await;
+            let chunks = chunks();
+            Box::pin(once(async move { app }).chain(chunks)) as PinnedStream<String>
+        })
+    })
+    .await
+}
+/// A convenience function leptos_pavex uses to build the Pavex Response in a variety of ways
 async fn handle_response(
     req_head: RequestHead,
     _req_body: RawIncomingBody,
@@ -247,7 +299,8 @@ async fn handle_response(
     res.0
 }
 
-/// Provide Context one might want available to people in the additional context environment
+/// Provide additional information to Leptos from an outside environment. This could be global
+/// state, a db pool, or data from Pavex extractors or middleware.
 #[tracing::instrument(level = "trace", fields(error), skip_all)]
 pub fn provide_initial_contexts(req_head: &RequestHead, parts: RequestParts) {
     let path = req_head
@@ -264,7 +317,8 @@ pub fn provide_initial_contexts(req_head: &RequestHead, parts: RequestParts) {
     #[cfg(feature = "nonce")]
     leptos::nonce::provide_nonce();
 }
-// Makes sure the stuff that could be added to context earlier is set, and add the remaining stuff
+// Makes sure the required items are provided to the context, depending on what could be set by the
+// user in their own context handler.
 #[tracing::instrument(level = "trace", fields(error), skip_all)]
 fn provide_post_contexts(
     path: &str,
@@ -286,26 +340,6 @@ fn provide_post_contexts(
     provide_server_redirect(redirect);
     #[cfg(feature = "nonce")]
     leptos::nonce::provide_nonce();
-}
-
-#[tracing::instrument(level = "trace", fields(error), skip_all)]
-pub async fn render_app_async(
-    req_head: RequestHead,
-    req_body: RawIncomingBody,
-    app_fn: AppFunction,
-) -> Response {
-    handle_response(req_head, req_body, app_fn, |app, chunks| {
-        Box::pin(async move {
-            let app = app
-                .inner()
-                .to_html_stream_in_order()
-                .collect::<String>()
-                .await;
-            let chunks = chunks();
-            Box::pin(once(async move { app }).chain(chunks)) as PinnedStream<String>
-        })
-    })
-    .await
 }
 
 /// Generates a list of all routes defined in Leptos's Router in your app. We can then use this to automatically
@@ -348,11 +382,11 @@ pub fn generate_route_list_with_exclusions_and_ssg(
     generate_route_list_with_exclusions_and_ssg_and_context(app_fn, excluded_routes, || {})
 }
 
-/// Pavex Route List
+/// A convenience type for a collection of Pavex routes
 pub type PavexRouteList = Vec<PavexRouteListing>;
 
-#[derive(Clone, Debug, Default)]
 /// A route that this application can serve.
+#[derive(Clone, Debug, Default)]
 pub struct PavexRouteListing {
     path: String,
     mode: SsrMode,
@@ -502,14 +536,15 @@ pub fn generate_route_list_with_exclusions_and_ssg_and_context(
     )
 }
 
-// An Enum to specify
+// An enum holding the different types of routes requiring different Owner setups
 pub enum RouteType {
     ServerFn,
     Component,
 }
-/// A function to pass Leptos additional context from Pavex
-/// The owner needs to exist for calls to provide_context() to be successful. Pavex needs this to run
-/// before the constructor for additional context
+
+/// Provide additional information to Leptos' context from an outside environment. This could be global
+/// state, a db pool, or data from Pavex extractors or middleware. This will need to run before
+/// Pavex generates the AppFunction
 pub fn pass_leptos_context(
     route_type: &RouteType,
     req_head: &RequestHead,

@@ -2,9 +2,8 @@
 use pavex::http::{uri::Scheme, HeaderMap, Method};
 use pavex::request::RequestHead;
 
-// Because IncomingRequest is not Clone, we provide this struct with the
-// easily cloneable parts.
-// TODO: Evaluate whether Body can go here(perhaps as Bytes) without breaking Streaming
+/// A convenience type that's provided to the Leptos context containing info about the incoming Request
+/// TODO: This may be able to be eliminated in favor of the native types
 #[derive(Debug, Clone)]
 pub struct RequestParts {
     method: Method,

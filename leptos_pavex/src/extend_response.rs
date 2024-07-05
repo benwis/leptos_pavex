@@ -4,6 +4,8 @@ use leptos_integration_utils::{BoxedFnOnce, PinnedFuture, PinnedStream};
 use leptos_meta::ServerMetaContext;
 use reactive_graph::owner::Sandboxed;
 
+/// A Pavex specific version of the ExtendResponse trait from leptos_integration_utils,
+/// due to our need to take in a sized AppFunction instead of the typical closure
 pub trait ExtendResponse: Sized {
     type ResponseOptions: Send;
 

@@ -10,10 +10,11 @@ pub struct SubPath<'a> {
     pub path: &'a str,
 }
 
+/// A Pavex handler to serve all files contained in the folder. For Leptos, all files handled by cargo-leptos
+/// will be placed in the `target/site` folder, and this folder is thus exposed.
 pub fn serve_files(subpath: &PathParams<SubPath>) -> Response {
     let prefix = "target/site";
 
-    // TODO: Here's where we would modify it for the incoming path. Check how Leptos does it
     let basepath = Path::new(&format!("./{}", prefix)).to_path_buf();
     let mut path = match basepath.join(subpath.0.path).canonicalize() {
         Ok(p) => p,
@@ -46,8 +47,4 @@ pub fn serve_files(subpath: &PathParams<SubPath>) -> Response {
             .set_raw_body(Full::new(file.into())),
         Err(_) => Response::internal_server_error(),
     }
-}
-
-pub fn index() -> Response {
-    serve_files(&PathParams(SubPath { path: "" }))
 }

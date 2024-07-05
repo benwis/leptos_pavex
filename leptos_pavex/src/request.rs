@@ -5,8 +5,10 @@ use leptos::server_fn::{error::ServerFnError, request::Req};
 use pavex::request::body::{BodySizeLimit, BufferedBody, RawIncomingBody};
 use pavex::request::RequestHead;
 use std::borrow::Cow;
-/// This is here because the orphan rule does not allow us to implement it on IncomingRequest with
-/// the generic error. So we have to wrap it to make it happy
+
+
+/// Generate a Request type, as Pavex does not provide one and Leptos expects one to exist
+/// Provided to the Leptos Context for each Request
 #[derive(Debug)]
 pub struct PavexRequest {
     pub head: RequestHead,

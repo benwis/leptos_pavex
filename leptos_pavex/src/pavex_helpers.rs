@@ -5,7 +5,7 @@ use leptos::{
 };
 use reactive_graph::owner::Owner;
 
-//A type to hold the result of the App Function Closure so Pavex is happy
+//A struct to hold the output of the app function closure so Pavex is happy
 pub struct AppFunction(AnyView<Dom>);
 impl AppFunction {
     pub fn new(any_view: AnyView<Dom>) -> Self {
@@ -18,8 +18,8 @@ impl AppFunction {
         &self.0
     }
 }
-// Provide a constructor for AppFunction so Pavex can generate it at will
-// You'll need to put this inside another function so you can specify the function and not Pavex
+/// Provide a helper function for users to put in a Pavex constructor to handle the 
+/// Leptos application closure.
 pub fn generate_app_function<IV>(app_fn: impl Fn() -> IV + Clone + Send + 'static) -> AppFunction
 where
     IV: IntoView + 'static,
@@ -28,13 +28,12 @@ where
     AppFunction::new(any_view)
 }
 
+/// This type holds the app's root root reactive Owner, which will be generated for each request,
+/// and differs between server functions and regular Leptos routes
 #[derive(Debug, Default, Clone)]
-/// A dummy type that holds nothing, but allows us to return a value for the Pavex handler that'll
-/// let the user provide stuff to Leptos from the server. Do not register this as a prebuilt type,
-/// for it to work you need to build a constructor that calls `create_owner()` first!
-pub struct AdditionalContextComponent(Owner);
+pub struct ComponentOwner(Owner);
 
-impl AdditionalContextComponent {
+impl ComponentOwner {
     /// Give this type your additional context in a closure
     pub fn new(owner: Owner) -> Self {
         Self(owner)
@@ -44,13 +43,11 @@ impl AdditionalContextComponent {
         &self.0
     }
 }
-
+/// This type holds the app's root root reactive Owner, which will be generated for each request,
+/// and differs between server functions and regular Leptos routes
 #[derive(Debug, Default)]
-/// A dummy type that holds nothing, but allows us to return a value for the Pavex handler that'll
-/// let the user provide stuff to Leptos from the server. Do not register this as a prebuilt type,
-/// for it to work you need to build a constructor that calls `create_owner()` first!
-pub struct AdditionalContextServerFn(Owner);
-impl AdditionalContextServerFn {
+pub struct ServerFnOwner(Owner);
+impl ServerFnOwner {
     /// Give this type your additional context in a closure
     pub fn new(owner: Owner) -> Self {
         Self(owner)

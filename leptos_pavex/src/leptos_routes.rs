@@ -7,10 +7,11 @@ use pavex::{
     },
     f,
 };
-
 use crate::{init_executor, PavexRouteList};
 
-pub fn generate_leptos_routes(paths: &PavexRouteList, bp: &mut Blueprint) {
+/// A convenience function to add all routes defined in Leptos to the Pavex router automatically.
+/// Requires a mutable reference to the blueprint and a list of routes from Leptos
+pub fn add_leptos_routes(paths: &PavexRouteList, bp: &mut Blueprint) {
     init_executor();
 
     // register server functions

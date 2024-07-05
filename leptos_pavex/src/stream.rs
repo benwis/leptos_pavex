@@ -6,6 +6,8 @@ use pin_project::pin_project;
 use std::pin::Pin;
 use std::error::Error;
 
+/// A stream wrapper so that we may implement Pavex's RawBody for a stream. This one is used generically 
+/// in the Res/Req machinery
 #[pin_project]
 pub struct PavexStream<S>
 where
@@ -43,6 +45,7 @@ where
     }
 }
 
+/// A stream wrapper specifically for the Leptos HTML output stream so that we may implement Pavex's RawBody trait for it
 #[pin_project]
 pub struct LeptosPavexStream<S>
 where
