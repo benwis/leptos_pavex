@@ -9,7 +9,6 @@ use leptos_pavex::pavex_helpers::{
 use leptos_pavex::{pass_leptos_context, RouteType};
 use pavex::request::RequestHead;
 
-#[track_caller]
 pub fn generate_app(
     context: &AdditionalContextComponent,
     options: LeptosOptions,

@@ -132,8 +132,7 @@ lib-profile-release = "wasm-release"
 bin-cargo-command = "cargo px"
 
 # [patch."https://github.com/leptos-rs/leptos"]
-# leptos = { path = "../../../leptos/leptos"}
-# server_fn = { path = "../../../leptos/server_fn"}
-# leptos_integration_utils = {path = "../../../leptos/integrations/utils"}
-# leptos_meta = { path = "../../../leptos/meta"}
-# leptos_router = { path = "../../../leptos/router"}
+leptos = { path = "../../../leptos/leptos"}
+leptos_integration_utils = {path = "../../../leptos/integrations/utils"}
+leptos_meta = { path = "../../../leptos/meta"}
+leptos_router = { path = "../../../leptos/router"}

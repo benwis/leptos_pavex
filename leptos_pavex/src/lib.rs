@@ -19,6 +19,7 @@ use futures::stream::once;
 use futures::{Stream, StreamExt};
 use hydration_context::SsrSharedContext;
 use leptos::server_fn::redirect::REDIRECT_HEADER;
+use reactive_graph::owner::expect_context;
 use std::io;
 use std::pin::Pin;
 use std::sync::Arc;
@@ -217,8 +218,8 @@ async fn handle_response(
         BoxedFnOnce<PinnedStream<String>>,
     ) -> PinnedFuture<PinnedStream<String>>,
 ) -> Response {
-    let res_options = ResponseOptions::default();
-    let meta_context = ServerMetaContext::new();
+    let res_options: ResponseOptions = ResponseOptions::default();
+    let meta_context = expect_context::<ServerMetaContext>();
 
     let additional_context = {
         let meta_context = meta_context.clone();
