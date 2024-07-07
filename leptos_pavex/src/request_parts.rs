@@ -4,7 +4,7 @@ use pavex::request::RequestHead;
 
 /// A convenience type that's provided to the Leptos context containing info about the incoming Request
 /// TODO: This may be able to be eliminated in favor of the native types
-#[derive(Debug, Clone)]
+#[derive(Debug, Default, Clone)]
 pub struct RequestParts {
     method: Method,
     scheme: Option<Scheme>,

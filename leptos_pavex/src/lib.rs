@@ -28,7 +28,7 @@ use crate::response_options::ResponseOptions;
 use leptos::prelude::{provide_context, use_context, Owner};
 use leptos::tachys::view::RenderHtml;
 use leptos_integration_utils::{BoxedFnOnce, PinnedFuture, PinnedStream};
-use leptos_meta::ServerMetaContext;
+use leptos_meta::{ServerMetaContext, ServerMetaContextOutput};
 use leptos_router::components::provide_server_redirect;
 use leptos_router::location::RequestUrl;
 use leptos_router::{PathSegment, RouteList, RouteListing, SsrMode, StaticDataMap, StaticMode};
@@ -40,7 +40,7 @@ use pavex::request::body::RawIncomingBody;
 use pavex::request::path::MatchedPathPattern;
 use pavex::request::RequestHead;
 use pavex::response::Response;
-use pavex_helpers::{ComponentOwner, AppFunction};
+use pavex_helpers::{AppFunction, ComponentOwner};
 use reactive_graph::computed::ScopedFuture;
 use response::PavexResponse;
 
@@ -117,8 +117,10 @@ pub async fn render_app_to_stream(
     req_head: RequestHead,
     req_body: RawIncomingBody,
     app_fn: AppFunction,
+    meta_context_output: ServerMetaContextOutput,
 ) -> Response {
-    render_app_to_stream_and_replace_blocks(req_head, req_body, app_fn, false).await
+    render_app_to_stream_and_replace_blocks(req_head, req_body, app_fn, meta_context_output, false)
+        .await
 }
 
 /// Returns a Pavex Response containing an HTML stream of your application.
@@ -134,7 +136,7 @@ pub async fn render_route(
     req_head: RequestHead,
     req_body: RawIncomingBody,
     matched_path: &MatchedPathPattern,
-    context: ComponentOwner,
+    mut context: ComponentOwner,
     app_fn: AppFunction,
 ) -> Response {
     // 1. Process route to match the values in routeListing
@@ -152,18 +154,31 @@ pub async fn render_route(
             )
         });
     // 3. Match listing mode against known, and choose function
+    let meta_output = context.take_meta_context_output();
     let owner = context.owner();
+
     match listing.mode() {
         SsrMode::OutOfOrder => {
             owner
-                .with(|| ScopedFuture::new(render_app_to_stream(req_head, req_body, app_fn)))
+                .with(|| {
+                    ScopedFuture::new(render_app_to_stream(
+                        req_head,
+                        req_body,
+                        app_fn,
+                        meta_output,
+                    ))
+                })
                 .await
         }
         SsrMode::PartiallyBlocked => {
             owner
                 .with(|| {
                     ScopedFuture::new(render_app_to_stream_and_replace_blocks(
-                        req_head, req_body, app_fn, true,
+                        req_head,
+                        req_body,
+                        app_fn,
+                        meta_output,
+                        true,
                     ))
                 })
                 .await
@@ -171,13 +186,20 @@ pub async fn render_route(
         SsrMode::InOrder => {
             owner
                 .with(|| {
-                    ScopedFuture::new(render_app_to_stream_in_order(req_head, req_body, app_fn))
+                    ScopedFuture::new(render_app_to_stream_in_order(
+                        req_head,
+                        req_body,
+                        app_fn,
+                        meta_output,
+                    ))
                 })
                 .await
         }
         SsrMode::Async => {
             owner
-                .with(|| ScopedFuture::new(render_app_async(req_head, req_body, app_fn)))
+                .with(|| {
+                    ScopedFuture::new(render_app_async(req_head, req_body, app_fn, meta_output))
+                })
                 .await
         }
     }
@@ -197,15 +219,22 @@ pub async fn render_app_to_stream_and_replace_blocks(
     req_head: RequestHead,
     req_body: RawIncomingBody,
     app_fn: AppFunction,
+    meta_context_output: ServerMetaContextOutput,
     replace_blocks: bool,
 ) -> Response {
     _ = replace_blocks; // TODO
-    handle_response(req_head, req_body, app_fn, |app, chunks| {
-        Box::pin(async move {
-            Box::pin(app.inner().to_html_stream_out_of_order().chain(chunks()))
-                as PinnedStream<String>
-        })
-    })
+    handle_response(
+        req_head,
+        req_body,
+        app_fn,
+        meta_context_output,
+        |app, chunks| {
+            Box::pin(async move {
+                Box::pin(app.inner().to_html_stream_out_of_order().chain(chunks()))
+                    as PinnedStream<String>
+            })
+        },
+    )
     .await
 }
 
@@ -221,12 +250,20 @@ pub async fn render_app_to_stream_in_order(
     req_head: RequestHead,
     req_body: RawIncomingBody,
     app_fn: AppFunction,
+    meta_context_output: ServerMetaContextOutput,
 ) -> Response {
-    handle_response(req_head, req_body, app_fn, |app, chunks| {
-        Box::pin(async move {
-            Box::pin(app.inner().to_html_stream_in_order().chain(chunks())) as PinnedStream<String>
-        })
-    })
+    handle_response(
+        req_head,
+        req_body,
+        app_fn,
+        meta_context_output,
+        |app, chunks| {
+            Box::pin(async move {
+                Box::pin(app.inner().to_html_stream_in_order().chain(chunks()))
+                    as PinnedStream<String>
+            })
+        },
+    )
     .await
 }
 
@@ -242,18 +279,25 @@ pub async fn render_app_async(
     req_head: RequestHead,
     req_body: RawIncomingBody,
     app_fn: AppFunction,
+    meta_context_output: ServerMetaContextOutput,
 ) -> Response {
-    handle_response(req_head, req_body, app_fn, |app, chunks| {
-        Box::pin(async move {
-            let app = app
-                .inner()
-                .to_html_stream_in_order()
-                .collect::<String>()
-                .await;
-            let chunks = chunks();
-            Box::pin(once(async move { app }).chain(chunks)) as PinnedStream<String>
-        })
-    })
+    handle_response(
+        req_head,
+        req_body,
+        app_fn,
+        meta_context_output,
+        |app, chunks| {
+            Box::pin(async move {
+                let app = app
+                    .inner()
+                    .to_html_stream_in_order()
+                    .collect::<String>()
+                    .await;
+                let chunks = chunks();
+                Box::pin(once(async move { app }).chain(chunks)) as PinnedStream<String>
+            })
+        },
+    )
     .await
 }
 /// A convenience function leptos_pavex uses to build the Pavex Response in a variety of ways
@@ -261,6 +305,7 @@ async fn handle_response(
     req_head: RequestHead,
     _req_body: RawIncomingBody,
     app_fn: AppFunction,
+    meta_context_output: ServerMetaContextOutput,
     stream_builder: fn(
         AppFunction,
         BoxedFnOnce<PinnedStream<String>>,
@@ -279,13 +324,13 @@ async fn handle_response(
 
             let full_path = format!("http://leptos.dev{path}");
             let req_parts = RequestParts::new_from_req(&req_head);
-            provide_post_contexts(&full_path, &meta_context, req_parts, res_options.clone());
+            provide_post_contexts(&full_path, meta_context, req_parts, res_options.clone());
         }
     };
 
     let res = PavexResponse::from_app(
         app_fn,
-        meta_context,
+        meta_context_output,
         additional_context,
         res_options,
         stream_builder,
@@ -298,7 +343,11 @@ async fn handle_response(
 /// Provide additional information to Leptos from an outside environment. This could be global
 /// state, a db pool, or data from Pavex extractors or middleware.
 #[tracing::instrument(level = "trace", fields(error), skip_all)]
-pub fn provide_initial_contexts(req_head: &RequestHead, parts: RequestParts) {
+pub fn provide_initial_contexts(
+    req_head: &RequestHead,
+    parts: RequestParts,
+    meta_context: ServerMetaContext,
+) {
     let path = req_head
         .target
         .path_and_query()
@@ -306,9 +355,8 @@ pub fn provide_initial_contexts(req_head: &RequestHead, parts: RequestParts) {
         .unwrap_or(PathAndQuery::from_static("/"));
     provide_context(RequestUrl::new(&path.to_string()));
     provide_context(parts);
-    if use_context::<ServerMetaContext>().is_none() {
-        provide_context(ServerMetaContext::new());
-    }
+    provide_context(meta_context);
+
     provide_server_redirect(redirect);
     #[cfg(feature = "nonce")]
     leptos::nonce::provide_nonce();
@@ -318,7 +366,7 @@ pub fn provide_initial_contexts(req_head: &RequestHead, parts: RequestParts) {
 #[tracing::instrument(level = "trace", fields(error), skip_all)]
 fn provide_post_contexts(
     path: &str,
-    meta_context: &ServerMetaContext,
+    meta_context: ServerMetaContext,
     parts: RequestParts,
     default_res_options: ResponseOptions,
 ) {
@@ -330,7 +378,7 @@ fn provide_post_contexts(
         provide_context(parts);
     }
     if use_context::<ServerMetaContext>().is_none() {
-        provide_context(meta_context.clone());
+        provide_context(meta_context);
     }
     provide_context(default_res_options);
     provide_server_redirect(redirect);
@@ -497,8 +545,8 @@ pub fn generate_route_list_with_exclusions_and_ssg_and_context(
             // stub out a path for now
             provide_context(RequestUrl::new(""));
             let mock_parts = RequestParts::new();
-
-            provide_post_contexts("", &Default::default(), mock_parts, Default::default());
+            let (meta_context, _) = ServerMetaContext::new();
+            provide_post_contexts("", meta_context, mock_parts, Default::default());
             additional_context();
             let foo = RouteList::generate(move || app_fn.inner());
             foo
@@ -545,17 +593,19 @@ pub fn pass_leptos_context(
     route_type: &RouteType,
     req_head: &RequestHead,
     additional_context: impl Fn() + 'static + Clone,
-) -> Owner {
+) -> (Owner, ServerMetaContextOutput) {
     let owner = match route_type {
         RouteType::ServerFn => Owner::new(),
         RouteType::Component => Owner::new_root(Some(Arc::new(SsrSharedContext::new()))),
     };
     let req_parts = RequestParts::new_from_req(&req_head);
+
+    let (meta_context, meta_context_output) = ServerMetaContext::new();
     // Set the created Owner as the current one, by setting the thread local. Pavex pins each request to their own
     // thread, so this should be fineTM
     owner.with(|| {
-        provide_initial_contexts(req_head, req_parts);
+        provide_initial_contexts(req_head, req_parts, meta_context);
         additional_context();
     });
-    owner
+    (owner, meta_context_output)
 }

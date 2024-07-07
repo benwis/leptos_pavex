@@ -1,7 +1,7 @@
 use crate::{pavex_helpers::AppFunction, response::build_response};
 use futures::{stream::once, Future, Stream, StreamExt};
 use leptos_integration_utils::{BoxedFnOnce, PinnedFuture, PinnedStream};
-use leptos_meta::ServerMetaContext;
+use leptos_meta:: ServerMetaContextOutput;
 use reactive_graph::owner::Sandboxed;
 
 /// A Pavex specific version of the ExtendResponse trait from leptos_integration_utils,
@@ -17,7 +17,7 @@ pub trait ExtendResponse: Sized {
 
     fn from_app(
         app_fn: AppFunction,
-        meta_context: ServerMetaContext,
+        meta_context: ServerMetaContextOutput,
         additional_context: impl FnOnce() + Send + 'static,
         res_options: Self::ResponseOptions,
         stream_builder: fn(
@@ -26,10 +26,16 @@ pub trait ExtendResponse: Sized {
         ) -> PinnedFuture<PinnedStream<String>>,
     ) -> impl Future<Output = Self> + Send {
         async move {
-            let (owner, stream) =
-                build_response(app_fn, meta_context, additional_context, stream_builder);
-            let mut stream = stream.await;
+            let (owner, stream) = build_response(app_fn, additional_context, stream_builder);
+            let stream = stream.await.ready_chunks(32).map(|n| n.join(""));
 
+            let sc = owner.shared_context().unwrap();
+            while let Some(pending) = sc.await_deferred() {
+                pending.await;
+            }
+
+            let mut stream =
+                Box::pin(meta_context.inject_meta_context(stream).await);
             // wait for the first chunk of the stream, then set the status and headers
             let first_chunk = stream.next().await.unwrap_or_default();
 

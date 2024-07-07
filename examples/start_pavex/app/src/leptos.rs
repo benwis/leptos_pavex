@@ -3,16 +3,11 @@ use leptos::prelude::{
 };
 use leptos_app::pages::App;
 use leptos_meta::MetaTags;
-use leptos_pavex::pavex_helpers::{
-    ComponentOwner, ServerFnOwner, AppFunction,
-};
+use leptos_pavex::pavex_helpers::{AppFunction, ComponentOwner, ServerFnOwner};
 use leptos_pavex::{pass_leptos_context, RouteType};
 use pavex::request::RequestHead;
 
-pub fn generate_app(
-    context: &ComponentOwner,
-    options: LeptosOptions,
-) -> AppFunction {
+pub fn generate_app(context: &ComponentOwner, options: LeptosOptions) -> AppFunction {
     let owner = context.owner();
     let fun = move || {
         view! {
@@ -35,15 +30,15 @@ pub fn generate_app(
 }
 
 pub fn additional_context_components(req_head: &RequestHead) -> ComponentOwner {
-    let owner = pass_leptos_context(&RouteType::Component, req_head, || {
+    let (owner, meta_context_output) = pass_leptos_context(&RouteType::Component, req_head, || {
         // Pass additional context items here
         provide_context("Test".to_string());
     });
-    ComponentOwner::new(owner)
+    ComponentOwner::new(owner, meta_context_output)
 }
 
 pub fn additional_context_serverfn(req_head: &RequestHead) -> ServerFnOwner {
-    let owner = pass_leptos_context(&RouteType::ServerFn, req_head, || {
+    let (owner, _) = pass_leptos_context(&RouteType::ServerFn, req_head, || {
         // Pass additional context items here
         provide_context("Test".to_string());
     });
