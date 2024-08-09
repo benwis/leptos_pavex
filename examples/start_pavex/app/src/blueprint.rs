@@ -13,10 +13,10 @@ pub fn blueprint() -> Blueprint {
     telemetry::register(&mut bp);
     configuration::register(&mut bp);
 
-    bp.constructor(
-        f!(super::leptos::additional_context_components),
-        Lifecycle::RequestScoped,
-    );
+    //bp.constructor(
+    //    f!(super::leptos::additional_context_components),
+    //    Lifecycle::RequestScoped,
+    //);
     bp.constructor(
         f!(super::leptos::additional_context_serverfn),
         Lifecycle::RequestScoped,

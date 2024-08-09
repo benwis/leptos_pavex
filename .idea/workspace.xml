@@ -9,7 +9,9 @@
   <component name="ChangeListManager">
     <list default="true" id="dc9646a2-d8ac-4395-ab6f-1cce323c37f6" name="Changes" comment="General cleanup, removal of with_context functions">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/examples/start_pavex/Cargo.lock" beforeDir="false" afterPath="$PROJECT_DIR$/examples/start_pavex/Cargo.lock" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/examples/start_pavex/app/src/blueprint.rs" beforeDir="false" afterPath="$PROJECT_DIR$/examples/start_pavex/app/src/blueprint.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/examples/start_pavex/server_sdk/Cargo.toml" beforeDir="false" afterPath="$PROJECT_DIR$/examples/start_pavex/server_sdk/Cargo.toml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -41,7 +43,8 @@
     "nodejs_package_manager_path": "npm",
     "org.rust.cargo.project.model.PROJECT_DISCOVERY": "true",
     "org.rust.cargo.project.model.impl.CargoExternalSystemProjectAware.subscribe.first.balloon": "",
-    "org.rust.first.attach.projects": "true"
+    "org.rust.first.attach.projects": "true",
+    "settings.editor.selected.configurable": "editor.preferences.fonts.default"
   }
 }]]></component>
   <component name="RecentsManager">
@@ -81,6 +84,7 @@
       <updated>1718506299833</updated>
       <workItem from="1718506300834" duration="24933000" />
       <workItem from="1719966078447" duration="8900000" />
+      <workItem from="1722704733283" duration="188000" />
     </task>
     <task id="LOCAL-00001" summary="General cleanup, removal of with_context functions">
       <option name="closed" value="true" />

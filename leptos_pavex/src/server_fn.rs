@@ -14,7 +14,7 @@ use pavex::response::Response;
 use url::Url;
 
 #[allow(unused)] // used by server integrations
-type LazyServerFnMap<Req, Res> = Lazy<DashMap<&'static str, ServerFnTraitObj<Req, Res>>>;
+type LazyServerFnMap<Req, Res> = Lazy<DashMap<(String, HttpMethod), ServerFnTraitObj<Req, Res>>>;
 
 static REGISTERED_SERVER_FUNCTIONS: LazyServerFnMap<PavexRequest, PavexResponse> =
     initialize_server_fn_map!(PavexRequest, PavexResponse);
@@ -27,7 +27,7 @@ where
     T: ServerFn<ServerRequest = PavexRequest, ServerResponse = PavexResponse> + 'static,
 {
     REGISTERED_SERVER_FUNCTIONS.insert(
-        T::PATH,
+        (T::PATH.into(), T::InputEncoding::METHOD),
         ServerFnTraitObj::new(
             T::PATH,
             T::InputEncoding::METHOD,
@@ -56,7 +56,7 @@ pub async fn handle_server_fns_with_context(
     context: ServerFnOwner,
 ) -> Response {
     let pq = req_head.target.path_and_query().unwrap();
-    match crate::server_fn::get_server_fn_by_path(pq.as_str()) {
+    match crate::server_fn::get_server_fn_by_path(pq.as_str(), &req_head.method) {
         Some(lepfn) => {
             let owner = context.owner();
             let blah = owner.with(|| {
@@ -127,15 +127,19 @@ pub async fn handle_server_fns_with_context(
 }
 
 /// Returns the server function at the given path
-pub fn get_server_fn_by_path(path: &str) -> Option<ServerFnTraitObj<PavexRequest, PavexResponse>> {
+pub fn get_server_fn_by_path(
+    path: &str,
+    method: &HttpMethod,
+) -> Option<ServerFnTraitObj<PavexRequest, PavexResponse>> {
     // Sanitize Url to prevent query string or ids causing issues. To do that Url wants a full url,
     // so we give it a fake one. We're only using the path anyway!
     let full_url = format!("http://leptos.dev{}", path);
+
     let Ok(url) = Url::parse(&full_url) else {
         println!("Failed to parse: {full_url:?}");
         return None;
     };
     REGISTERED_SERVER_FUNCTIONS
-        .get_mut(url.path())
+        .get_mut(&(url.path().to_string(), method.clone()))
         .map(|f| f.clone())
 }

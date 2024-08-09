@@ -21,7 +21,7 @@ http = "1.1.0"
 hyper = "1.4.0"
 leptos_config = { version = "0.7.0-alpha", git = "https://github.com/leptos-rs/leptos", branch = "leptos_0.7" }
 leptos_pavex = { version = "0.1.0", path = "../../../leptos_pavex" }
-pavex = "0.1.45"
+pavex = "0.1.46"
 pavex_matchit = "0.7.4"
 pavex_tracing = "0.1.45"
 thiserror = "1.0.61"

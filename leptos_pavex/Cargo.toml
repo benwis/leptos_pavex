@@ -14,7 +14,7 @@ leptos_router.workspace = true
 futures.workspace = true
 url.workspace = true
 bytes.workspace = true
-pavex = {version="0.1.44", default-features=false}
+pavex = "0.1.44"
 dashmap.workspace = true
 once_cell.workspace = true
 multimap.workspace = true
