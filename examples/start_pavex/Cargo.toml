@@ -36,10 +36,10 @@ leptos_pavex_macro = { path = "../../../leptos_pavex/leptos_pavex_macro"}
 #leptos_meta = { version = "0.7.0-preview2" }
 #leptos_router = { version = "0.7.0-preview2" }
 
-leptos = { git = "https://github.com/leptos-rs/leptos", branch = "leptos_0.7" }
-leptos_meta = { git = "https://github.com/leptos-rs/leptos", branch = "leptos_0.7" }
-leptos_router = { git = "https://github.com/leptos-rs/leptos", branch = "leptos_0.7" }
-leptos_config = { git = "https://github.com/leptos-rs/leptos", branch = "leptos_0.7" }
+leptos = { git = "https://github.com/leptos-rs/leptos" }
+leptos_meta = { git = "https://github.com/leptos-rs/leptos" }
+leptos_router = { git = "https://github.com/leptos-rs/leptos" }
+leptos_config = { git = "https://github.com/leptos-rs/leptos" }
 
 
 cfg-if = "1"
